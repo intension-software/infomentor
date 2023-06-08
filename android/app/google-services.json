@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "383337818314",
+    "project_id": "infomentor-d71f7",
+    "storage_bucket": "infomentor-d71f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383337818314:android:092717513e3b0f71e1ac33",
+        "android_client_info": {
+          "package_name": "com.example.infomentor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "383337818314-3054sb611v72o19dc8cbag26h58svk10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJBvVIUoxpnvSzDy2JoClW09vSNYViQR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "383337818314-3054sb611v72o19dc8cbag26h58svk10.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
