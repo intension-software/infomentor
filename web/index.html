@@ -32,6 +32,30 @@
   <title>infomentor</title>
   <link rel="manifest" href="manifest.json">
 
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyCKxORmtJ4yQBMBT87i1tQiw1675VM39II",
+      authDomain: "infomentor-d71f7.firebaseapp.com",
+      projectId: "infomentor-d71f7",
+      storageBucket: "infomentor-d71f7.appspot.com",
+      messagingSenderId: "383337818314",
+      appId: "1:383337818314:web:a6e8c3e5cd1323fee1ac33",
+      measurementId: "G-DF2Y7P0QX9"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+
   <script>
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = null;
