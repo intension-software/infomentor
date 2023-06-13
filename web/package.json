@@ -1,0 +1,34 @@
+{
+  "name": "infomentor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "infomentor",
+  "author": "Marko Tomčík",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "gatsby": "^5.9.1",
+    "gatsby-omni-font-loader": "^2.0.2",
+    "gatsby-plugin-google-gtag": "^5.10.0",
+    "gatsby-plugin-sass": "^6.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "sass": "^1.62.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.5",
+    "@types/react": "^18.2.5",
+    "@types/react-dom": "^18.2.4",
+    "typescript": "^5.0.4"
+  }
+}

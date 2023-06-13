@@ -1,0 +1,35 @@
+{
+  "hosting": [
+    {
+      "target": "web",
+      "public": "web/public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "redirects": [
+        {
+          "source": "/app",
+          "destination": "https://app.infomentor.sk",
+          "type": 301
+        }
+      ]
+    },
+    {
+      "target": "app",
+      "public": "app/build/web",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

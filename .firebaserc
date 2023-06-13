@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "infomentor-311a7"
+  },
+  "targets": {
+    "infomentor-311a7": {
+      "hosting": {
+        "app": [
+          "app-infomentor"
+        ],
+        "web": [
+          "infomentor-311a7"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

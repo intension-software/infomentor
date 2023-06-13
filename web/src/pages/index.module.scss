@@ -1,0 +1,140 @@
+@import '../styles/colors.scss';
+
+:root {
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+body {
+  margin: 0;
+  background-color: $purple-2;
+  color: $white;
+}
+
+.button {
+  all: unset;
+  background-color: $white;
+  color: $black;
+  border-radius: 2.5rem;
+  padding: 0.75rem 2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 1rem 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Poppins;
+
+  @media (min-width: 550px) {
+    text-align: center;
+  }
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+}
+
+main {
+  padding: 0 2rem;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  gap: 0.5rem;
+
+  div:has(> img) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:first-of-type {
+      height: 100%;
+
+      > img {
+        height: 3.25rem;
+      }
+    }
+
+    &:last-of-type {
+      > img {
+        height: 1.5rem;
+        margin-bottom: 1rem;
+        animation: scrollDown 1s infinite;
+      }
+
+      @keyframes scrollDown {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(0.5rem);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+section {
+  margin-block: 5rem;
+}
+
+section[data-type="tri-body"] {
+  h2 {
+    margin-bottom: 3rem;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+
+    @media (min-width: 550px) {
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+  }
+
+  > div > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+
+    h3, p {
+      margin: 0;
+    }
+  }
+}
+
+footer {
+  img {
+    width: 100%;
+  }
+
+  @media (min-width: 550px) {
+    display: none;
+  }
+}

@@ -1,0 +1,52 @@
+@import '../styles/colors.scss';
+
+.button {
+  text-decoration: none;
+  color: $white;
+  background: $purple-2;
+  border: none;
+  border-radius: 40px;
+  padding: 0.6rem 1.8rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.2rem;
+  text-transform: uppercase;
+
+  &:hover {
+    cursor: pointer;
+    background: $purple-3;
+  }
+
+  &:active {
+    background: $purple-2;
+  }
+
+  &:focus {
+    outline: 4px solid $blue;
+  }
+
+  &:disabled, &[aria-disabled='true'] {
+    background: $grey-2;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // Dark mode
+  // data-dark is true
+  &[data-dark='true'] {
+    color: $purple-2;
+    background: $white;
+
+    &:hover {
+      background: $purple-1;
+    }
+
+    &:active {
+      background: $white;
+    }
+
+    &:focus {
+      outline-color: #ffffff80;
+    }
+  }
+}
