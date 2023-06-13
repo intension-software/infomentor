@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:infomentor/auth.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,26 +9,28 @@ class Login extends StatefulWidget {
   State<Login> createState() => _LoginState();
 }
 
+
 class _LoginState extends State<Login> {
-  TextEditingController _passwordTextController = TextEditingController();
-  TextEditingController _emailTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _loading = false;
+  final TextEditingController _passwordTextController = TextEditingController();
+  final TextEditingController _emailTextController = TextEditingController();
+
+  handleLogin() async {
+    final email = _emailTextController.value.text;
+    final password = _passwordTextController.value.text;
+    await Auth().signIn(email, password);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(color: Color(0xff4b4fb3)),
       child: Column(
         children: <Widget>[
           reTextField("Vložte email", false, _emailTextController),
           reTextField("Vložte heslo", true, _passwordTextController),
-          reButton(context, "PRIHLÁSIŤ SA", 0xff3cad9a, 0xffffffff, 0xffffffff, () {
-            FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: _emailTextController.text, 
-              password: _passwordTextController.text)
-            .then((value) {
-              Navigator.pushNamed(context, '/');
-            });
-          })
+          reButton(context, "PRIHLÁSIŤ SA", 0xff3cad9a, 0xffffffff, 0xffffffff, handleLogin)
         ],
       ),
     ));

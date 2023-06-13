@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/screens/Login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +24,23 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        initialRoute: '/login',
-        routes: {'/': (context) => Home(), '/login': (context) => Login()});
+        theme: ThemeData(
+          primaryColor: Color(0xff4b4fb3),
+          scaffoldBackgroundColor: Color(0xff4b4fb3),
+          
+        ),
+        routes: {
+          '/':(context) => StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Home();
+              } else {
+                return Login();
+              }
+            }
+          ),
+        }
+    );
   }
 }

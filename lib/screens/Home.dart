@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,9 +13,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      decoration: BoxDecoration(color: Color(0xff4b4fb3)),
+    bottomNavigationBar: reBottomNavigation(),
+    body: Container(
+      child: ElevatedButton(
+        onPressed: () {
+          FirebaseAuth.instance.signOut();
+        },
+        child: Text('Sign Out')
+      ),
     ));
-    ;
   }
 }
