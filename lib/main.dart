@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/screens/Login.dart';
+import 'package:infomentor/screens/Learning.dart';
+import 'package:infomentor/screens/Challenges.dart';
+import 'package:infomentor/screens/Discussions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -29,18 +32,47 @@ class MainApp extends StatelessWidget {
           scaffoldBackgroundColor: Color(0xff4b4fb3),
           
         ),
-        routes: {
-          '/':(context) => StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Home();
-              } else {
-                return Login();
-              }
-            }
-          ),
+         routes: {
+        '/': (context) => RouteHandler(
+              builder: (_) => Home(),
+            ),
+        '/Challenges': (context) => RouteHandler(
+              builder: (_) => Challenges(),
+            ),
+        '/Discussions': (context) => RouteHandler(
+              builder: (_) => Discussions(),
+            ),
+        '/Learning': (context) => RouteHandler(
+              builder: (_) => Learning(),
+            ),
+      },
+    );
+  }
+}
+
+class RouteHandler extends StatelessWidget {
+  final WidgetBuilder builder;
+
+  const RouteHandler({Key? key, required this.builder}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Display a loading indicator if the authentication state is still loading
+          return CircularProgressIndicator();
+        } else {
+          if (snapshot.hasData) {
+            // User is logged in, navigate to the specified screen
+            return builder(context);
+          } else {
+            // User is not logged in, navigate to Login
+            return Login();
+          }
         }
+      },
     );
   }
 }

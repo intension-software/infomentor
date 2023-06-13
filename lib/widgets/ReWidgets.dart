@@ -78,6 +78,7 @@ class reBottomNavigation extends StatefulWidget {
 class _reBottomNavigationState
     extends State<reBottomNavigation> {
   int _selectedIndex = 0;
+  List<String> routes = ['/', '/Challenges', '/Discussions', '/Learning'];
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
@@ -102,6 +103,7 @@ class _reBottomNavigationState
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      Navigator.pushNamed(context,routes[_selectedIndex]);
     });
   }
 
@@ -124,6 +126,7 @@ class _reBottomNavigationState
           BottomNavigationBarItem(
             icon: Icon(Icons.book_online),
             label: 'Vzdelávanie',
+            
           ),
         ],
         currentIndex: _selectedIndex,
