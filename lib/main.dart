@@ -22,7 +22,7 @@ void main() async {
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,49 +30,25 @@ class MainApp extends StatelessWidget {
         theme: ThemeData(
           primaryColor: Color(0xff4b4fb3),
           scaffoldBackgroundColor: Color(0xff4b4fb3),
-          
         ),
-         routes: {
-        '/': (context) => RouteHandler(
-              builder: (_) => Home(),
-            ),
-        '/Challenges': (context) => RouteHandler(
-              builder: (_) => Challenges(),
-            ),
-        '/Discussions': (context) => RouteHandler(
-              builder: (_) => Discussions(),
-            ),
-        '/Learning': (context) => RouteHandler(
-              builder: (_) => Learning(),
-            ),
-      },
-    );
-  }
-}
-
-class RouteHandler extends StatelessWidget {
-  final WidgetBuilder builder;
-
-  const RouteHandler({Key? key, required this.builder}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Display a loading indicator if the authentication state is still loading
-          return CircularProgressIndicator();
-        } else {
-          if (snapshot.hasData) {
-            // User is logged in, navigate to the specified screen
-            return builder(context);
-          } else {
-            // User is not logged in, navigate to Login
-            return Login();
-          }
-        }
-      },
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Display a loading indicator if the authentication state is still loading
+              return CircularProgressIndicator();
+            } else {
+              if (snapshot.hasData) {
+                // User is logged in, navigate to the specified screen
+                return Home();
+              } else {
+                // User is not logged in, navigate to Login
+                return Login();
+              }
+            }
+          },
+        ),
+        
     );
   }
 }

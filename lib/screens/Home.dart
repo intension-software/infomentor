@@ -13,7 +13,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    bottomNavigationBar: reBottomNavigation(),
     body: Container(
       child: ElevatedButton(
         onPressed: () {
