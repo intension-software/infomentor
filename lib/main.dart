@@ -5,6 +5,7 @@ import 'package:infomentor/screens/Login.dart';
 import 'package:infomentor/screens/Learning.dart';
 import 'package:infomentor/screens/Challenges.dart';
 import 'package:infomentor/screens/Discussions.dart';
+import 'package:infomentor/screens/Test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -29,7 +30,6 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
         theme: ThemeData(
           primaryColor: Color(0xff4b4fb3),
-          scaffoldBackgroundColor: Color(0xff4b4fb3),
         ),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
@@ -40,7 +40,7 @@ class MainApp extends StatelessWidget {
             } else {
               if (snapshot.hasData) {
                 // User is logged in, navigate to the specified screen
-                return Home();
+                return Test();
               } else {
                 // User is not logged in, navigate to Login
                 return Login();

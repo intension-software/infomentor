@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infomentor/screens/Test.dart';
 
 TextField reTextField(
     String text, bool isPasswordType, TextEditingController controller) {
@@ -135,4 +136,21 @@ class _reBottomNavigationState
         onTap: _onItemTapped,
       );
   }
+}
+
+Container reImageAnswer(String image) {
+  return Container(
+    margin:  EdgeInsets.fromLTRB(0, 0, 0, 32),
+    padding:  EdgeInsets.fromLTRB(8, 8, 8, 8),
+    width:  double.infinity,
+    height:  247,
+    decoration:  BoxDecoration (
+      image:  DecorationImage (
+        fit:  BoxFit.cover,
+        image:  NetworkImage (
+          image
+        ),
+      ),
+    ),
+  );
 }
