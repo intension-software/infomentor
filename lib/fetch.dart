@@ -22,7 +22,14 @@ class DocumentData {
   });
 }
 
-Future<DocumentData?> fetchTests(String testId, String questionId) async {
+class FetchResult {
+  DocumentData? documentData;
+  int? documentCount;
+
+  FetchResult({this.documentData, this.documentCount});
+}
+
+Future<FetchResult> fetchTests(String testId, String questionId) async {
   try {
     // Reference to the document in Firestore
     DocumentReference documentRef = FirebaseFirestore.instance
@@ -33,11 +40,14 @@ Future<DocumentData?> fetchTests(String testId, String questionId) async {
 
     // Retrieve the document
     DocumentSnapshot snapshot = await documentRef.get();
+    final documentCount =
+        await getDocumentCount('tests/$testId/questions');
 
     // Check if the document exists
     if (snapshot.exists) {
       // Access the data of the document
-      Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? data =
+          snapshot.data() as Map<String, dynamic>?;
 
       if (data != null) {
         // Extract the values from the data
@@ -64,7 +74,13 @@ Future<DocumentData?> fetchTests(String testId, String questionId) async {
           title: title,
         );
 
-        return documentData;
+        // Create a FetchResult instance with documentData and documentCount
+        FetchResult result = FetchResult(
+          documentData: documentData,
+          documentCount: documentCount,
+        );
+
+        return result;
       }
     } else {
       print('Document does not exist.');
@@ -73,5 +89,19 @@ Future<DocumentData?> fetchTests(String testId, String questionId) async {
     print('Error fetching document: $e');
   }
 
-  return null; // Return null if the document retrieval fails or does not exist
+  // If the document retrieval fails or does not exist, return FetchResult with null documentData and null documentCount
+  FetchResult result = FetchResult();
+  return result;
+}
+
+Future<int> getDocumentCount(String collectionPath) async {
+  try {
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection(collectionPath).get();
+
+    return snapshot.docs.length;
+  } catch (e) {
+    print('Error retrieving document count: $e');
+    return 0;
+  }
 }

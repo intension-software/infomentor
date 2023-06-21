@@ -12,6 +12,7 @@ class Test extends StatefulWidget {
 
 class _TestState extends State<Test> {
   int? _answer;
+  int q = 0;
   List<String>? answers;
   List<String>? answersImage;
   int? correct;
@@ -20,21 +21,23 @@ class _TestState extends State<Test> {
   String? question;
   String? subQuestion;
   String? title;
+  int? documentCount;
 
   @override
   void initState() {
     super.initState();
-    fetchTests("0", "1").then((document) {
-      if (document != null) {
+    fetchTests("0", q.toString()).then((FetchResult result) {
+      if (result.documentData != null) {
         setState(() {
-          answers = document.answers;
-          answersImage = document.answersImage;
-          correct = document.correct;
-          definition = document.definition;
-          image = document.image;
-          question = document.question;
-          subQuestion = document.subQuestion;
-          title = document.title;
+          answers = result.documentData!.answers;
+          answersImage = result.documentData!.answersImage;
+          correct = result.documentData!.correct;
+          definition = result.documentData!.definition;
+          image = result.documentData!.image;
+          question = result.documentData!.question;
+          subQuestion = result.documentData!.subQuestion;
+          title = result.documentData!.title;
+          documentCount = result.documentCount;
         });
       }
     });
@@ -62,7 +65,7 @@ class _TestState extends State<Test> {
               itemBuilder: (BuildContext context, index) {
                 if (index < (answersImage?.length ?? 0)) {
                   String? item = answersImage?[index];
-                    return Container(
+                  return Container(
                     margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -128,11 +131,34 @@ class _TestState extends State<Test> {
                       ),
                     ),
                   );
-                  }
+                }
               },
             ),
           ),
-          reButton(context, 'HOTOVO', 0xff3cad9a, 0xffffffff, 0xffffffff, () {})
+          reButton(context, 'HOTOVO', 0xff3cad9a, 0xffffffff, 0xffffffff, () {
+            if (q + 1 < (documentCount ?? 0)) {
+              setState(() {
+                q++;
+                print(q);
+                _answer = null;
+              });
+              fetchTests("0", q.toString()).then((FetchResult result) {
+                if (result.documentData != null) {
+                  setState(() {
+                    answers = result.documentData!.answers;
+                    answersImage = result.documentData!.answersImage;
+                    correct = result.documentData!.correct;
+                    definition = result.documentData!.definition;
+                    image = result.documentData!.image;
+                    question = result.documentData!.question;
+                    subQuestion = result.documentData!.subQuestion;
+                    title = result.documentData!.title;
+                    documentCount = result.documentCount;
+                  });
+                }
+              });
+            }
+          })
         ],
       ),
     );
