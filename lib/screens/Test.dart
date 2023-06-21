@@ -45,18 +45,25 @@ class _TestState extends State<Test> {
     return Scaffold(
       body: Column(
         children: [
+          Text(title ?? ''),
+          image == '' ? Container() : Image.asset(
+            image ?? '',
+            fit: BoxFit.cover,
+          ),
           Container(
             margin: EdgeInsets.fromLTRB(8, 32, 8, 32),
-            child: Text(title ?? ''),
+            child: Text(definition ?? ''),
           ),
+          Text(question ?? ''),
+          Text(subQuestion ?? ''),
           Expanded(
             child: ListView.builder(
               itemCount: (answersImage?.length ?? 0) + (answers?.length ?? 0),
               itemBuilder: (BuildContext context, index) {
                 if (index < (answersImage?.length ?? 0)) {
                   String? item = answersImage?[index];
-
-                  return Container(
+                  if (item != '') {
+                    return Container(
                     margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -122,6 +129,7 @@ class _TestState extends State<Test> {
                       ),
                     ),
                   );
+                  }
                 }
               },
             ),
