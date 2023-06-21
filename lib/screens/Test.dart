@@ -136,10 +136,9 @@ class _TestState extends State<Test> {
             ),
           ),
           reButton(context, 'HOTOVO', 0xff3cad9a, 0xffffffff, 0xffffffff, () {
-            if (q + 1 < (documentCount ?? 0)) {
+            if (q + 1 < (documentCount ?? 0) && _answer != null) {
               setState(() {
                 q++;
-                print(q);
                 _answer = null;
               });
               fetchTests("0", q.toString()).then((FetchResult result) {
