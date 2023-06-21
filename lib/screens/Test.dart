@@ -1,45 +1,7 @@
+import 'package:infomentor/fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-
-
-String title = 'Test1';
-
-int correct = 1;
-
-List answers = [
-  'text1',
-  'text2',
-  'text3',
-  'text4',
-  'text5',
-  'text6',
-  'text7',
-  'text1',
-  'text2',
-  'text3',
-  'text4',
-  'text5',
-  'text6',
-  'text7'
-];
-
-List answersImage = [
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png',
-  'assets/testAnswer.png'
-];
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Test extends StatefulWidget {
   const Test({Key? key}) : super(key: key);
@@ -50,6 +12,33 @@ class Test extends StatefulWidget {
 
 class _TestState extends State<Test> {
   int? _answer;
+  List<String>? answers;
+  List<String>? answersImage;
+  int? correct;
+  String? definition;
+  String? image;
+  String? question;
+  String? subQuestion;
+  String? title;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTests("0", "0").then((document) {
+      if (document != null) {
+        setState(() {
+          answers = document.answers;
+          answersImage = document.answersImage;
+          correct = document.correct;
+          definition = document.definition;
+          image = document.image;
+          question = document.question;
+          subQuestion = document.subQuestion;
+          title = document.title;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +47,14 @@ class _TestState extends State<Test> {
         children: [
           Container(
             margin: EdgeInsets.fromLTRB(8, 32, 8, 32),
-            child: Text(title),
+            child: Text(title ?? ''),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: answersImage.length + answers.length,
+              itemCount: (answersImage?.length ?? 0) + (answers?.length ?? 0),
               itemBuilder: (BuildContext context, index) {
-                if (index < answersImage.length) {
-                  String item = answersImage[index];
+                if (index < (answersImage?.length ?? 0)) {
+                  String? item = answersImage?[index];
 
                   return Container(
                     margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
@@ -82,7 +71,7 @@ class _TestState extends State<Test> {
                     child: Column(
                       children: [
                         Image.asset(
-                          item,
+                          item ?? '',
                           fit: BoxFit.cover,
                         ),
                         ListTile(
@@ -103,7 +92,7 @@ class _TestState extends State<Test> {
                     ),
                   );
                 } else {
-                  String item = answers[index - answersImage.length];
+                  String? item = answers?[(index - (answersImage?.length ?? 0))];
 
                   return Container(
                     margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
@@ -119,7 +108,7 @@ class _TestState extends State<Test> {
                           : Colors.white,
                     ),
                     child: ListTile(
-                      title: Text(item),
+                      title: Text(item ?? ''),
                       leading: Radio(
                         value: index,
                         groupValue: _answer,

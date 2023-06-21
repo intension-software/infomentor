@@ -7,6 +7,8 @@ import 'package:infomentor/screens/Challenges.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/screens/Test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 void main() async {
@@ -19,6 +21,7 @@ void main() async {
       projectId: "infomentor-d71f7",
     ),
   );
+  
   runApp(const MainApp());
 }
 
