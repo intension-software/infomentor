@@ -11,7 +11,8 @@ class Discussions extends StatefulWidget {
 class _DiscussionsState extends State<Discussions> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
+      child: Text('discussions'),
     );
   }
 }

@@ -11,7 +11,8 @@ class Learning extends StatefulWidget {
 class _LearningState extends State<Learning> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
+      child: Text('learning'),
     );
   }
 }

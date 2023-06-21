@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/screens/Login.dart';
-import 'package:infomentor/screens/Learning.dart';
-import 'package:infomentor/screens/Challenges.dart';
-import 'package:infomentor/screens/Discussions.dart';
-import 'package:infomentor/screens/Test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 void main() async {
@@ -43,7 +37,7 @@ class MainApp extends StatelessWidget {
             } else {
               if (snapshot.hasData) {
                 // User is logged in, navigate to the specified screen
-                return Test();
+                return Home();
               } else {
                 // User is not logged in, navigate to Login
                 return Login();

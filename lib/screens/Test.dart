@@ -12,6 +12,7 @@ class Test extends StatefulWidget {
 
 class _TestState extends State<Test> {
   int? _answer;
+  int score = 0;
   int q = 0;
   List<String>? answers;
   List<String>? answersImage;
@@ -139,6 +140,8 @@ class _TestState extends State<Test> {
             if (q + 1 < (documentCount ?? 0) && _answer != null) {
               setState(() {
                 q++;
+                if (_answer == correct) score++;
+                print(score);
                 _answer = null;
               });
               fetchTests("0", q.toString()).then((FetchResult result) {

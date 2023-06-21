@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
+import 'package:infomentor/screens/Test.dart';
+
 
 class Challenges extends StatefulWidget {
   const Challenges({super.key});
@@ -11,7 +13,8 @@ class Challenges extends StatefulWidget {
 class _ChallengesState extends State<Challenges> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
+      child:  Test(),
     );
   }
 }
