@@ -24,7 +24,7 @@ class _TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-    fetchTests("0", "0").then((document) {
+    fetchTests("0", "1").then((document) {
       if (document != null) {
         setState(() {
           answers = document.answers;
@@ -62,7 +62,6 @@ class _TestState extends State<Test> {
               itemBuilder: (BuildContext context, index) {
                 if (index < (answersImage?.length ?? 0)) {
                   String? item = answersImage?[index];
-                  if (item != '') {
                     return Container(
                     margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
                     width: double.infinity,
@@ -130,7 +129,6 @@ class _TestState extends State<Test> {
                     ),
                   );
                   }
-                }
               },
             ),
           ),
