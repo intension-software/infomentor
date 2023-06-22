@@ -1,10 +1,12 @@
-import 'package:infomentor/fetch.dart';
 import 'package:flutter/material.dart';
+import 'package:infomentor/fetch.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Test extends StatefulWidget {
-  const Test({Key? key}) : super(key: key);
+  final String testId;
+  final Function overlay;
+
+  const Test({Key? key, required this.testId, required this.overlay}) : super(key: key);
 
   @override
   State<Test> createState() => _TestState();
@@ -27,7 +29,7 @@ class _TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-    fetchTests("0", q.toString()).then((FetchResult result) {
+    fetchTests(widget.testId, q.toString()).then((FetchResult result) {
       if (result.documentData != null) {
         setState(() {
           answers = result.documentData!.answers;
@@ -144,7 +146,7 @@ class _TestState extends State<Test> {
                 print(score);
                 _answer = null;
               });
-              fetchTests("0", q.toString()).then((FetchResult result) {
+              fetchTests(widget.testId, q.toString()).then((FetchResult result) {
                 if (result.documentData != null) {
                   setState(() {
                     answers = result.documentData!.answers;
@@ -159,8 +161,12 @@ class _TestState extends State<Test> {
                   });
                 }
               });
+            } else if (q + 1 >= (documentCount ?? 0) && _answer != null) {
+              if (_answer == correct) score++;
+              widget.overlay();
+              _answer = null;
             }
-          })
+          }),
         ],
       ),
     );
