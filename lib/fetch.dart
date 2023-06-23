@@ -29,58 +29,64 @@ class FetchResult {
   FetchResult({this.documentData, this.documentCount});
 }
 
-Future<FetchResult> fetchTests(String testId, String questionId) async {
+Future<FetchResult> fetchTests(String testId, int questionIndex) async {
   try {
     // Reference to the document in Firestore
-    DocumentReference documentRef = FirebaseFirestore.instance
-        .collection('tests')
-        .doc(testId)
-        .collection('questions')
-        .doc(questionId);
+    DocumentReference documentRef = FirebaseFirestore.instance.collection('tests').doc(testId);
 
     // Retrieve the document
     DocumentSnapshot snapshot = await documentRef.get();
-    final documentCount =
-        await getDocumentCount('tests/$testId/questions');
 
     // Check if the document exists
     if (snapshot.exists) {
       // Access the data of the document
-      Map<String, dynamic>? data =
-          snapshot.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
       if (data != null) {
-        // Extract the values from the data
-        List<String> answers =
-            List<String>.from(data['answers'] as List<dynamic>? ?? []);
-        List<String> answersImage =
-            List<String>.from(data['answersImage'] as List<dynamic>? ?? []);
-        int correct = data['correct'] as int? ?? 0;
-        String definition = data['definition'] as String? ?? '';
-        String image = data['image'] as String? ?? '';
-        String question = data['question'] as String? ?? '';
-        String subQuestion = data['subQuestion'] as String? ?? '';
-        String title = data['title'] as String? ?? '';
+        // Access the "questions" list
+        List<dynamic>? questions = data['questions'] as List<dynamic>?;
 
-        // Create a DocumentData instance
-        DocumentData documentData = DocumentData(
-          answers: answers,
-          answersImage: answersImage,
-          correct: correct,
-          definition: definition,
-          image: image,
-          question: question,
-          subQuestion: subQuestion,
-          title: title,
-        );
+        if (questions != null && questionIndex < questions.length) {
+          // Access the question data using the questionIndex
+          Map<String, dynamic>? questionData =
+              questions[questionIndex] as Map<String, dynamic>?;
 
-        // Create a FetchResult instance with documentData and documentCount
-        FetchResult result = FetchResult(
-          documentData: documentData,
-          documentCount: documentCount,
-        );
+          if (questionData != null) {
+            // Extract the values from the questionData
+            List<String> answers = List<String>.from(
+                questionData['answers'] as List<dynamic>? ?? []);
+            List<String> answersImage = List<String>.from(
+                questionData['answersImage'] as List<dynamic>? ?? []);
+            int correct = questionData['correct'] as int? ?? 0;
+            String definition = questionData['definition'] as String? ?? '';
+            String image = questionData['image'] as String? ?? '';
+            String question = questionData['question'] as String? ?? '';
+            String subQuestion = questionData['subQuestion'] as String? ?? '';
+            String title = questionData['title'] as String? ?? '';
 
-        return result;
+            // Create a DocumentData instance
+            DocumentData documentData = DocumentData(
+              answers: answers,
+              answersImage: answersImage,
+              correct: correct,
+              definition: definition,
+              image: image,
+              question: question,
+              subQuestion: subQuestion,
+              title: title,
+            );
+
+            // Create a FetchResult instance with documentData and documentCount
+            FetchResult result = FetchResult(
+              documentData: documentData,
+              documentCount: questions.length,
+            );
+
+            return result;
+          }
+        } else {
+          print('Question does not exist.');
+        }
       }
     } else {
       print('Document does not exist.');
@@ -92,16 +98,4 @@ Future<FetchResult> fetchTests(String testId, String questionId) async {
   // If the document retrieval fails or does not exist, return FetchResult with null documentData and null documentCount
   FetchResult result = FetchResult();
   return result;
-}
-
-Future<int> getDocumentCount(String collectionPath) async {
-  try {
-    QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection(collectionPath).get();
-
-    return snapshot.docs.length;
-  } catch (e) {
-    print('Error retrieving document count: $e');
-    return 0;
-  }
 }

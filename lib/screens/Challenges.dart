@@ -28,7 +28,7 @@ class _ChallengesState extends State<Challenges> {
   OverlayEntry createOverlayEntry() {
     return OverlayEntry(
       builder: (context) => Positioned.fill(
-        child: Test(testId: "0", overlay: toggleOverlayVisibility),
+        child: Test(testId: "test", overlay: toggleOverlayVisibility),
       ),
     );
   }
