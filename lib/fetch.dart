@@ -45,6 +45,42 @@ class UserData {
   });
 }
 
+class MaterialData {
+  String association;
+  String description;
+  String image;
+  String link;
+  String subject;
+  String title;
+  String type;
+  String video;
+
+  MaterialData({
+    required this.association,
+    required this.description,
+    required this.image,
+    required this.link,
+    required this.subject,
+    required this.title,
+    required this.type,
+    required this.video,
+  });
+}
+
+class ClassData {
+  String name;
+  String school;
+  List<String> students;
+  String teacher;
+
+  ClassData({
+    required this.name,
+    required this.school,
+    required this.students,
+    required this.teacher,
+  });
+}
+
 class FetchResult {
   DocumentData? documentData;
   int? documentCount;
@@ -177,6 +213,86 @@ Future<UserData> fetchUser(String userId) async {
     }
   } catch (e) {
     print('Error fetching user data: $e');
+    rethrow;
+  }
+}
+
+Future<List<MaterialData>> fetchMaterials(String classId) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the materials field from the class document
+      List<Map<String, dynamic>> materials =
+          List<Map<String, dynamic>>.from(
+              classSnapshot.get('materials') as List<dynamic>? ?? []);
+
+      // Create MaterialData instances from the materials data
+      List<MaterialData> materialDataList = materials.map((material) {
+        String image = material['image'] as String? ?? '';
+        if (image.isEmpty) {
+          // If the image is empty, replace it with a placeholder image
+          image = 'placeholder.png'; // Replace with the path to your placeholder image
+        }
+
+        return MaterialData(
+          association: material['association'] as String? ?? '',
+          description: material['description'] as String? ?? '',
+          image: image,
+          link: material['link'] as String? ?? '',
+          subject: material['subject'] as String? ?? '',
+          title: material['title'] as String? ?? '',
+          type: material['type'] as String? ?? '',
+          video: material['video'] as String? ?? '',
+        );
+      }).toList();
+
+      return materialDataList;
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error fetching materials: $e');
+    rethrow;
+  }
+}
+
+Future<List<ClassData>> fetchClasses(String userId) async {
+  try {
+    // Reference to the user document in Firestore
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Retrieve the user document
+    DocumentSnapshot userSnapshot = await userRef.get();
+
+    if (userSnapshot.exists) {
+      // Extract the classes field from the user document
+      List<Map<String, dynamic>> classes =
+          List<Map<String, dynamic>>.from(
+              userSnapshot.get('classes') as List<dynamic>? ?? []);
+
+      // Create ClassData instances from the classes data
+      List<ClassData> classDataList = classes.map((classItem) {
+        return ClassData(
+          name: classItem['name'] as String? ?? '',
+          school: classItem['school'] as String? ?? '',
+          students: List<String>.from(classItem['students'] as List<dynamic>? ?? []),
+          teacher: classItem['teacher'] as String? ?? '',
+        );
+      }).toList();
+
+      return classDataList;
+    } else {
+      throw Exception('User document does not exist.');
+    }
+  } catch (e) {
+    print('Error fetching classes: $e');
     rethrow;
   }
 }
