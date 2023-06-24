@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/fetch.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MaterialCardWidget extends StatefulWidget {
   final String materialId;
@@ -35,6 +36,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   bool isHeartFilled = false;
   UserData? userData;
   String? userId;
+  late YoutubePlayerController youtubeController;
 
   @override
   void initState() {
@@ -49,6 +51,12 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
         });
       });
     }
+
+    youtubeController = YoutubePlayerController(
+      initialVideoId: YoutubePlayer.convertUrlToId(widget.video) ?? '',
+    );
+
+    super.initState();
   }
 
   @override
@@ -172,18 +180,18 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scaffold(
-          backgroundColor: Colors.white, // Set the overlay background color
+          backgroundColor: Colors.white,
           appBar: AppBar(
-            backgroundColor: Colors.white, // Set the appbar background color
-            elevation: 0, // Remove the appbar elevation
+            backgroundColor: Colors.white,
+            elevation: 0,
             leading: SizedBox(
-              height: 30, // Set the height of the button
-              width: 60, // Set the width of the button
+              height: 30,
+              width: 60,
               child: IconButton(
                 icon: Icon(Icons.arrow_back),
-                color: Colors.grey, // Set the color of the back button to black
+                color: Colors.grey,
                 onPressed: () {
-                  Navigator.of(context).pop(); // Navigate back when the back button is pressed
+                  Navigator.of(context).pop();
                 },
               ),
             ),
@@ -260,12 +268,16 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         ),
                       ),
                       SizedBox(height: 8),
-                      Text(
-                        widget.video,
-                        style: TextStyle(
-                          fontSize: 16,
+                      if (widget.video.isNotEmpty && _isValidYouTubeLink(widget.video))
+                        YoutubePlayerBuilder(
+                          player: YoutubePlayer(
+                            controller: youtubeController,
+                            showVideoProgressIndicator: true,
+                          ),
+                          builder: (context, player) {
+                            return player;
+                          },
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -275,6 +287,14 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
         ),
       ),
     );
+  }
+
+  bool _isValidYouTubeLink(String link) {
+    final Uri? uri = Uri.tryParse(link);
+    if (uri != null && uri.host == 'www.youtube.com') {
+      return true;
+    }
+    return false;
   }
 
   Future<void> _launchURL(String url) async {
