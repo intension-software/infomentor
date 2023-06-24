@@ -89,7 +89,7 @@ class _reBottomNavigationState extends State<reBottomNavigation> {
           label: 'Diskusia',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.book_online),
+          icon: Icon(Icons.menu_book_rounded),
           label: 'Vzdelávanie',
         ),
       ],
