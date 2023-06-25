@@ -21,8 +21,8 @@ class _LearningState extends State<Learning> {
           children: [
             ToggleButtons(
               children: [
-                Text('All'),
-                Text('Favorite'),
+                Text('Všetky'),
+                Text('Uložené'),
               ],
               isSelected: [showAll, !showAll],
               onPressed: (index) {

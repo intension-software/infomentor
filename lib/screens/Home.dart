@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
           Container(
             child: Text('home'),
           ), // Replace with your actual widget for the Home page
-          Challenges(),
+          Challenges(capitolsId: "0"),
           Discussions(),
           Learning(),
         ],

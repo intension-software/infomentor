@@ -4,10 +4,11 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 import 'dart:async';
 
 class Test extends StatefulWidget {
-  final String testId;
+  final int testIndex;
   final Function overlay;
+  final String capitolsId;
 
-  const Test({Key? key, required this.testId, required this.overlay})
+  const Test({Key? key, required this.testIndex, required this.overlay, required this.capitolsId})
       : super(key: key);
 
   @override
@@ -17,7 +18,7 @@ class Test extends StatefulWidget {
 class _TestState extends State<Test> {
   int? _answer;
   int score = 0;
-  int q = 0;
+  int questionIndex = 0;
   List<String>? answers;
   List<String>? answersImage;
   int? correct;
@@ -26,25 +27,25 @@ class _TestState extends State<Test> {
   String? question;
   String? subQuestion;
   String? title;
-  int? documentCount;
+  int? questionsCount;
   bool _disposed = false;
 
   Future<void> fetchQuestionData(int index) async {
     try {
-      FetchResult result = await fetchTests(widget.testId, index);
+      FetchResult result = await fetchCapitols(widget.capitolsId);
 
       if (_disposed) return; // Check if the widget has been disposed
 
       setState(() {
-        answers = result.documentData?.answers;
-        answersImage = result.documentData?.answersImage;
-        correct = result.documentData?.correct;
-        definition = result.documentData?.definition;
-        image = result.documentData?.image;
-        question = result.documentData?.question;
-        subQuestion = result.documentData?.subQuestion;
-        title = result.documentData?.title;
-        documentCount = result.documentCount;
+        answers = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answers;
+        answersImage = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answersImage;
+        correct = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].correct;
+        definition = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].definition;
+        image = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].image;
+        question = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].question;
+        subQuestion = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].subQuestion;
+        title = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].title;
+        questionsCount = result.capitolsData?.tests[widget.testIndex].points;
       });
     } catch (e) {
       print('Error fetching question data: $e');
@@ -54,43 +55,43 @@ class _TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-    fetchQuestionData(q);
+    fetchQuestionData(questionIndex);
   }
 
   @override
   void didUpdateWidget(Test oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.testId != oldWidget.testId) {
+    if (widget.testIndex != oldWidget.testIndex) {
       // Test ID has changed, reset the state and fetch new data
       setState(() {
-        q = 0;
+        questionIndex = 0;
         score = 0;
         _answer = null;
       });
-      fetchQuestionData(q);
+      fetchQuestionData(questionIndex);
     }
   }
 
   void onNextButtonPressed() {
-    if (q + 1 < (documentCount ?? 0) && _answer != null) {
+    if (questionIndex + 1 < (questionsCount ?? 0) && _answer != null) {
       setState(() {
         if (_answer == correct) score++;
         print(score);
         _answer = null;
-        q++;
+        questionIndex++;
       });
-      fetchQuestionData(q);
-    } else if (q + 1 >= (documentCount ?? 0) && _answer != null) {
+      fetchQuestionData(questionIndex);
+    } else if (questionIndex + 1 >= (questionsCount ?? 0) && _answer != null) {
       if (_answer == correct) score++;
       widget.overlay();
       _answer = null;
 
       setState(() {
-        q = 0;
+        questionIndex = 0;
         score = 0;
       });
 
-      fetchQuestionData(q);
+      fetchQuestionData(questionIndex);
     }
   }
 
