@@ -4,7 +4,6 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/fetch.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class Challenges extends StatefulWidget {
   final String capitolsId;
 
@@ -26,10 +25,8 @@ class _ChallengesState extends State<Challenges> {
   void initState() {
     super.initState();
     fetchQuestionData();
-    fetchUserData(); // Call fetchQuestionData in initState
+    fetchUserData();
   }
-
-  
 
   void toggleOverlayVisibility(int index) {
     setState(() {
@@ -52,9 +49,11 @@ class _ChallengesState extends State<Challenges> {
       if (user != null) {
         // Fetch the user data using the fetchUser function
         UserData userData = await fetchUser(user.uid);
-        setState(() {
-          currentUserData = userData;
-        });
+        if (mounted) {
+          setState(() {
+            currentUserData = userData;
+          });
+        }
       } else {
         print('User is not logged in.');
       }
@@ -67,11 +66,13 @@ class _ChallengesState extends State<Challenges> {
     try {
       FetchResult result = await fetchCapitols(widget.capitolsId);
 
-      setState(() {
-        testsLength = result.capitolsData?.tests.length;
-        title = result.capitolsData?.name;
-        color = result.capitolsData?.color;
-      });
+      if (mounted) {
+        setState(() {
+          testsLength = result.capitolsData?.tests.length;
+          title = result.capitolsData?.name;
+          color = result.capitolsData?.color;
+        });
+      }
     } catch (e) {
       print('Error fetching question data: $e');
     }
@@ -84,7 +85,7 @@ class _ChallengesState extends State<Challenges> {
           child: Container(
             color: Colors.black.withOpacity(0.5),
             alignment: Alignment.center,
-            child: Test(testIndex: testIndex, overlay: () => overlayEntry.remove(),capitolsId:  "0")
+            child: Test(testIndex: testIndex, overlay: () => overlayEntry.remove(), capitolsId: "0", userData: currentUserData),
           ),
         ),
       ),
@@ -97,11 +98,12 @@ class _ChallengesState extends State<Challenges> {
       body: Container(
         child: Column(
           children: [
-            Text(title ?? '',
+            Text(
+              title ?? '',
               style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Expanded(
               child: Align(
@@ -116,6 +118,7 @@ class _ChallengesState extends State<Challenges> {
                       child: StarButton(
                         number: reversedIndex,
                         color: color as int,
+                        userData: currentUserData,
                         onPressed: (int number) => toggleOverlayVisibility(number),
                       ),
                     );
@@ -133,11 +136,12 @@ class _ChallengesState extends State<Challenges> {
 class StarButton extends StatelessWidget {
   final int number;
   final int color;
+  final UserData? userData;
   final void Function(int) onPressed;
 
-  StarButton({required this.number, required this.onPressed, required this.color});
+  StarButton({required this.number, required this.onPressed,required this.userData, required this.color});
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
@@ -145,7 +149,13 @@ class StarButton extends StatelessWidget {
           child: Column(
             children: [
               Text('týždenná výzva'),
-              reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () => onPressed(number))
+              Text(userData!.capitols[0].tests[number].name),
+              userData != null && !userData!.capitols[0].tests[number].completed
+                  ? reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () => onPressed(number))
+                  : Column(children: [
+                    Text("HOTOVO"),
+                    Text("${userData!.capitols[0].tests[number].points} / ${userData!.capitols[0].tests[number].questions.length}")
+                  ]),
             ],
           ),
         ),

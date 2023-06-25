@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/fetch.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Test extends StatefulWidget {
   final int testIndex;
   final Function overlay;
   final String capitolsId;
+  final UserData? userData;
 
-  const Test({Key? key, required this.testIndex, required this.overlay, required this.capitolsId})
+  const Test(
+      {Key? key,
+      required this.testIndex,
+      required this.overlay,
+      required this.capitolsId,
+      required this.userData})
       : super(key: key);
 
   @override
@@ -17,18 +25,21 @@ class Test extends StatefulWidget {
 
 class _TestState extends State<Test> {
   int? _answer;
-  int score = 0;
+  bool? isCorrect;
+  bool lastScreen = false;
   int questionIndex = 0;
   List<String>? answers;
   List<String>? answersImage;
   int? correct;
   String? definition;
+  String? explanation;
   String? image;
   String? question;
   String? subQuestion;
   String? title;
   int? questionsCount;
   bool _disposed = false;
+  bool pressed = false;
 
   Future<void> fetchQuestionData(int index) async {
     try {
@@ -41,6 +52,7 @@ class _TestState extends State<Test> {
         answersImage = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answersImage;
         correct = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].correct;
         definition = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].definition;
+        explanation = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].explanation;
         image = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].image;
         question = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].question;
         subQuestion = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].subQuestion;
@@ -65,32 +77,8 @@ class _TestState extends State<Test> {
       // Test ID has changed, reset the state and fetch new data
       setState(() {
         questionIndex = 0;
-        score = 0;
         _answer = null;
       });
-      fetchQuestionData(questionIndex);
-    }
-  }
-
-  void onNextButtonPressed() {
-    if (questionIndex + 1 < (questionsCount ?? 0) && _answer != null) {
-      setState(() {
-        if (_answer == correct) score++;
-        print(score);
-        _answer = null;
-        questionIndex++;
-      });
-      fetchQuestionData(questionIndex);
-    } else if (questionIndex + 1 >= (questionsCount ?? 0) && _answer != null) {
-      if (_answer == correct) score++;
-      widget.overlay();
-      _answer = null;
-
-      setState(() {
-        questionIndex = 0;
-        score = 0;
-      });
-
       fetchQuestionData(questionIndex);
     }
   }
@@ -104,53 +92,108 @@ class _TestState extends State<Test> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Text(title ?? ''),
-          if (image != null && image!.isNotEmpty && image != "")
-            image!.isEmpty
-                ? Container() // Placeholder for empty image field
-                : Image.asset(
-                    image!,
-                    fit: BoxFit.cover,
+      backgroundColor: lastScreen ? Color(0xff4b4fb3) : Colors.white,
+      body: !lastScreen ? SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch, // Added this line
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                title ?? '',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            if (image != null && image!.isNotEmpty && image != "")
+              image!.isEmpty
+                  ? Container() // Placeholder for empty image field
+                  : FittedBox(
+                  fit: BoxFit.contain,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: 200, // Replace with your desired maximum width
+                      maxHeight: 200, // Replace with your desired maximum height
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Image.asset(
+                        image!,
+                      ),
+                    ),
                   ),
-          Container(
-            margin: EdgeInsets.fromLTRB(8, 32, 8, 32),
-            child: Text(definition ?? ''),
-          ),
-          Text(question ?? ''),
-          Text(subQuestion ?? ''),
-          Expanded(
-            child: ListView.builder(
+                ),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                definition ?? '',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                question ?? '',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                subQuestion ?? '',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: (answersImage?.length ?? 0) + (answers?.length ?? 0),
               itemBuilder: (BuildContext context, index) {
-                if (answersImage != null && index < answersImage!.length) {
-                  String? item = answersImage?[index];
-                  return Container(
-                    margin: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: _answer == index
-                          ? Border.all(color: Color(0xff4b4fb3))
-                          : Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                      color: _answer == index
-                          ? Color(0xffdddef4)
-                          : Colors.white,
-                    ),
-                    child: Column(
-                      children: [
-                        if (item != null && item.isNotEmpty)
-                          Image.asset(
-                            item,
-                            fit: BoxFit.cover,
-                          ),
-                        ListTile(
-                          title: Text('Obrázok ${index + 1}'),
+                if (pressed) {
+                  if (index == correct) {
+                    // Show the tile in green if index matches correct
+                    if (answersImage != null && index < answersImage!.length) {
+                      String? item = answersImage?[index];
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: _answer == index ? Border.all(color: Colors.red) : Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.green,
+                        ),
+                        child: Column(
+                          children: [
+                            if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
+                            ListTile(
+                              title: Text('Obrázok ${index + 1}'),
+                              leading: Radio(
+                                value: index,
+                                groupValue: _answer,
+                                fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                                onChanged: (int? value) {
+                                  setState(() {
+                                    _answer = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
+                      String? item = answers?[(index - (answersImage?.length ?? 0))];
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: _answer == index ? Border.all(color: Colors.red) : Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.green,
+                        ),
+                        child: ListTile(
+                          title: Text(item ?? ''),
                           leading: Radio(
                             value: index,
                             groupValue: _answer,
-                            fillColor:
-                                MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                            fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
                             onChanged: (int? value) {
                               setState(() {
                                 _answer = value;
@@ -158,55 +201,311 @@ class _TestState extends State<Test> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                } else if (answers != null &&
-                    index - (answersImage?.length ?? 0) < answers!.length) {
-                  String? item =
-                      answers?[(index - (answersImage?.length ?? 0))];
-                  return Container(
-                    margin: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: _answer == index
-                          ? Border.all(color: Color(0xff4b4fb3))
-                          : Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                      color: _answer == index
-                          ? Color(0xffdddef4)
-                          : Colors.white,
-                    ),
-                    child: ListTile(
-                      title: Text(item ?? ''),
-                      leading: Radio(
-                        value: index,
-                        groupValue: _answer,
-                        fillColor:
-                            MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
-                        onChanged: (int? value) {
-                          setState(() {
-                            _answer = value;
-                          });
-                        },
-                      ),
-                    ),
-                  );
+                      );
+                    }
+                  } else if (index == _answer && _answer != correct) {
+                    // Show the tile in red if index matches _answer but is different from correct
+                    if (answersImage != null && index < answersImage!.length) {
+                      String? item = answersImage?[index];
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.red,
+                        ),
+                        child: Column(
+                          children: [
+                            if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
+                            ListTile(
+                              title: Text('Obrázok ${index + 1}'),
+                              leading: Radio(
+                                value: index,
+                                groupValue: _answer,
+                                fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                                onChanged: (int? value) {
+                                  setState(() {
+                                    _answer = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
+                      String? item = answers?[(index - (answersImage?.length ?? 0))];
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.red,
+                        ),
+                        child: ListTile(
+                          title: Text(item ?? ''),
+                          leading: Radio(
+                            value: index,
+                            groupValue: _answer,
+                            fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                            onChanged: (int? value) {
+                              setState(() {
+                                _answer = value;
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    }
+                  }
                 } else {
-                  return Container(); // Placeholder for empty answer fields
+                  // Show all items when boolPressed is false
+                  if (answersImage != null && index < answersImage!.length) {
+                    String? item = answersImage?[index];
+                    return Container(
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        border: _answer == index ? Border.all(color: Color(0xff4b4fb3)) : Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                        color: _answer == index ? Color(0xffdddef4) : Colors.white,
+                      ),
+                      child: Column(
+                        children: [
+                          if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
+                          ListTile(
+                            title: Text('Obrázok ${index + 1}'),
+                            leading: Radio(
+                              value: index,
+                              groupValue: _answer,
+                              fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                              onChanged: (int? value) {
+                                setState(() {
+                                  _answer = value;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
+                    String? item = answers?[(index - (answersImage?.length ?? 0))];
+                    return Container(
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        border: _answer == index ? Border.all(color: Color(0xff4b4fb3)) : Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                        color: _answer == index ? Color(0xffdddef4) : Colors.white,
+                      ),
+                      child: ListTile(
+                        title: Text(item ?? ''),
+                        leading: Radio(
+                          value: index,
+                          groupValue: _answer,
+                          fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                          onChanged: (int? value) {
+                            setState(() {
+                              _answer = value;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  }
                 }
+
+                return Container(); // Placeholder for empty answer fields or non-matching tiles
               },
             ),
-          ),
-          reButton(
-            context,
-            'HOTOVO',
-            0xff3cad9a,
-            0xffffffff,
-            0xffffffff,
-            onNextButtonPressed,
-          ),
-        ],
-      ),
+            SizedBox(height: 20),
+
+            if (pressed) Text(explanation ?? ""),
+            SizedBox(height: 20),
+
+            pressed ? reButton(
+              context,
+              'ĎALEJ',
+              0xff3cad9a,
+              0xffffffff,
+              0xffffffff,
+              onNextButtonPressed,
+            ) : reButton(
+              context,
+              'HOTOVO',
+              0xff3cad9a,
+              0xffffffff,
+              0xffffffff,
+              onAnswerPressed,
+            ),
+          ],
+        ),
+      ) : Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].name,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(height: 20),
+            Icon(
+              Icons.star,
+              size: 50,
+              color: Colors.yellow,
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Super!",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}/${questionsCount} správnych odpovedí",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.star,
+                  size: 20,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 5),
+                Text(
+                  "+4",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            reButton(
+              context,
+              'ZAVRIEŤ',
+              0xff3cad9a,
+              0xffffffff,
+              0xffffffff,
+              () => widget.overlay(),
+            ),
+          ],
+        )
     );
+  }
+
+  void onAnswerPressed() {
+    if (_answer != null) {
+      setState(() {
+      if (_answer == correct) {
+            widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex] = true;
+            widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points++;
+            widget.userData!.points++;
+        }
+        _answer = _answer;
+        pressed = true;
+      });
+    }
+  }
+
+  void onNextButtonPressed() {
+    if (questionIndex + 1 < (questionsCount ?? 0)) {
+      setState(() {
+        questionIndex++;
+        pressed = false;
+        _answer = null;
+      });
+      fetchQuestionData(questionIndex);
+    } else {
+
+
+      setState(() {
+        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
+        questionIndex = 0;
+        _answer = null;
+        pressed = false;
+      });
+      if (areAllCompleted(widget.userData!)) {
+        widget.userData!.capitols[int.parse(widget.capitolsId)].completed = true;
+      }
+      saveUserDataToFirestore(widget.userData!);
+      _showLastScreen();
+    }
+  }
+
+  void _showLastScreen() {
+    setState(() {
+      // Update the state to show the last screen
+      lastScreen = true;
+      question = null;
+      subQuestion = null;
+      title = null;
+      image = null;
+      definition = null;
+      answers = null;
+      answersImage = null;
+    });
+  }
+
+  bool areAllCompleted(UserData userData) {
+    for (var capitol in userData.capitols) {
+      for (var test in capitol.tests) {
+        if (!test.completed) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  Future<void> saveUserDataToFirestore(UserData userData) async {
+    try {
+      // Reference to the user document in Firestore
+      DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
+
+      // Convert userData object to a Map
+      Map<String, dynamic> userDataMap = {
+        'email': userData.email,
+        'name': userData.name,
+        'active': userData.active,
+        'schoolClass': userData.schoolClass,
+        'image': userData.image,
+        'surname': userData.surname,
+        'points': userData.points,
+        'capitols': userData.capitols.map((userCapitolsData) {
+          return {
+            'id': userCapitolsData.id,
+            'name': userCapitolsData.name,
+            'image': userCapitolsData.image,
+            'completed': userCapitolsData.completed,
+            'tests': userCapitolsData.tests.map((userCapitolsTestData) {
+              return {
+                'name': userCapitolsTestData.name,
+                'completed': userCapitolsTestData.completed,
+                'points': userCapitolsTestData.points,
+                'questions': userCapitolsTestData.questions,
+              };
+            }).toList(),
+          };
+        }).toList(),
+        'materials': userData.materials,
+      };
+
+      // Update the user document in Firestore with the new userDataMap
+      await userRef.update(userDataMap);
+    } catch (e) {
+      print('Error saving user data to Firestore: $e');
+      rethrow;
+    }
   }
 }

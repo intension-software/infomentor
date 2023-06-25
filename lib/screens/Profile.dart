@@ -11,11 +11,14 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   UserData? currentUserData;
+  int capitolOne = 0;
+  // int capitolTwo = 0;
 
   @override
   void initState() {
     super.initState();
-    fetchUserData(); // Fetch the user data when the widget is initialized
+    fetchUserData();
+    fetchCapitolsData(); // Fetch the user data when the widget is initialized
   }
 
   Future<void> fetchUserData() async {
@@ -37,6 +40,21 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  Future<void> fetchCapitolsData() async {
+    try {
+      FetchResult one = await fetchCapitols("0");
+      //FetchResult two = await fetchCapitols("1");
+
+
+      setState(() {
+        capitolOne = one.capitolsData!.points;
+        // capitolTwo = two.capitolsData!.points;
+      });
+    } catch (e) {
+      print('Error fetching question data: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +64,7 @@ class _ProfileState extends State<Profile> {
               child: Column(
                 children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage('assets/profile_image.jpg'), // Replace with the path to your asset image
+                    backgroundImage: AssetImage('assets/profile_image.png'), // Replace with the path to your asset image
                     radius: 80, // Set the radius of the profile picture
                   ),
                   SizedBox(height: 16),
@@ -105,7 +123,7 @@ class _ProfileState extends State<Profile> {
                                   SizedBox(width: 8),
                                   Expanded(
                                     child: LinearProgressIndicator(
-                                      value: currentUserData!.points / 34, // Assuming the maximum points is 34
+                                      value: currentUserData!.points / capitolOne /*+ capitolTwo*/, // Assuming the maximum points is 34
                                       backgroundColor: Colors.grey[300],
                                       valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                                       

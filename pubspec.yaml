@@ -27,3 +27,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/testAnswer.png
+    - assets/placeholder.png
+    - assets/profile_image.png

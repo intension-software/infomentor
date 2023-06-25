@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/fetch.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MaterialCardWidget extends StatefulWidget {
   final String materialId;
@@ -36,7 +35,6 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   bool isHeartFilled = false;
   UserData? userData;
   String? userId;
-  late YoutubePlayerController youtubeController;
 
   @override
   void initState() {
@@ -51,12 +49,6 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
         });
       });
     }
-
-    youtubeController = YoutubePlayerController(
-      initialVideoId: YoutubePlayer.convertUrlToId(widget.video) ?? '',
-    );
-
-    super.initState();
   }
 
   @override
@@ -180,18 +172,18 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.white, // Set the overlay background color
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
+            backgroundColor: Colors.white, // Set the appbar background color
+            elevation: 0, // Remove the appbar elevation
             leading: SizedBox(
-              height: 30,
-              width: 60,
+              height: 30, // Set the height of the button
+              width: 60, // Set the width of the button
               child: IconButton(
                 icon: Icon(Icons.arrow_back),
-                color: Colors.grey,
+                color: Colors.grey, // Set the color of the back button to black
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Navigate back when the back button is pressed
                 },
               ),
             ),
@@ -268,16 +260,12 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         ),
                       ),
                       SizedBox(height: 8),
-                      if (widget.video.isNotEmpty && _isValidYouTubeLink(widget.video))
-                        YoutubePlayerBuilder(
-                          player: YoutubePlayer(
-                            controller: youtubeController,
-                            showVideoProgressIndicator: true,
-                          ),
-                          builder: (context, player) {
-                            return player;
-                          },
+                      Text(
+                        widget.video,
+                        style: TextStyle(
+                          fontSize: 16,
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -287,14 +275,6 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
         ),
       ),
     );
-  }
-
-  bool _isValidYouTubeLink(String link) {
-    final Uri? uri = Uri.tryParse(link);
-    if (uri != null && uri.host == 'www.youtube.com') {
-      return true;
-    }
-    return false;
   }
 
   Future<void> _launchURL(String url) async {
@@ -322,29 +302,43 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   }
 
   Future<void> saveUserDataToFirestore(UserData userData) async {
-    try {
-      // Reference to the user document in Firestore
-      DocumentReference userRef =
-          FirebaseFirestore.instance.collection('users').doc(userId);
+  try {
+    // Reference to the user document in Firestore
+    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
-      // Convert userData object to a Map
-      Map<String, dynamic> userDataMap = {
-        'email': userData.email,
-        'name': userData.name,
-        'active': userData.active,
-        'schoolClass': userData.schoolClass,
-        'image': userData.image,
-        'surname': userData.surname,
-        'points': userData.points,
-        'capitols': userData.capitols,
-        'materials': userData.materials,
-      };
+    // Convert userData object to a Map
+    Map<String, dynamic> userDataMap = {
+      'email': userData.email,
+      'name': userData.name,
+      'active': userData.active,
+      'schoolClass': userData.schoolClass,
+      'image': userData.image,
+      'surname': userData.surname,
+      'points': userData.points,
+      'capitols': userData.capitols.map((userCapitolsData) {
+        return {
+          'id': userCapitolsData.id,
+          'name': userCapitolsData.name,
+          'image': userCapitolsData.image,
+          'completed': userCapitolsData.completed,
+          'tests': userCapitolsData.tests.map((userCapitolsTestData) {
+            return {
+              'name': userCapitolsTestData.name,
+              'completed': userCapitolsTestData.completed,
+              'points': userCapitolsTestData.points,
+              'questions': userCapitolsTestData.questions,
+            };
+          }).toList(),
+        };
+      }).toList(),
+      'materials': userData.materials,
+    };
 
-      // Update the user document in Firestore with the new userDataMap
-      await userRef.update(userDataMap);
-    } catch (e) {
-      print('Error saving user data to Firestore: $e');
-      rethrow;
-    }
+    // Update the user document in Firestore with the new userDataMap
+    await userRef.update(userDataMap);
+  } catch (e) {
+    print('Error saving user data to Firestore: $e');
+    rethrow;
   }
+}
 }

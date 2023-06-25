@@ -6,6 +6,7 @@ class QuestionsData {
   List<String> answersImage;
   int correct;
   String definition;
+  String explanation;
   String image;
   String question;
   String subQuestion;
@@ -16,6 +17,7 @@ class QuestionsData {
     required this.answersImage,
     required this.correct,
     required this.definition,
+    required this.explanation,
     required this.image,
     required this.question,
     required this.subQuestion,
@@ -206,6 +208,7 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
                     questionData['answersImage'] as List<dynamic>? ?? []);
                 int correct = questionData['correct'] as int? ?? 0;
                 String definition = questionData['definition'] as String? ?? '';
+                String explanation = questionData['explanation'] as String? ?? '';
                 String image = questionData['image'] as String? ?? '';
                 String question = questionData['question'] as String? ?? '';
                 String subQuestion =
@@ -218,6 +221,7 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
                   answersImage: answersImage,
                   correct: correct,
                   definition: definition,
+                  explanation: explanation,
                   image: image,
                   question: question,
                   subQuestion: subQuestion,
