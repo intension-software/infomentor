@@ -37,15 +37,47 @@ class TestsData {
 
 class CapitolsData {
   String name;
+  int color;
   String badge;
   int points;
   List<TestsData> tests;
 
   CapitolsData({
     required this.name,
+    required this.color,
     required this.badge,
     required this.points,
     required this.tests,
+  });
+}
+
+class UserCapitolsData {
+  String id;
+  String name;
+  String image;
+  bool completed;
+  List<UserCapitolsTestData> tests;
+
+  UserCapitolsData({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.completed,
+    required this.tests,
+  });
+}
+
+class UserCapitolsTestData {
+  String name;
+  bool completed;
+  int points;
+  List<bool> questions;
+
+  UserCapitolsTestData({
+    required this.name,
+    required this.completed,
+    required this.points,
+    required this.questions,
   });
 }
 
@@ -57,8 +89,8 @@ class UserData {
   String image;
   String surname;
   int points;
-  List<Map<String, dynamic>> capitols;
-  List<String> materials; // Updated field to store favorited material IDs
+  List<UserCapitolsData> capitols;
+  List<String> materials;
 
   UserData({
     required this.email,
@@ -140,6 +172,7 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
       if (data != null) {
         // Extract the values from the data
         String name = data['name'] as String? ?? '';
+        int color = data['color'] as int;
         String badge = data['badge'] as String? ?? '';
         int points = data['points'] as int? ?? 0;
 
@@ -210,6 +243,7 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
           // Create a CapitolsData instance with the name, badge, points, and the list of tests
           CapitolsData capitolsData = CapitolsData(
             name: name,
+            color: color,
             badge: badge,
             points: points,
             tests: testsDataList,
@@ -278,9 +312,72 @@ Future<UserData> fetchUser(String userId) async {
           image: image,
           surname: surname,
           points: points,
-          capitols: capitols,
-          materials: materials
+          capitols: [],
+          materials: materials,
         );
+
+        // Iterate over the capitols data
+        for (var capitolData in capitols) {
+          // Extract the values from the capitolData
+          String capitolId = capitolData['id'] as String? ?? '';
+          String capitolName = capitolData['name'] as String? ?? '';
+          String capitolImage = capitolData['image'] as String? ?? '';
+          bool capitolCompleted = capitolData['completed'] as bool? ?? false;
+
+          // Access the "tests" list within the capitolData
+          List<dynamic>? tests = capitolData['tests'] as List<dynamic>?;
+
+          if (tests != null) {
+            // Create a list to hold the UserCapitolsTestData instances
+            List<UserCapitolsTestData> testsDataList = [];
+
+            // Iterate over the tests data
+            for (var testData in tests) {
+              // Extract the test name, completion status, points, and questions
+              String testName = testData['name'] as String? ?? '';
+              bool testCompleted = testData['completed'] as bool? ?? false;
+              int testPoints = testData['points'] as int? ?? 0;
+              List<dynamic>? questions = testData['questions'] as List<dynamic>?;
+
+              if (questions != null) {
+                // Create a list to hold the questions completion status
+                List<bool> questionsDataList = [];
+
+                // Iterate over the questions data
+                for (var questionData in questions) {
+                  // Extract the question completion status
+                  bool questionCompleted = questionData as bool? ?? false;
+
+                  // Add the question completion status to the list
+                  questionsDataList.add(questionCompleted);
+                }
+
+                // Create a UserCapitolsTestData instance with the test name, completion status, points, and questions
+                UserCapitolsTestData testData = UserCapitolsTestData(
+                  name: testName,
+                  completed: testCompleted,
+                  points: testPoints,
+                  questions: questionsDataList,
+                );
+
+                // Add the UserCapitolsTestData instance to the list
+                testsDataList.add(testData);
+              }
+            }
+
+            // Create a UserCapitolsData instance with the capitol id, name, image, completion status, and the list of tests
+            UserCapitolsData capitolData = UserCapitolsData(
+              id: capitolId,
+              name: capitolName,
+              image: capitolImage,
+              completed: capitolCompleted,
+              tests: testsDataList,
+            );
+
+            // Add the UserCapitolsData instance to the list
+            userData.capitols.add(capitolData);
+          }
+        }
 
         return userData;
       } else {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Test.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/fetch.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class Challenges extends StatefulWidget {
   final String capitolsId;
@@ -16,12 +18,18 @@ class _ChallengesState extends State<Challenges> {
   bool isOverlayVisible = false;
   late OverlayEntry overlayEntry;
   int? testsLength;
+  String? title;
+  UserData? currentUserData;
+  int? color;
 
   @override
   void initState() {
     super.initState();
-    fetchQuestionData(); // Call fetchQuestionData in initState
+    fetchQuestionData();
+    fetchUserData(); // Call fetchQuestionData in initState
   }
+
+  
 
   void toggleOverlayVisibility(int index) {
     setState(() {
@@ -36,12 +44,33 @@ class _ChallengesState extends State<Challenges> {
     }
   }
 
+  Future<void> fetchUserData() async {
+    try {
+      // Retrieve the Firebase Auth user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // Fetch the user data using the fetchUser function
+        UserData userData = await fetchUser(user.uid);
+        setState(() {
+          currentUserData = userData;
+        });
+      } else {
+        print('User is not logged in.');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
   Future<void> fetchQuestionData() async {
     try {
       FetchResult result = await fetchCapitols(widget.capitolsId);
 
       setState(() {
         testsLength = result.capitolsData?.tests.length;
+        title = result.capitolsData?.name;
+        color = result.capitolsData?.color;
       });
     } catch (e) {
       print('Error fetching question data: $e');
@@ -52,10 +81,6 @@ class _ChallengesState extends State<Challenges> {
     return OverlayEntry(
       builder: (context) => Positioned.fill(
         child: GestureDetector(
-          onTap: () {
-            toggleOverlayVisibility(testIndex);
-            Navigator.of(context).pop();
-          },
           child: Container(
             color: Colors.black.withOpacity(0.5),
             alignment: Alignment.center,
@@ -72,6 +97,12 @@ class _ChallengesState extends State<Challenges> {
       body: Container(
         child: Column(
           children: [
+            Text(title ?? '',
+              style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            ),
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
@@ -84,6 +115,7 @@ class _ChallengesState extends State<Challenges> {
                       padding: EdgeInsets.all(8.0),
                       child: StarButton(
                         number: reversedIndex,
+                        color: color as int,
                         onPressed: (int number) => toggleOverlayVisibility(number),
                       ),
                     );
@@ -100,14 +132,24 @@ class _ChallengesState extends State<Challenges> {
 
 class StarButton extends StatelessWidget {
   final int number;
+  final int color;
   final void Function(int) onPressed;
 
-  StarButton({required this.number, required this.onPressed});
+  StarButton({required this.number, required this.onPressed, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onPressed(number),
+    return PopupMenuButton<int>(
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        PopupMenuItem<int>(
+          child: Column(
+            children: [
+              Text('týždenná výzva'),
+              reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () => onPressed(number))
+            ],
+          ),
+        ),
+      ],
       child: Container(
         width: 60.0,
         height: 60.0,
