@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Test.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-import 'package:infomentor/fetch.dart';
+import 'package:infomentor/screens/backend/fetchCapitols.dart';
+import 'package:infomentor/screens/backend/fetchUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Challenges extends StatefulWidget {
