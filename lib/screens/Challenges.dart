@@ -146,6 +146,7 @@ class StarButton extends StatelessWidget {
     return PopupMenuButton<int>(
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
         PopupMenuItem<int>(
+
           child: Column(
             children: [
               Text('týždenná výzva'),
