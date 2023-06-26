@@ -210,8 +210,8 @@ class StarButton extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    width: 70.0,
-                    height: 70.0,
+                    width: 65.0,
+                    height: 65.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
