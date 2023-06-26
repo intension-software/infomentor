@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:infomentor/screens/backend/fetchCapitols.dart';
+import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:infomentor/screens/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 
 
 class Profile extends StatefulWidget {
