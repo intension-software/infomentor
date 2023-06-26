@@ -1,5 +1,15 @@
 {
   "projects": {
-    "default": "infomentor-d71f7"
-  }
+    "default": "infomentor-311a7"
+  },
+  "targets": {
+    "infomentor-311a7": {
+      "hosting": {
+        "dev": [
+          "dev-infomentor"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
