@@ -43,9 +43,9 @@ class FocusShades {
 
 class AppColors {
   static final Shades primary = Shades(
-    main: Color(0xff1660B8),
-    light: Color(0xff186BCC),
-    lighter: Color(0xffD1E1F5),
+    main: Color(0xff4B4FB3),
+    light: Color(0xff5358C7),
+    lighter: Color(0xffDDDEF4),
   );
 
   static final Shades blue = Shades(

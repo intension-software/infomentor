@@ -191,7 +191,7 @@ class _DiscussionsState extends State<Discussions> {
       },
     );
 
-    Overlay.of(context)?.insert(_overlayEntry!);
+    Overlay.of(context).insert(_overlayEntry!);
   }
 
   Stream<List<CommentsData>> fetchCommentsStream(String postId) {

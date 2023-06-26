@@ -418,6 +418,19 @@ class _TestState extends State<Test> {
     );
   }
 
+  int countTrueValues(List<bool>? boolList) {
+        int count = 0;
+        if (boolList != null) {
+          for (bool value in boolList) {
+            if (value == true) {
+              count++;
+            }
+          }
+        }
+        return count;
+      }
+
+
   void onAnswerPressed() {
     if (_answer != null) {
       setState(() {
@@ -425,11 +438,13 @@ class _TestState extends State<Test> {
             widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points++;
             widget.userData!.points++;
         }
+        if (widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions.length - 1 == countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions)) widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
+
         widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex] = true;
         _answer = _answer;
         pressed = true;
-      });
 
+      });
       saveUserDataToFirestore(widget.userData!);
     }
   }

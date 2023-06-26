@@ -18,7 +18,7 @@ class Challenges extends StatefulWidget {
 class _ChallengesState extends State<Challenges> {
   bool isOverlayVisible = false;
   late OverlayEntry overlayEntry;
-  int? testsLength;
+  int testsLength = 0;
   String? title;
   UserData? currentUserData;
   int? color;
@@ -49,9 +49,23 @@ class _ChallengesState extends State<Challenges> {
     }
   }
 
+   int countTrueTests(List<UserCapitolsTestData>? boolList) {
+    int count = 0;
+    if (boolList != null) {
+      for (UserCapitolsTestData testData in boolList) {
+        if (testData.completed) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
   void toggle() {
     refreshData();
     overlayEntry.remove();
+    isOverlayVisible = false;
+    
   }
 
   Future<void> fetchUserData() async {
@@ -81,7 +95,7 @@ class _ChallengesState extends State<Challenges> {
 
       if (mounted) {
         setState(() {
-          testsLength = result.capitolsData?.tests.length;
+          testsLength = result.capitolsData!.tests.length;
           title = result.capitolsData?.name;
           color = result.capitolsData?.color;
         });
@@ -108,14 +122,32 @@ class _ChallengesState extends State<Challenges> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
+      body: 
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(color: Theme.of(context).colorScheme.background),
+          child: Column(
           children: [
-            Text(
-              title ?? '',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            FractionallySizedBox(
+              widthFactor: 1.0,
+              child: Container(
+                decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+                child: Column(
+                  children: [
+                    Text(
+                      title ?? '',
+                      style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    LinearProgressIndicator(
+                      value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[0].tests)  / testsLength : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
+                      backgroundColor: Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                      
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -147,6 +179,9 @@ class _ChallengesState extends State<Challenges> {
   }
 }
 
+
+
+ 
 class StarButton extends StatelessWidget {
   final int number;
   final int color;
@@ -160,17 +195,7 @@ class StarButton extends StatelessWidget {
     this.userData,
   });
 
-  int countTrueValues(List<bool>? boolList) {
-    int count = 0;
-    if (boolList != null) {
-      for (bool value in boolList) {
-        if (value == true) {
-          count++;
-        }
-      }
-    }
-    return count;
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -245,6 +270,18 @@ class StarButton extends StatelessWidget {
       ),
       Offset.zero & overlay.size,
     );
+
+     int countTrueValues(List<bool>? boolList) {
+        int count = 0;
+        if (boolList != null) {
+          for (bool value in boolList) {
+            if (value == true) {
+              count++;
+            }
+          }
+        }
+        return count;
+      }
 
     showMenu<int>(
       context: context,
