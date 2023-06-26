@@ -25,6 +25,18 @@ class Test extends StatefulWidget {
   State<Test> createState() => _TestState();
 }
 
+int countTrueValues(List<bool>? boolList) {
+    int count = 0;
+    if (boolList != null) {
+      for (bool value in boolList) {
+        if (value == true) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
 class _TestState extends State<Test> {
   int? _answer;
   bool? isCorrect;
@@ -69,6 +81,7 @@ class _TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
+    questionIndex = countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions);
     fetchQuestionData(questionIndex);
   }
 
@@ -94,6 +107,17 @@ class _TestState extends State<Test> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.grey,
+            ),
+            onPressed: () => widget.overlay()
+          ),
+        ),
       backgroundColor: lastScreen ? Color(0xff4b4fb3) : Colors.white,
       body: !lastScreen ? SingleChildScrollView(
         child: Column(
@@ -171,11 +195,7 @@ class _TestState extends State<Test> {
                                 value: index,
                                 groupValue: _answer,
                                 fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    _answer = value;
-                                  });
-                                },
+                                onChanged: null,
                               ),
                             ),
                           ],
@@ -196,11 +216,7 @@ class _TestState extends State<Test> {
                             value: index,
                             groupValue: _answer,
                             fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
-                            onChanged: (int? value) {
-                              setState(() {
-                                _answer = value;
-                              });
-                            },
+                            onChanged: null,
                           ),
                         ),
                       );
@@ -225,11 +241,7 @@ class _TestState extends State<Test> {
                                 value: index,
                                 groupValue: _answer,
                                 fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    _answer = value;
-                                  });
-                                },
+                                onChanged: null,
                               ),
                             ),
                           ],
@@ -410,13 +422,15 @@ class _TestState extends State<Test> {
     if (_answer != null) {
       setState(() {
       if (_answer == correct) {
-            widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex] = true;
             widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points++;
             widget.userData!.points++;
         }
+        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex] = true;
         _answer = _answer;
         pressed = true;
       });
+
+      saveUserDataToFirestore(widget.userData!);
     }
   }
 

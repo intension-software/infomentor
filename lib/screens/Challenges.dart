@@ -29,6 +29,11 @@ class _ChallengesState extends State<Challenges> {
     fetchUserData();
   }
 
+  Future<void> refreshData() async {
+    await fetchQuestionData();
+    await fetchUserData();
+  }
+
   void toggleOverlayVisibility(int index) {
     setState(() {
       isOverlayVisible = !isOverlayVisible;
@@ -40,6 +45,11 @@ class _ChallengesState extends State<Challenges> {
     } else {
       overlayEntry.remove();
     }
+  }
+
+  void toggle() {
+    refreshData();
+    overlayEntry.remove();
   }
 
   Future<void> fetchUserData() async {
@@ -86,7 +96,7 @@ class _ChallengesState extends State<Challenges> {
           child: Container(
             color: Colors.black.withOpacity(0.5),
             alignment: Alignment.center,
-            child: Test(testIndex: testIndex, overlay: () => overlayEntry.remove(), capitolsId: "0", userData: currentUserData),
+            child: Test(testIndex: testIndex, overlay: toggle, capitolsId: "0", userData: currentUserData),
           ),
         ),
       ),
@@ -109,15 +119,15 @@ class _ChallengesState extends State<Challenges> {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: ListView.builder(
+                child: SizedBox(
+                  child: ListView.builder(
                   reverse: true,
                   itemCount: testsLength ?? 0,
                   itemBuilder: (BuildContext context, int index) {
-                    final reversedIndex = (testsLength ?? 0) - index - 1;
                     return Padding(
                       padding: EdgeInsets.all(8.0),
                       child: StarButton(
-                        number: reversedIndex,
+                        number: index,
                         color: color as int,
                         userData: currentUserData,
                         onPressed: (int number) => toggleOverlayVisibility(number),
@@ -125,6 +135,7 @@ class _ChallengesState extends State<Challenges> {
                     );
                   },
                 ),
+                )
               ),
             ),
           ],
@@ -140,44 +151,128 @@ class StarButton extends StatelessWidget {
   final UserData? userData;
   final void Function(int) onPressed;
 
-  StarButton({required this.number, required this.onPressed, required this.userData, required this.color});
+  StarButton({
+    required this.number,
+    required this.onPressed,
+    required this.color,
+    this.userData,
+  });
+
+  int countTrueValues(List<bool>? boolList) {
+    int count = 0;
+    if (boolList != null) {
+      for (bool value in boolList) {
+        if (value == true) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<int>(
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+    return GestureDetector(
+      onTap: () {
+        showPopupMenu(context);
+      },
+      child: SizedBox(
+        child: userData != null &&
+                !userData!.capitols[0].tests[number].completed
+            ? Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 60.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.transparent,
+                    ),
+                  ),
+                  Container(
+                    width: 80.0,
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2.0),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(90.0),
+                      child: LinearProgressIndicator(
+                        value: countTrueValues(userData!.capitols[0].tests[number].questions) /
+                            userData!.capitols[0].tests[number].questions.length,
+                        backgroundColor: Colors.transparent,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 70.0,
+                    height: 70.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.star,
+                        color: Colors.yellow,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Image.asset(
+                'star.png',
+                width: 100.0,
+                height: 100.0,
+              ),
+      ),
+    );
+  }
+
+  void showPopupMenu(BuildContext context) {
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu<int>(
+      context: context,
+      position: position,
+      items: <PopupMenuEntry<int>>[
         PopupMenuItem<int>(
           child: Column(
             children: [
               Text('týždenná výzva'),
-              Text(userData!.capitols[0].tests[number].name),
-              userData != null && !userData!.capitols[0].tests[number].completed
-                  ? reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () {
-                      onPressed(number);
-                      Navigator.of(context).pop(); // Close the PopupMenuButton
-                    })
-                  : Column(children: [
-                      Text("HOTOVO"),
-                      Text("${userData!.capitols[0].tests[number].points} / ${userData!.capitols[0].tests[number].questions.length}")
-                    ]),
+              Text(userData?.capitols[0].tests[number].name ?? ''),
+              if (userData != null &&
+                  !userData!.capitols[0].tests[number].completed)
+                reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () {
+                  onPressed(number);
+                  Navigator.of(context).pop();
+                }),
+              if (userData != null &&
+                  userData!.capitols[0].tests[number].completed)
+                Column(
+                  children: [
+                    Text("HOTOVO"),
+                    Text(
+                      "${userData!.capitols[0].tests[number].points} / ${userData!.capitols[0].tests[number].questions.length}",
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
       ],
-      child: Container(
-        width: 60.0,
-        height: 60.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.yellow,
-        ),
-        child: Center(
-          child: Icon(
-            Icons.star,
-            color: Colors.white,
-          ),
-        ),
-      ),
     );
   }
 }

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Test.dart';
 
 TextField reTextField(
-    String text, bool isPasswordType, TextEditingController controller) {
+  String text,
+  bool isPasswordType,
+  TextEditingController controller,
+  Color? borderColor,
+) {
   return TextField(
     controller: controller,
     obscureText: isPasswordType,
@@ -10,12 +14,38 @@ TextField reTextField(
     autocorrect: !isPasswordType,
     decoration: InputDecoration(
       labelText: text,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide(
+          color: borderColor ?? Colors.white, // Use the provided borderColor or fallback to white if null
+          width: 2.0,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide(
+          color: borderColor ?? Colors.white, // Use the provided borderColor or fallback to white if null
+          width: 2.0,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide(
+          color: borderColor ?? Colors.white, // Use the provided borderColor or fallback to white if null
+          width: 2.0,
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 16.0,
+        horizontal: 10.0,
+      ),
     ),
     keyboardType: isPasswordType
         ? TextInputType.visiblePassword
         : TextInputType.emailAddress,
   );
 }
+
 
 Container reButton(BuildContext context, String text, int color, int pressColor, int textColor, dynamic onTap) {
   return Container(
