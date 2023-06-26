@@ -122,7 +122,7 @@ class _HomeState extends State<Home> {
           Container(
             child: Text('home'),
           ), // Replace with your actual widget for the Home page
-          Challenges(capitolsId: "0"),
+          Challenges(capitolsId: "0", fetch: fetchUserData()),
           Discussions(),
           Learning(),
         ],

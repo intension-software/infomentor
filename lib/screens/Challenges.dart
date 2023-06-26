@@ -7,8 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class Challenges extends StatefulWidget {
   final String capitolsId;
+  final Future<void> fetch;
 
-  const Challenges({Key? key, required this.capitolsId});
+  const Challenges({Key? key, required this.capitolsId, required this.fetch});
 
   @override
   State<Challenges> createState() => _ChallengesState();
@@ -32,6 +33,7 @@ class _ChallengesState extends State<Challenges> {
   Future<void> refreshData() async {
     await fetchQuestionData();
     await fetchUserData();
+    await widget.fetch;
   }
 
   void toggleOverlayVisibility(int index) {
