@@ -16,6 +16,7 @@ dependencies:
   video_player: ^2.6.1
   chewie: ^1.5.0
   youtube_player_flutter: ^8.1.2
+  google_fonts: ^5.1.0
   
 
 dev_dependencies:

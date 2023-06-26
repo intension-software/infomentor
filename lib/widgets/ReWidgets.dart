@@ -1,50 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Test.dart';
+import 'package:infomentor/Colors.dart';
 
-TextField reTextField(
+
+Container reTextField(
   String text,
   bool isPasswordType,
   TextEditingController controller,
   Color? borderColor,
 ) {
-  return TextField(
-    controller: controller,
-    obscureText: isPasswordType,
-    enableSuggestions: !isPasswordType,
-    autocorrect: !isPasswordType,
-    decoration: InputDecoration(
-      labelText: text,
-      border: OutlineInputBorder(
+  return Container(
+    decoration: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.mono.black.withOpacity(0.1),
+          spreadRadius: 2,
+          blurRadius: 4,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: TextField(
+      controller: controller,
+      obscureText: isPasswordType,
+      enableSuggestions: !isPasswordType,
+      autocorrect: !isPasswordType,
+      style: TextStyle(color: AppColors.mono.black), // Set the text color to black
+      cursorColor: Colors.transparent, // Set the cursor color to transparent
+      decoration: InputDecoration(
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        labelText: text,
+        hintText: '', // Remove the text in the left corner when active
+        filled: true, // Add a background color to the TextField
+        fillColor: AppColors.mono.white, // Set the background color to white
+         border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          color: borderColor ?? Colors.white, // Use the provided borderColor or fallback to white if null
+          color: borderColor ?? AppColors.mono.white, // Use the provided borderColor or fallback to white if null
           width: 2.0,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          color: borderColor ?? Colors.white, // Use the provided borderColor or fallback to white if null
+          color: borderColor ?? AppColors.mono.white, // Use the provided borderColor or fallback to white if null
           width: 2.0,
         ),
       ),
-      focusedBorder: OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          color: borderColor ?? Colors.white, // Use the provided borderColor or fallback to white if null
-          width: 2.0,
+            color: AppColors.green.main, // Set the focused border color to green
+            width: 2.0,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 20.0,
+          horizontal: 20.0,
         ),
       ),
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: 16.0,
-        horizontal: 10.0,
-      ),
+      keyboardType: isPasswordType
+          ? TextInputType.visiblePassword
+          : TextInputType.emailAddress,
     ),
-    keyboardType: isPasswordType
-        ? TextInputType.visiblePassword
-        : TextInputType.emailAddress,
   );
+
+
 }
+
+
 
 
 Container reButton(BuildContext context, String text, int color, int pressColor, int textColor, dynamic onTap) {
@@ -60,6 +84,9 @@ Container reButton(BuildContext context, String text, int color, int pressColor,
         ,
         child: Center(
           child: Text(
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             text,
             textAlign: TextAlign.center,
             selectionColor: Color(textColor),
@@ -124,8 +151,8 @@ class _reBottomNavigationState extends State<reBottomNavigation> {
         ),
       ],
       currentIndex: widget.selectedIndex,
-      unselectedItemColor: Colors.grey,
-      selectedItemColor: Color(0xff4b4fb3),
+      unselectedItemColor: AppColors.mono.grey,
+      selectedItemColor: Theme.of(context).primaryColor,
       onTap: widget.onItemTapped,
     );
   }

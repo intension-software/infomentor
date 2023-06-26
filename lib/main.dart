@@ -4,6 +4,8 @@ import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/screens/Login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/Colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 
 
@@ -31,7 +33,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         // Define the default brightness and colors.
         brightness: Brightness.light,
-        primaryColor: AppColors.primary.main,
+        primaryColor: AppColors.primary.light,
         colorScheme: ColorScheme.light().copyWith(
           // SECONDARY
           primaryContainer: AppColors.primary.light,
@@ -44,12 +46,12 @@ class MainApp extends StatelessWidget {
         ),
 
         // Define the default font family.
-        fontFamily: 'Inter',
+        fontFamily: GoogleFonts.inter().fontFamily,
 
         // Define the default `TextTheme`. Use this to specify the default
         // text styling for headlines, titles, bodies of text, and more.
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        textTheme: TextTheme(
+          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
           displayMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           displaySmall: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
 
@@ -58,9 +60,9 @@ class MainApp extends StatelessWidget {
           titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
 
 
-          headlineLarge: TextStyle(fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
-          headlineMedium: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
-          headlineSmall: TextStyle(fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+          headlineLarge: TextStyle(fontSize: 24, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.bold),
+          headlineMedium: TextStyle(fontSize: 20, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.bold),
+          headlineSmall: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.bold),
 
           labelLarge: TextStyle(fontSize: 16),
           labelMedium: TextStyle(fontSize: 14),

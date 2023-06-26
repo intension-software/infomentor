@@ -4,6 +4,7 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:infomentor/Colors.dart';
 
 class Challenges extends StatefulWidget {
   final String capitolsId;
@@ -134,16 +135,18 @@ class _ChallengesState extends State<Challenges> {
                 decoration: BoxDecoration(color: Theme.of(context).primaryColor),
                 child: Column(
                   children: [
+                   
                     Text(
                       title ?? '',
                       style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
+                    SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[0].tests)  / testsLength : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                      backgroundColor: AppColors.blue.lighter,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
                       
                     ),
                   ],
@@ -222,29 +225,29 @@ class StarButton extends StatelessWidget {
                     height: 80.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2.0),
+                      border: Border.all(color: AppColors.mono.white, width: 2.0),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(90.0),
                       child: LinearProgressIndicator(
                         value: countTrueValues(userData!.capitols[0].tests[number].questions) /
                             userData!.capitols[0].tests[number].questions.length,
-                        backgroundColor: Colors.transparent,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
+                        backgroundColor: AppColors.mono.lighterGrey,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.yellow.light),
                       ),
                     ),
                   ),
                   Container(
-                    width: 65.0,
-                    height: 65.0,
+                    width: 70.0,
+                    height: 70.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      color: AppColors.mono.white
                     ),
                     child: Center(
                       child: Icon(
                         Icons.star,
-                        color: Colors.yellow,
+                        color: AppColors.yellow.light,
                         size: 40,
                       ),
                     ),

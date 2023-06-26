@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infomentor/Colors.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,45 +41,110 @@ class _LoginState extends State<Login> {
       } catch (error) {
         setState(() {
           _loading = false;
-          _errorMessage = 'Invalid email or password. Please try again.';
-          _emailBorderColor = Colors.red;
-          _passwordBorderColor = Colors.red;
+          _errorMessage = 'Nesprávne prihlasovacie meno alebo heslo';
+          _emailBorderColor = Theme.of(context).colorScheme.error;
+          _passwordBorderColor = Theme.of(context).colorScheme.error;
         });
       }
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                reTextField("Vložte email", false, _emailTextController, _emailBorderColor),
-                reTextField("Vložte heslo", true, _passwordTextController, _passwordBorderColor),
-                if (_errorMessage != null)
-                  Text(
-                    _errorMessage!,
-                    style: TextStyle(color: Colors.red),
-                  ),
-                reButton(
-                  context,
-                  "PRIHLÁSIŤ SA",
-                  0xff3cad9a,
-                  0xffffffff,
-                  0xffffffff,
-                  handleLogin,
+ Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Theme.of(context).primaryColor,
+    body: Column(
+      children: <Widget>[
+        SizedBox(height: 30),
+        Image.asset(
+          'assets/logo.png',
+          width: 200,
+        ),
+        Expanded(
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Container(
+                width: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Prihlásenie',
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayLarge!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                    ),
+                    SizedBox(height: 100),
+                    reTextField(
+                      "Vložte email",
+                      false,
+                      _emailTextController,
+                      _emailBorderColor,
+                    ),
+                    SizedBox(height: 8),
+                    reTextField(
+                      "Vložte heslo",
+                      true,
+                      _passwordTextController,
+                      _passwordBorderColor,
+                    ),
+                    SizedBox(height: 8),
+                    _errorMessage != null ?
+                      Container(
+                          width: 300,
+                          height: 60,
+
+                        decoration: BoxDecoration(
+                          color: AppColors.red.lighter,
+                          borderRadius: BorderRadius.circular(5),
+                          
+                        ),
+                        child: Center(child: Text(
+                          _errorMessage!,
+                          style: TextStyle(color: AppColors.red.main),
+                        ),
+                        )
+                      ) : Container(),
+                      
+                      SizedBox(height: 8),
+                    Text('Ak prihlasovacie údaje nemáš, vypýtaj ',
+                        style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                      ),
+                      Text('si ich od svojho vyučujúceho ',
+                        style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                      ),
+                      
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
+        reButton(
+          context,
+          "PRIHLÁSIŤ SA",
+          0xff3cad9a,
+          0xffffffff,
+          0xffffffff,
+          handleLogin,
+        ),
+        SizedBox(height: 30),
+      ],
+    ),
+  );
+}
 }
