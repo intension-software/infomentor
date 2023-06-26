@@ -140,24 +140,26 @@ class StarButton extends StatelessWidget {
   final UserData? userData;
   final void Function(int) onPressed;
 
-  StarButton({required this.number, required this.onPressed,required this.userData, required this.color});
+  StarButton({required this.number, required this.onPressed, required this.userData, required this.color});
 
- @override
+  @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
         PopupMenuItem<int>(
-
           child: Column(
             children: [
               Text('týždenná výzva'),
               Text(userData!.capitols[0].tests[number].name),
               userData != null && !userData!.capitols[0].tests[number].completed
-                  ? reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () => onPressed(number))
+                  ? reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () {
+                      onPressed(number);
+                      Navigator.of(context).pop(); // Close the PopupMenuButton
+                    })
                   : Column(children: [
-                    Text("HOTOVO"),
-                    Text("${userData!.capitols[0].tests[number].points} / ${userData!.capitols[0].tests[number].questions.length}")
-                  ]),
+                      Text("HOTOVO"),
+                      Text("${userData!.capitols[0].tests[number].points} / ${userData!.capitols[0].tests[number].questions.length}")
+                    ]),
             ],
           ),
         ),

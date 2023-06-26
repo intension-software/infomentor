@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:infomentor/backend/fetchClasses.dart';
 import 'package:infomentor/backend/fetchUser.dart';
-import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async'; // Add this import statement
 

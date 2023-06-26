@@ -52,8 +52,15 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   }
 
   @override
+  void dispose() {
+    // Cancel timers or stop animations...
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    String imageAsset = widget.image.isEmpty ? 'placeholder.png' : widget.image;
+    String imageAsset = widget.image.isEmpty ? 'assets/placeholder.png' : widget.image;
 
     return GestureDetector(
       onTap: () {

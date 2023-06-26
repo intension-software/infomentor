@@ -384,7 +384,7 @@ class _TestState extends State<Test> {
                 ),
                 SizedBox(width: 5),
                 Text(
-                  "+4",
+                  "+${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,

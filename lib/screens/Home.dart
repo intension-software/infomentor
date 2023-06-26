@@ -4,6 +4,7 @@ import 'package:infomentor/screens/Learning.dart';
 import 'package:infomentor/screens/Challenges.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/screens/Profile.dart';
 
@@ -18,11 +19,28 @@ class _HomeState extends State<Home> {
   final PageController _pageController = PageController();
   int _selectedIndex = 0;
   UserData? currentUserData;
+  int? capitolOne;
 
   @override
   void initState() {
     super.initState();
     fetchUserData(); // Fetch the user data when the app starts
+    fetchCapitolsData();
+  }
+
+  Future<void> fetchCapitolsData() async {
+    try {
+      FetchResult one = await fetchCapitols("0");
+      //FetchResult two = await fetchCapitols("1");
+
+
+      setState(() {
+        capitolOne = one.capitolsData!.points;
+        // capitolTwo = two.capitolsData!.points;
+      });
+    } catch (e) {
+      print('Error fetching question data: $e');
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -57,7 +75,7 @@ class _HomeState extends State<Home> {
               child: Row(
                 children: [
                   Text(
-                    '${currentUserData!.points} / 50',
+                    '${currentUserData!.points} / ${capitolOne}',
                     style: TextStyle(
                       fontSize: 16,
                       color: Color(0xfff9BB00),
