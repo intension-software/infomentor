@@ -9,6 +9,13 @@
           "dev-infomentor"
         ]
       }
+    },
+    "infomentor-d71f7": {
+      "hosting": {
+        "dev": [
+          "dev-infomentor"
+        ]
+      }
     }
   },
   "etags": {}
