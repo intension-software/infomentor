@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-import 'package:infomentor/auth.dart';
+import 'package:infomentor/backend/auth.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/widgets/MaterialCardWidget.dart';
-import 'package:infomentor/screens/backend/fetchUser.dart';
+import 'package:infomentor/backend/fetchUser.dart';
 
 
 class Learning extends StatefulWidget {

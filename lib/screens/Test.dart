@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:infomentor/screens/backend/fetchCapitols.dart';
+import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:infomentor/screens/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 
 
 class Test extends StatefulWidget {
@@ -384,7 +384,7 @@ class _TestState extends State<Test> {
                 ),
                 SizedBox(width: 5),
                 Text(
-                  "+4",
+                  "+${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,

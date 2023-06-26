@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:infomentor/screens/backend/fetchCapitols.dart';
+import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:infomentor/screens/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 
 
 class Profile extends StatefulWidget {
@@ -125,7 +125,7 @@ class _ProfileState extends State<Profile> {
                                   SizedBox(width: 8),
                                   Expanded(
                                     child: LinearProgressIndicator(
-                                      value: currentUserData!.points / capitolOne /*+ capitolTwo*/, // Assuming the maximum points is 34
+                                      value: capitolOne != 0 ? currentUserData!.points / capitolOne : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
                                       backgroundColor: Colors.grey[300],
                                       valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                                       
