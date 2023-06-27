@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/Colors.dart';
+
 
 
 class Test extends StatefulWidget {
@@ -108,65 +110,87 @@ class _TestState extends State<Test> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor:Theme.of(context).primaryColor,
           elevation: 0,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.grey,
+              color: AppColors.mono.white,
             ),
             onPressed: () => widget.overlay()
           ),
         ),
-      backgroundColor: lastScreen ? Color(0xff4b4fb3) : Colors.white,
+      backgroundColor: lastScreen ? Theme.of(context).primaryColor : AppColors.mono.white,
       body: !lastScreen ? SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch, // Added this line
-          children: [
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                title ?? '',
-                textAlign: TextAlign.center,
+            children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor
               ),
-            ),
-            if (image != null && image!.isNotEmpty && image != "")
-              image!.isEmpty
-                  ? Container() // Placeholder for empty image field
-                  : FittedBox(
-                  fit: BoxFit.contain,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: 200, // Replace with your desired maximum width
-                      maxHeight: 200, // Replace with your desired maximum height
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Image.asset(
-                        image!,
-                      ),
-                    ),
+              child: Column(
+                children: [
+                  Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  title ?? '',
+                   style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                ),
+              ),
+                    if (image != null && image!.isNotEmpty && image != "")
+                  image!.isEmpty
+                      ? Container() // Placeholder for empty image field
+                      :  Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Image.asset(
+                            width: 500,
+                            height: 400,
+                            image!,
+                          ),
+                        ),
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text(
+                    definition ?? '',
+                     style: Theme.of(context)
+                          .textTheme
+                          .labelSmall!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                   ),
                 ),
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                definition ?? '',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                question ?? '',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                subQuestion ?? '',
-                textAlign: TextAlign.center,
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text(
+                    question ?? '',
+                    style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text(
+                    subQuestion ?? '',
+                     style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                  ),
+                ),
+                ],
               ),
             ),
             ListView.builder(
@@ -182,9 +206,9 @@ class _TestState extends State<Test> {
                       return Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          border: _answer == index ? Border.all(color: Colors.red) : Border.all(color: Colors.grey),
+                          border: _answer == index ? Border.all(color: Theme.of(context).colorScheme.error) : Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.green,
+                          color: AppColors.green.main,
                         ),
                         child: Column(
                           children: [
@@ -194,7 +218,7 @@ class _TestState extends State<Test> {
                               leading: Radio(
                                 value: index,
                                 groupValue: _answer,
-                                fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                                fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                                 onChanged: null,
                               ),
                             ),
@@ -206,16 +230,16 @@ class _TestState extends State<Test> {
                       return Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          border: _answer == index ? Border.all(color: Colors.red) : Border.all(color: Colors.grey),
+                          border: _answer == index ? Border.all(color: Theme.of(context).colorScheme.error) : Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.green,
+                          color: AppColors.green.main,
                         ),
                         child: ListTile(
                           title: Text(item ?? ''),
                           leading: Radio(
                             value: index,
                             groupValue: _answer,
-                            fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                            fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                             onChanged: null,
                           ),
                         ),
@@ -228,9 +252,9 @@ class _TestState extends State<Test> {
                       return Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.red,
+                          color: Theme.of(context).colorScheme.error,
                         ),
                         child: Column(
                           children: [
@@ -240,7 +264,7 @@ class _TestState extends State<Test> {
                               leading: Radio(
                                 value: index,
                                 groupValue: _answer,
-                                fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                                fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                                 onChanged: null,
                               ),
                             ),
@@ -252,16 +276,16 @@ class _TestState extends State<Test> {
                       return Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.red,
+                          color: Theme.of(context).colorScheme.error,
                         ),
                         child: ListTile(
                           title: Text(item ?? ''),
                           leading: Radio(
                             value: index,
                             groupValue: _answer,
-                            fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                            fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                             onChanged: (int? value) {
                               setState(() {
                                 _answer = value;
@@ -279,9 +303,9 @@ class _TestState extends State<Test> {
                     return Container(
                       margin: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        border: _answer == index ? Border.all(color: Color(0xff4b4fb3)) : Border.all(color: Colors.grey),
+                        border: _answer == index ? Border.all(color: Theme.of(context).primaryColor) : Border.all(color: AppColors.mono.lightGrey),
                         borderRadius: BorderRadius.circular(10),
-                        color: _answer == index ? Color(0xffdddef4) : Colors.white,
+                        color: _answer == index ? AppColors.primary.lighter: AppColors.mono.white,
                       ),
                       child: Column(
                         children: [
@@ -291,7 +315,7 @@ class _TestState extends State<Test> {
                             leading: Radio(
                               value: index,
                               groupValue: _answer,
-                              fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                              fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                               onChanged: (int? value) {
                                 setState(() {
                                   _answer = value;
@@ -307,16 +331,16 @@ class _TestState extends State<Test> {
                     return Container(
                       margin: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        border: _answer == index ? Border.all(color: Color(0xff4b4fb3)) : Border.all(color: Colors.grey),
+                        border: _answer == index ? Border.all(color: Theme.of(context).primaryColor) : Border.all(color: AppColors.mono.lightGrey),
                         borderRadius: BorderRadius.circular(10),
-                        color: _answer == index ? Color(0xffdddef4) : Colors.white,
+                        color: _answer == index ? AppColors.primary.lighter: AppColors.mono.white,
                       ),
                       child: ListTile(
                         title: Text(item ?? ''),
                         leading: Radio(
                           value: index,
                           groupValue: _answer,
-                          fillColor: MaterialStateProperty.all<Color>(Color(0xff4b4fb3)),
+                          fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
                           onChanged: (int? value) {
                             setState(() {
                               _answer = value;
@@ -359,7 +383,7 @@ class _TestState extends State<Test> {
             Text(
               widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].name,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.mono.white,
                 fontSize: 20,
               ),
             ),
@@ -367,13 +391,13 @@ class _TestState extends State<Test> {
             Icon(
               Icons.star,
               size: 50,
-              color: Colors.yellow,
+              color: AppColors.yellow.light,
             ),
             SizedBox(height: 10),
             Text(
               "Super!",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.mono.white,
                 fontSize: 24,
               ),
             ),
@@ -381,7 +405,7 @@ class _TestState extends State<Test> {
             Text(
               "${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}/${questionsCount} správnych odpovedí",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.mono.white,
                 fontSize: 20,
               ),
             ),
@@ -392,13 +416,13 @@ class _TestState extends State<Test> {
                 Icon(
                   Icons.star,
                   size: 20,
-                  color: Colors.yellow,
+                  color: AppColors.yellow.light,
                 ),
                 SizedBox(width: 5),
                 Text(
                   "+${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.mono.white,
                     fontSize: 20,
                   ),
                 ),

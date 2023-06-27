@@ -10,6 +10,7 @@ class QuestionsData {
   String question;
   String subQuestion;
   String title;
+  
 
   QuestionsData({
     required this.answers,
@@ -39,16 +40,22 @@ class TestsData {
 class CapitolsData {
   String name;
   int color;
+  int colorLight;
+  int colorLighter;
   String badge;
   int points;
   List<TestsData> tests;
+  int weeklyChallenge;
 
   CapitolsData({
     required this.name,
     required this.color,
+    required this.colorLight,
+    required this.colorLighter,
     required this.badge,
     required this.points,
     required this.tests,
+    required this.weeklyChallenge,
   });
 }
 
@@ -78,8 +85,12 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
         // Extract the values from the data
         String name = data['name'] as String? ?? '';
         int color = data['color'] as int;
+        int colorLight = data['color'] as int;
+        int colorLighter = data['color'] as int;
         String badge = data['badge'] as String? ?? '';
         int points = data['points'] as int? ?? 0;
+        int weeklyChallenge = data['weeklyChallenge'] as int? ?? 0;
+        
 
         // Access the "tests" list
         List<dynamic>? tests = data['tests'] as List<dynamic>?;
@@ -151,9 +162,12 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
           CapitolsData capitolsData = CapitolsData(
             name: name,
             color: color,
+            colorLight: colorLight,
+            colorLighter: colorLighter,
             badge: badge,
             points: points,
             tests: testsDataList,
+            weeklyChallenge: weeklyChallenge,
           );
 
           // Create a FetchResult instance with capitolsData

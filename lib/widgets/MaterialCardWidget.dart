@@ -3,6 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/Colors.dart';
+
 
 class MaterialCardWidget extends StatefulWidget {
   final String materialId;
@@ -62,116 +64,119 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   Widget build(BuildContext context) {
     String imageAsset = widget.image.isEmpty ? 'assets/placeholder.png' : widget.image;
 
-    return GestureDetector(
-      onTap: () {
-        _showOverlay(context);
-      },
-      child: Container(
-        margin: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          image: DecorationImage(
-            image: AssetImage(imageAsset),
-            fit: BoxFit.cover,
+    return MouseRegion(
+         cursor: SystemMouseCursors.click,
+         child: GestureDetector(
+        onTap: () {
+          _showOverlay(context);
+        },
+        child: Container(
+          margin: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              image: AssetImage(imageAsset),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(8),
-                  margin: EdgeInsets.all(8),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 20), // Adjust spacing from the top for the text
-                      Text(
-                        widget.title,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        widget.subject,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        widget.type,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  widget.type,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Row(
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      isHeartFilled ? Icons.favorite : Icons.favorite_outline,
-                      color: Colors.white,
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    margin: EdgeInsets.all(8),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
-                    onPressed: () {
-                      toggleFavorite();
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.link,
-                      color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 20), // Adjust spacing from the top for the text
+                        Text(
+                          widget.title,
+                          style: TextStyle(
+                            color: AppColors.mono.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          widget.subject,
+                          style: TextStyle(
+                            color: AppColors.mono.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          widget.type,
+                          style: TextStyle(
+                            color: AppColors.mono.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
-                    onPressed: () {
-                      _launchURL(widget.link);
-                    },
                   ),
                 ],
               ),
-            ),
-          ],
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.mono.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    widget.type,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        isHeartFilled ? Icons.favorite : Icons.favorite_outline,
+                        color: AppColors.mono.white,
+                      ),
+                      onPressed: () {
+                        toggleFavorite();
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.link,
+                        color: AppColors.mono.white,
+                      ),
+                      onPressed: () {
+                        _launchURL(widget.link);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 
@@ -179,16 +184,16 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scaffold(
-          backgroundColor: Colors.white, // Set the overlay background color
+          backgroundColor: AppColors.mono.white, // Set the overlay background color
           appBar: AppBar(
-            backgroundColor: Colors.white, // Set the appbar background color
+            backgroundColor: AppColors.mono.white, // Set the appbar background color
             elevation: 0, // Remove the appbar elevation
             leading: SizedBox(
               height: 30, // Set the height of the button
               width: 60, // Set the width of the button
               child: IconButton(
                 icon: Icon(Icons.arrow_back),
-                color: Colors.grey, // Set the color of the back button to black
+                color: AppColors.mono.lightGrey, // Set the color of the back button to black
                 onPressed: () {
                   Navigator.of(context).pop(); // Navigate back when the back button is pressed
                 },
@@ -259,7 +264,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                               'Go to Link',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.blue,
+                                color: AppColors.blue.main,
                                 decoration: TextDecoration.underline,
                               ),
                             ),

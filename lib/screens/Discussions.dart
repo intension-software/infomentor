@@ -4,6 +4,8 @@ import 'package:infomentor/backend/fetchClasses.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async'; // Add this import statement
+import 'package:infomentor/Colors.dart';
+
 
 
 class Discussions extends StatefulWidget {
@@ -109,7 +111,7 @@ class _DiscussionsState extends State<Discussions> {
                 leading: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
-                    color: Colors.grey,
+                    color: AppColors.mono.grey,
                   ),
                   onPressed: _toggleCommentsOverlay,
                 ),
@@ -124,11 +126,61 @@ class _DiscussionsState extends State<Discussions> {
                       itemCount: comments.length,
                       itemBuilder: (context, index) {
                         CommentsData comment = comments[index];
-                        return ListTile(
-                          title: Text(comment.value),
-                          subtitle: Text(comment.user),
-                          trailing: Text(
-                              comment.date.toDate().toString()), // Display the date in a desired format
+                        return Container(
+                          margin: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(color: AppColors.mono.lightGrey),
+                          ),
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                  SizedBox(height: 4.0),
+
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(right: 16.0),
+                                    child: CircleAvatar(
+                                      backgroundImage: AssetImage('assets/profile_image.png'),
+                                      radius: 24.0,
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      
+                                      Text(
+                                        comment.user,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                      Text(
+                                        comment.date.toDate().toString(),
+                                        style: TextStyle(
+                                          color: AppColors.mono.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(comment.value),
+                              Row(
+                                children: [
+                                  Spacer(),
+                                  Icon(Icons.thumb_up_outlined, size: 20.0),
+                                  SizedBox(width: 4.0),
+                                ],
+                              ),
+                            ],
+                          ),
                         );
                       },
                     );
@@ -141,7 +193,7 @@ class _DiscussionsState extends State<Discussions> {
               ),
               bottomNavigationBar: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: Colors.grey[200],
+                color: AppColors.mono.lightGrey,
                 child: Row(
                   children: [
                     Expanded(
@@ -232,21 +284,79 @@ class _DiscussionsState extends State<Discussions> {
 }
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _posts.length,
-      itemBuilder: (context, index) {
-        PostsData post = _posts[index];
+Widget build(BuildContext context) {
+  return ListView.builder(
+    itemCount: _posts.length,
+    itemBuilder: (context, index) {
+      PostsData post = _posts[index];
 
-        return GestureDetector(
-          onTap: () => _toggleCommentsOverlay(post),
-          child: ListTile(
-            title: Text(post.value),
-            subtitle: Text(post.user),
-            trailing: Text(post.date.toDate().toString()),
+      return MouseRegion(
+         cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+        onTap: () => _toggleCommentsOverlay(post),
+        child: Container(
+          margin: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            border: Border.all(color: AppColors.mono.lightGrey),
           ),
-        );
-      },
-    );
-  }
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                  SizedBox(height: 4.0),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(right: 16.0),
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage('assets/profile_image.png'),
+                      radius: 24.0,
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Text(
+                        post.user,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      Text(
+                        post.date.toDate().toString(),
+                        style: TextStyle(
+                          color: AppColors.mono.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.0),
+              Text(post.value),
+              Row(
+                children: [
+                  Spacer(),
+                  Icon(Icons.chat_bubble_outline, size: 20.0),
+                  SizedBox(width: 4.0),
+                  Text(
+                    'odpovede',
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      )
+      );
+    },
+  );
+}
 }

@@ -113,7 +113,7 @@ class _ChallengesState extends State<Challenges> {
           child: Container(
             color: Colors.black.withOpacity(0.5),
             alignment: Alignment.center,
-            child: Test(testIndex: testIndex, overlay: toggle, capitolsId: "0", userData: currentUserData),
+            child: Test(testIndex: testIndex, overlay: toggle, capitolsId: widget.capitolsId, userData: currentUserData),
           ),
         ),
       ),
@@ -144,7 +144,7 @@ class _ChallengesState extends State<Challenges> {
                     ),
                     SizedBox(height: 8),
                     LinearProgressIndicator(
-                      value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[0].tests)  / testsLength : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
+                      value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[int.parse(widget.capitolsId)].tests)  / testsLength : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
                       backgroundColor: AppColors.blue.lighter,
                       valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
                       
@@ -168,6 +168,7 @@ class _ChallengesState extends State<Challenges> {
                         color: color as int,
                         userData: currentUserData,
                         onPressed: (int number) => toggleOverlayVisibility(number),
+                        capitolsId: widget.capitolsId,
                       ),
                     );
                   },
@@ -190,11 +191,13 @@ class StarButton extends StatelessWidget {
   final int color;
   final UserData? userData;
   final void Function(int) onPressed;
+  final String capitolsId;
 
   StarButton({
     required this.number,
     required this.onPressed,
     required this.color,
+    required this.capitolsId,
     this.userData,
   });
 
@@ -202,64 +205,67 @@ class StarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showPopupMenu(context);
-      },
-      child: SizedBox(
-        child: userData != null &&
-                !userData!.capitols[0].tests[number].completed
-            ? Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.transparent,
-                    ),
-                  ),
-                  Container(
-                    width: 80.0,
-                    height: 80.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.mono.white, width: 2.0),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(90.0),
-                      child: LinearProgressIndicator(
-                        value: countTrueValues(userData!.capitols[0].tests[number].questions) /
-                            userData!.capitols[0].tests[number].questions.length,
-                        backgroundColor: AppColors.mono.lighterGrey,
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.yellow.light),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          showPopupMenu(context);
+        },
+        child: SizedBox(
+          child: userData != null &&
+                  !userData!.capitols[int.parse(capitolsId)].tests[number].completed
+              ? Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.transparent,
                       ),
                     ),
-                  ),
-                  Container(
-                    width: 70.0,
-                    height: 70.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.mono.white
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.star,
-                        color: AppColors.yellow.light,
-                        size: 40,
+                    Container(
+                      width: 80.0,
+                      height: 80.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.mono.white, width: 2.0),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(90.0),
+                        child: LinearProgressIndicator(
+                          value: countTrueValues(userData!.capitols[int.parse(capitolsId)].tests[number].questions) /
+                              userData!.capitols[int.parse(capitolsId)].tests[number].questions.length,
+                          backgroundColor: AppColors.mono.lighterGrey,
+                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.yellow.light),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            : Image.asset(
-                'star.png',
-                width: 100.0,
-                height: 100.0,
-              ),
-      ),
+                    Container(
+                      width: 70.0,
+                      height: 70.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.mono.white
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.star,
+                          color: AppColors.yellow.light,
+                          size: 40,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Image.asset(
+                  'star.png',
+                  width: 100.0,
+                  height: 100.0,
+                ),
+        ),
+      )
     );
   }
 
@@ -294,20 +300,20 @@ class StarButton extends StatelessWidget {
           child: Column(
             children: [
               Text('týždenná výzva'),
-              Text(userData?.capitols[0].tests[number].name ?? ''),
+              Text(userData?.capitols[int.parse(capitolsId)].tests[number].name ?? ''),
               if (userData != null &&
-                  !userData!.capitols[0].tests[number].completed)
+                  !userData!.capitols[int.parse(capitolsId)].tests[number].completed)
                 reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () {
                   onPressed(number);
                   Navigator.of(context).pop();
                 }),
               if (userData != null &&
-                  userData!.capitols[0].tests[number].completed)
+                  userData!.capitols[int.parse(capitolsId)].tests[number].completed)
                 Column(
                   children: [
                     Text("HOTOVO"),
                     Text(
-                      "${userData!.capitols[0].tests[number].points} / ${userData!.capitols[0].tests[number].questions.length}",
+                      "${userData!.capitols[int.parse(capitolsId)].tests[number].points} / ${userData!.capitols[int.parse(capitolsId)].tests[number].questions.length}",
                     ),
                   ],
                 ),

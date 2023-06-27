@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/fetchUser.dart';
 import 'package:infomentor/screens/Login.dart';
 
 class Profile extends StatefulWidget {
@@ -23,27 +23,27 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> fetchUserData() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
 
-    if (user != null && mounted) {
-      UserData userData = await fetchUser(user.uid);
+      if (user != null && mounted) {
+        UserData userData = await fetchUser(user.uid);
+        setState(() {
+          currentUserData = userData;
+        });
+      } else {
+        setState(() {
+          currentUserData = null;
+        });
+        print('User is not logged in.');
+      }
+    } catch (e) {
       setState(() {
-        currentUserData = userData;
+        currentUserData = null;
       });
-    } else {
-      setState(() {
-        currentUserData = null; // Set currentUserData to null when the user is not logged in
-      });
-      print('User is not logged in.');
+      print('Error fetching user data: $e');
     }
-  } catch (e) {
-    setState(() {
-      currentUserData = null; // Set currentUserData to null on error
-    });
-    print('Error fetching user data: $e');
   }
-}
 
   Future<void> fetchCapitolsData() async {
     try {
@@ -59,8 +59,16 @@ class _ProfileState extends State<Profile> {
 
   @override
   void dispose() {
-    // Cancel any ongoing operations or listeners here
     super.dispose();
+  }
+
+  Future<void> signOutAndReload() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+      (route) => false, // Remove all previous routes from the stack
+    );
   }
 
   @override
@@ -213,7 +221,7 @@ class _ProfileState extends State<Profile> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Diskusne fórun:',
+                                          'Diskusne fórum:',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -292,6 +300,10 @@ class _ProfileState extends State<Profile> {
                   ElevatedButton(
                     onPressed: () {
                     FirebaseAuth.instance.signOut();
+                    setState(() {
+                      fetchUserData();
+                      
+                    });
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => Login()),
