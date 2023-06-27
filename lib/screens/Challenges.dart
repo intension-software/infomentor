@@ -260,7 +260,7 @@ class StarButton extends StatelessWidget {
                   ],
                 )
               : Image.asset(
-                  'star.png',
+                  'assets/star.png',
                   width: 100.0,
                   height: 100.0,
                 ),
