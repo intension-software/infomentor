@@ -14,6 +14,13 @@ class _LearningState extends State<Learning> {
   bool showAll = true;
 
   @override
+  void dispose() {
+    // Cancel timers or stop animations...
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(

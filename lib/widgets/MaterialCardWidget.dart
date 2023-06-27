@@ -56,7 +56,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   @override
   void dispose() {
     // Cancel timers or stop animations...
-
+  
     super.dispose();
   }
 
@@ -72,6 +72,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
         },
         child: Container(
           margin: EdgeInsets.all(12),
+          height: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
