@@ -300,7 +300,7 @@ class _HomeState extends State<Home> {
                   ),
 
 
-                    completedCount == 0 ? Container(
+                    !weeklyBool ? Container(
                       height: 350,
                       width: 700,
                       decoration: BoxDecoration(
