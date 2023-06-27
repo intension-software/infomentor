@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SizedBox(width: 8),
-                  Image.asset('logo.png'),
+                  Image.asset('assets/logo.png'),
                   Spacer(),
                   Text(
                     '${currentUserData!.points} / ${capitolLength ?? 0}',
@@ -313,7 +313,7 @@ class _HomeState extends State<Home> {
                       margin: EdgeInsets.all(16),
                       child: Column(children: [
                         Image.asset(
-                          'badges/badgeArg.png',
+                          'assets/badges/badgeArg.png',
                           width: 200,
                           height: 200,
                         ),
@@ -359,7 +359,7 @@ class _HomeState extends State<Home> {
                             children: [
                               
                               Image.asset(
-                                'badges/badgeArg.png',
+                                'assets/badges/badgeArg.png',
                                 width: 200,
                                 fit: BoxFit.contain,
                               ),
