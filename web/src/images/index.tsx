@@ -1,3 +1,4 @@
+import favicon from "./favicon.png"
 import logo from "./logo.svg"
 import sample from "./sample.png"
 import problemSolving from "./problem-solving.png"
@@ -17,6 +18,7 @@ import logoPOO from "./logo-poo.png"
 import logoSDA from "./logo-sda.png"
 
 export default {
+  favicon,
   logo,
   sample,
   problemSolving,

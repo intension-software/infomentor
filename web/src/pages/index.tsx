@@ -132,4 +132,9 @@ const IndexPage: React.FC<PageProps> = () => {
 
 export default IndexPage
 
-export const Head: HeadFC = () => <title>Infomentor</title>
+export const Head: HeadFC = () => <>
+  <title>Infomentor</title>
+  <link rel="icon" href={images.favicon} />
+  <meta name="description" content="Infomentor je aplikácia, ktorá interaktívnou a zábavnou formou sprevádza stredoškolských študentov pri rozvoji kritického myslenia a mediálnej gramotnosti." />
+</>
+
