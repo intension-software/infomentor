@@ -3,6 +3,7 @@ import { HeadFC, PageProps } from "gatsby"
 import "./index.module.scss"
 
 import images from "../images"
+import { OutboundLink } from "gatsby-plugin-google-gtag"
 
 const year = new Date().getFullYear()
 
@@ -119,9 +120,9 @@ const IndexPage: React.FC<PageProps> = () => {
           <div>
             <p>S podporou</p>
             <div className="images">
-              <a href="https://www.mirri.gov.sk/" target="_blank"><img src={images.logoMirri} alt="Logo MIRRI" /></a>
-              <a href="https://www.planobnovy.sk/" target="_blank"><img src={images.logoPOO} alt="Logo Plán obnovy" /></a>
-              <a href="https://www.sda.sk/" target="_blank"><img src={images.logoSDA} alt="Logo SDA" /></a>
+              <OutboundLink href="https://www.mirri.gov.sk/" target="_blank"><img src={images.logoMirri} alt="Logo MIRRI" /></OutboundLink>
+              <OutboundLink href="https://www.planobnovy.sk/" target="_blank"><img src={images.logoPOO} alt="Logo Plán obnovy" /></OutboundLink>
+              <OutboundLink href="https://www.sda.sk/" target="_blank"><img src={images.logoSDA} alt="Logo SDA" /></OutboundLink>
             </div>
           </div>
         </footer>
@@ -137,4 +138,3 @@ export const Head: HeadFC = () => <>
   <link rel="icon" href={images.favicon} />
   <meta name="description" content="Infomentor je aplikácia, ktorá interaktívnou a zábavnou formou sprevádza stredoškolských študentov pri rozvoji kritického myslenia a mediálnej gramotnosti." />
 </>
-
