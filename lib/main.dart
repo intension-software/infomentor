@@ -5,19 +5,35 @@ import 'package:infomentor/screens/Login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 
 
 
 
 void main() async {
+  await dotenv.load();
+
+  final apiKey = dotenv.env['API_KEY'] ?? '';
+  final authDomain = dotenv.env['AUTH_DOMAIN'] ?? '';
+  final projectId = dotenv.env['PROJECT_ID'] ?? '';
+  final storageBucket = dotenv.env['STORAGE_BUCKET'] ?? '';
+  final messagingSenderId = dotenv.env['MESSAGING_SENDER_ID'] ?? '';
+  final appId = dotenv.env['APP_ID'] ?? '';
+  final measerumentId = dotenv.env['MEASERUMENT_ID'] ?? '';
+
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: FirebaseOptions(
-      apiKey: "AIzaSyCKxORmtJ4yQBMBT87i1tQiw1675VM39II",
-      appId: "1:383337818314:web:a6e8c3e5cd1323fee1ac33",
-      messagingSenderId: "383337818314",
-      projectId: "infomentor-d71f7",
+      apiKey: apiKey,
+      authDomain: authDomain,
+      projectId: projectId,
+      storageBucket: storageBucket,
+      messagingSenderId: messagingSenderId,
+      appId: appId,
+      measurementId: measerumentId
     ),
   );
   
