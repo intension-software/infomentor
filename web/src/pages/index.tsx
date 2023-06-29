@@ -56,7 +56,7 @@ const IndexPage: React.FC<PageProps> = () => {
                 <img className="icon" src={images.forumIcon} alt="Diskusné fórum" />
                 <div>
                   <h3>Diskusné fórum</h3>
-                  <p>Učitelia majú možnosť v rámci triedy založiť diskusiu na aktuálne dianie, kde sa žiaci môžu vyjadriť a precvičiť si tak svoje argumentačné schopnosti.</p>
+                  <p>Učitelia majú možnosť v&nbsp;rámci triedy založiť diskusiu na&nbsp;aktuálne dianie, kde sa žiaci môžu vyjadriť a&nbsp;precvičiť si tak svoje argumentačné schopnosti.</p>
                 </div>
               </div>
               <div>
@@ -64,7 +64,7 @@ const IndexPage: React.FC<PageProps> = () => {
                 <img className="icon" src={images.challengesIcon} alt="Týždenné výzvy" />
                 <div>
                   <h3>Týždenné výzvy</h3>
-                  <p>Pre žiakov sme pripravili testy, ktoré preskúšajú ich kritické myslenie na praktických príkladoch.</p>
+                  <p>Pre&nbsp;žiakov sme pripravili testy, ktoré preskúšajú ich kritické myslenie na&nbsp;praktických príkladoch.</p>
                 </div>
               </div>
               <div>
@@ -72,7 +72,7 @@ const IndexPage: React.FC<PageProps> = () => {
                 <img className="icon" src={images.educationIcon} alt="Vzdelávanie" />
                 <div>
                   <h3>Vzdelávanie</h3>
-                  <p>Učitelia aj žiaci tu môžu nájsť tipy na vzdelávacie podujatia, projekty a materiály, ktoré ich môžu posunúť ďalej.</p>
+                  <p>Učitelia aj žiaci tu môžu nájsť tipy na&nbsp;vzdelávacie podujatia, projekty a&nbsp;materiály, ktoré ich môžu posunúť ďalej.</p>
                 </div>
               </div>
             </div>
@@ -86,7 +86,7 @@ const IndexPage: React.FC<PageProps> = () => {
 
         <section className="text">
           <h2>Ako sa zapojiť?</h2>
-          <p>Obsah týždenných výziev a diskusií je navrhnutý tak, aby sa dal jednoducho implementovať do osnov predmetov ako sú Slovenský jazyk, Dejepis, Etika alebo Občianska náuka. Počas tvorby otázok sme dbali na to, aby sme sa držali v medziach štátneho vzdelávacieho programu. Ak si ako stredná škola prajete Infomentor implementovať do výučbového procesu, kontaktujte nás.</p>
+          <p>Obsah týždenných výziev a&nbsp;diskusií je navrhnutý tak, aby sa dal jednoducho implementovať do&nbsp;osnov predmetov ako sú Slovenský jazyk, Dejepis, Etika alebo Občianska náuka. Počas tvorby otázok sme dbali na&nbsp;to, aby sme sa držali v&nbsp;medziach štátneho vzdelávacieho programu. Ak si ako stredná škola prajete Infomentor implementovať do&nbsp;výučbového procesu, kontaktujte nás.</p>
           <a data-type="button" className="secondary" href="mailto:08majka80@gmail.com">Kontaktujte nás</a>
         </section>
         
@@ -96,7 +96,7 @@ const IndexPage: React.FC<PageProps> = () => {
             <h2>Prečo sa zapojiť?</h2>
             <img src={images.mariannaSzarkova} alt="Marianna Szarková" />
             <div>
-              <p>„Z dlhodobého hľadiska patrí Slovensko pod priemer v krajinách OECD v prieskumoch PISA. Aj z tohto dôvodu sme vyvinuli Infomentor – aplikáciu ktorá interaktívnou a zábavnou formou sprevádza stredoškolských študentov pri rozvojikritického myslenia a mediálnej gramotnosti. Výučba kritického myslenia sa teda vďaka našej aplikácii nemusí vykonávať prostredníctvom nových učebníc, ale jednoducho cez týždenné výzvy zamerané na jednotlivé aspekty mediálnej gramotnosti, ktoré boli pripravené v spolupráci so Slovenskou debatnou asociáciou.“</p>
+              <p>„Z&nbsp;dlhodobého hľadiska patrí Slovensko pod&nbsp;priemer v&nbsp;krajinách OECD v&nbsp;prieskumoch PISA. Aj z&nbsp;tohto dôvodu sme vyvinuli Infomentor - aplikáciu, ktorá interaktívnou a&nbsp;zábavnou formou sprevádza stredoškolských študentov pri&nbsp;rozvoji kritického myslenia a&nbsp;mediálnej gramotnosti. Výučba kritického myslenia sa teda vďaka našej aplikácii nemusí vykonávať prostredníctvom nových učebníc, ale jednoducho cez týždenné výzvy zamerané na&nbsp;jednotlivé aspekty mediálnej gramotnosti, ktoré boli pripravené v&nbsp;spolupráci so Slovenskou debatnou asociáciou.“</p>
               <p className="name">- Marianna Szarková</p>
             </div>
           </div>
