@@ -267,7 +267,7 @@ Widget build(BuildContext context) {
             alignment: Alignment.center,
             child: GestureDetector(
               onTap: () {
-                // Handle the image asset tap here
+                showPopupMenu(context);
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -283,37 +283,63 @@ Widget build(BuildContext context) {
 }
 
   void showPopupMenu(BuildContext context) {
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
-      ),
-      Offset.zero & overlay.size,
-    );
+  final RenderBox button = context.findRenderObject() as RenderBox;
+  final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
 
-     int countTrueValues(List<bool>? boolList) {
-        int count = 0;
-        if (boolList != null) {
-          for (bool value in boolList) {
-            if (value == true) {
-              count++;
-            }
-          }
+  final Offset buttonTopLeft = button.localToGlobal(Offset.zero, ancestor: overlay);
+  final Offset buttonBottomRight = button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay);
+  final double buttonCenterX = (buttonTopLeft.dx + buttonBottomRight.dx) / 2;
+  final double buttonCenterY = (buttonTopLeft.dy + buttonBottomRight.dy) / 2;
+  final Offset buttonCenter = Offset(buttonCenterX, buttonCenterY);
+
+  // Calculate the width of the menu
+  final double menuWidth = MediaQuery.of(context).size.width; // Adjust the width according to your needs
+
+  // Calculate the horizontal offset to center the menu
+  final double offsetX = (button.size.width - menuWidth ) / 2 + 150;
+
+  final RelativeRect position = RelativeRect.fromLTRB(
+    buttonCenter.dx - offsetX,
+    buttonCenter.dy + 40,
+    buttonCenter.dx - offsetX,
+    buttonCenter.dy,
+  );
+
+  int countTrueValues(List<bool>? boolList) {
+    int count = 0;
+    if (boolList != null) {
+      for (bool value in boolList) {
+        if (value == true) {
+          count++;
         }
-        return count;
       }
+    }
+    return count;
+  }
 
-    showMenu<int>(
-      context: context,
-      position: position,
-      items: <PopupMenuEntry<int>>[
-        PopupMenuItem<int>(
+  showMenu<int>(
+  context: context,
+  position: position,
+  shape: const TooltipShape(), // Add the TooltipShape as the shape for the popup menu
+  items: <PopupMenuEntry<int>>[
+    PopupMenuItem<int>(
+      child: Container(
+        width: 300, // Adjust the width as needed
+        decoration: BoxDecoration(
+          color: Color(color), // Use the same color as reButton
+          borderRadius: BorderRadius.circular(8), // Set rounded border radius
+        ),
+        child: Center(
           child: Column(
             children: [
-              Text('týždenná výzva'),
-              Text(userData?.capitols[int.parse(capitolsId)].tests[number].name ?? ''),
+              Text(
+                'týždenná výzva',
+                style: TextStyle(color: Colors.white), // Set text color to white
+              ),
+              Text(
+                userData?.capitols[int.parse(capitolsId)].tests[number].name ?? '',
+                style: TextStyle(color: Colors.white), // Set text color to white
+              ),
               if (userData != null &&
                   !userData!.capitols[int.parse(capitolsId)].tests[number].completed)
                 reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () {
@@ -324,16 +350,78 @@ Widget build(BuildContext context) {
                   userData!.capitols[int.parse(capitolsId)].tests[number].completed)
                 Column(
                   children: [
-                    Text("HOTOVO"),
+                    Text(
+                      "HOTOVO",
+                      style: TextStyle(color: Colors.white), // Set text color to white
+                    ),
                     Text(
                       "${userData!.capitols[int.parse(capitolsId)].tests[number].points} / ${userData!.capitols[int.parse(capitolsId)].tests[number].questions.length}",
+                      style: TextStyle(color: Colors.white), // Set text color to white
                     ),
                   ],
                 ),
             ],
           ),
         ),
-      ],
+      ),
+    ),
+  ],
+);
+}
+}
+
+class TooltipShape extends ShapeBorder {
+  const TooltipShape();
+
+  final BorderSide _side = BorderSide.none;
+  final double _borderRadius = 8.0; // Adjust the radius as needed
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(_side.width);
+
+  @override
+  Path getInnerPath(
+    Rect rect, {
+    TextDirection? textDirection,
+  }) {
+    final Path path = Path();
+
+    path.addRRect(
+      RRect.fromRectAndRadius(rect, Radius.circular(_borderRadius)),
     );
+
+    return path;
   }
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    final Path path = Path();
+    final RRect rrect = RRect.fromRectAndRadius(rect, Radius.circular(_borderRadius));
+
+    final double triangleWidth = 20.0; // Adjust the width of the triangle
+    final double triangleHeight = 10.0; // Adjust the height of the triangle
+
+    final double triangleTopCenterX = rrect.width / 2; // Calculate the X coordinate of the top center of the triangle
+    final double triangleTopCenterY = rrect.top - triangleHeight; // Calculate the Y coordinate of the top center of the triangle
+
+    path.moveTo(triangleTopCenterX, triangleTopCenterY);
+    path.lineTo(triangleTopCenterX - (triangleWidth / 2), triangleTopCenterY + triangleHeight);
+    path.lineTo(triangleTopCenterX + (triangleWidth / 2), triangleTopCenterY + triangleHeight);
+    path.close();
+
+    path.addRRect(rrect);
+
+    return path;
+  }
+
+  
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
+
+  @override
+  ShapeBorder scale(double t) => RoundedRectangleBorder(
+        side: _side.scale(t),
+        borderRadius: BorderRadius.circular(_borderRadius * t),
+      );
 }
