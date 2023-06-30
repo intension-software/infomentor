@@ -135,19 +135,21 @@ class _ChallengesState extends State<Challenges> {
                 decoration: BoxDecoration(color: Theme.of(context).primaryColor),
                 child: Column(
                   children: [
-                   
+                    SizedBox(height: 16),
                     Text(
                       title ?? '',
                       style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
-                    SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[int.parse(widget.capitolsId)].tests)  / testsLength : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
-                      backgroundColor: AppColors.blue.lighter,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
-                      
+                    SizedBox(height: 16),
+                    Container(
+                      height: 10,
+                      child: LinearProgressIndicator(
+                        value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[int.parse(widget.capitolsId)].tests)  / testsLength : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
+                        backgroundColor: AppColors.blue.lighter,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
+                      )
                     ),
                   ],
                 ),
@@ -204,70 +206,81 @@ class StarButton extends StatelessWidget {
  
 
   @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          showPopupMenu(context);
-        },
-        child: SizedBox(
-          child: userData != null &&
-                  !userData!.capitols[int.parse(capitolsId)].tests[number].completed
-              ? Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 60.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.transparent,
+Widget build(BuildContext context) {
+  return SizedBox(
+    child: userData != null &&
+            !userData!.capitols[int.parse(capitolsId)].tests[number].completed
+        ? Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.transparent,
+                ),
+              ),
+              Container(
+                width: 85.0,
+                height: 85.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.mono.white, width: 2.0),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(90.0),
+                  child: LinearProgressIndicator(
+                    value: countTrueValues(userData!.capitols[int.parse(capitolsId)].tests[number].questions) /
+                        userData!.capitols[int.parse(capitolsId)].tests[number].questions.length,
+                    backgroundColor: AppColors.mono.lighterGrey,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.yellow.light),
+                  ),
+                ),
+              ),
+              Container(
+                width: 70.0,
+                height: 70.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.mono.white,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    showPopupMenu(context);
+                  },
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Center(
+                      child: Icon(
+                        Icons.star,
+                        color: AppColors.yellow.light,
+                        size: 40,
                       ),
                     ),
-                    Container(
-                      width: 80.0,
-                      height: 80.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.mono.white, width: 2.0),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(90.0),
-                        child: LinearProgressIndicator(
-                          value: countTrueValues(userData!.capitols[int.parse(capitolsId)].tests[number].questions) /
-                              userData!.capitols[int.parse(capitolsId)].tests[number].questions.length,
-                          backgroundColor: AppColors.mono.lighterGrey,
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.yellow.light),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 70.0,
-                      height: 70.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.mono.white
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.star,
-                          color: AppColors.yellow.light,
-                          size: 40,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Image.asset(
+                  ),
+                ),
+              ),
+            ],
+          )
+        : Align(
+            alignment: Alignment.center,
+            child: GestureDetector(
+              onTap: () {
+                // Handle the image asset tap here
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Image.asset(
                   'assets/star.png',
                   width: 100.0,
                   height: 100.0,
                 ),
-        ),
-      )
-    );
-  }
+              ),
+            ),
+          ),
+  );
+}
 
   void showPopupMenu(BuildContext context) {
     final RenderBox button = context.findRenderObject() as RenderBox;
