@@ -22,6 +22,7 @@ class _DiscussionsState extends State<Discussions> {
   PostsData? _selectedPost;
   OverlayEntry? _overlayEntry;
 
+
   @override
   void initState() {
     super.initState();
@@ -145,7 +146,7 @@ class _DiscussionsState extends State<Discussions> {
                                   Container(
                                     margin: EdgeInsets.only(right: 16.0),
                                     child: CircleAvatar(
-                                      backgroundImage: AssetImage('assets/profile_image.png'),
+                                      backgroundImage: AssetImage('assets/profilePicture.png'),
                                       radius: 24.0,
                                     ),
                                   ),
@@ -247,20 +248,20 @@ class _DiscussionsState extends State<Discussions> {
   }
 
   Stream<List<CommentsData>> fetchCommentsStream(String postId) {
-  StreamController<List<CommentsData>> commentsStreamController = StreamController<List<CommentsData>>();
-
-  FirebaseFirestore.instance
+  return FirebaseFirestore.instance
       .collection('classes')
       .doc(userData!.schoolClass)
-      .get()
-      .then((classSnapshot) {
+      .snapshots()
+      .map((classSnapshot) {
     if (classSnapshot.exists) {
       List<dynamic> posts = classSnapshot.get('posts');
-      Map<String, dynamic> post = posts.firstWhere((item) => item['id'] == postId, orElse: () => {});
+      Map<String, dynamic> post =
+          posts.firstWhere((item) => item['id'] == postId, orElse: () => {});
 
       if (post.isNotEmpty) {
         List<dynamic> comments = post['comments'];
-        List<CommentsData> commentsDataList = comments.map((commentItem) {
+        List<CommentsData> commentsDataList =
+            comments.map((commentItem) {
           return CommentsData(
             date: commentItem['date'],
             like: commentItem['like'],
@@ -269,18 +270,15 @@ class _DiscussionsState extends State<Discussions> {
           );
         }).toList();
 
-        commentsStreamController.add(commentsDataList);
-      } else {
-        commentsStreamController.add([]);
+        return commentsDataList;
       }
-    } else {
-      commentsStreamController.add([]);
     }
-  }).catchError((error) {
-    commentsStreamController.addError(error);
-  });
 
-  return commentsStreamController.stream;
+    return <CommentsData>[]; // Return an empty list if the post or comments don't exist
+  }).handleError((error) {
+    print('Error fetching comments: $error');
+    return <CommentsData>[]; // Return an empty list in case of an error
+  });
 }
 
   @override
