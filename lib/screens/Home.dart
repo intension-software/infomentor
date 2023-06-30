@@ -6,8 +6,10 @@ import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/Colors.dart';
+import 'package:infomentor/widgets/MobileAppBar.dart';
+import 'package:infomentor/widgets/DesktopAppBar.dart';
+import 'package:infomentor/widgets/MobileBottomNavigation.dart';
 
 
 class Home extends StatefulWidget {
@@ -65,15 +67,20 @@ class _HomeState extends State<Home> {
 
 
       setState(() {
-        capitolLength = one.capitolsData!.points + two.capitolsData!.points;
-        weeklyChallenge = capitol!.capitolsData!.weeklyChallenge;
-        weeklyTitle = capitol!.capitolsData!.tests[weeklyChallenge].name;
-        futureWeeklyTitle = capitol!.capitolsData!.tests[weeklyChallenge + 1].name;
-        weeklyBool = currentUserData!.capitols![capitolsId].tests[weeklyChallenge].completed;
-        weeklyCapitolLength = capitol!.capitolsData!.tests.length;
-        completedCount = countTrueTests(currentUserData!.capitols![weeklyChallenge].tests);
-        capitolTitle = capitol!.capitolsData!.name;
-        // capitolTwo = two.capitolsData!.points;
+        if (mounted) {
+          capitolLength = one.capitolsData!.points + two.capitolsData!.points;
+          weeklyChallenge = capitol!.capitolsData!.weeklyChallenge;
+          weeklyTitle = capitol!.capitolsData!.tests[weeklyChallenge].name;
+          futureWeeklyTitle =
+              capitol!.capitolsData!.tests[weeklyChallenge + 1].name;
+          weeklyBool =
+              currentUserData!.capitols![capitolsId].tests[weeklyChallenge]
+                  .completed;
+          weeklyCapitolLength = capitol!.capitolsData!.tests.length;
+          completedCount =
+              countTrueTests(currentUserData!.capitols![weeklyChallenge].tests);
+          capitolTitle = capitol!.capitolsData!.name;
+        }
       });
     } catch (e) {
       print('Error fetching question data: $e');
@@ -100,114 +107,47 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void dispose() {
+    _pageController.dispose(); // Cancel the page controller
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor, // Set the appbar background color
-        elevation: 0,
-        flexibleSpace:  currentUserData != null && capitol != null ? SafeArea(
-              child: Row(
-                
-                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(width: 8),
-                  Image.asset('assets/logo.png'),
-                  Spacer(),
-                  Text(
-                    '${currentUserData!.points} / ${capitolLength ?? 0}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.yellow.light,
-                    ),
-                  ),
-                  SizedBox(width: 4),
-                  Icon(
-                    Icons.star,
-                    color: AppColors.yellow.light, // Use yellow star icon
-                  ),
-                  SizedBox(width: 8),
-                  IconButton(
-                    icon: Icon(
-                      Icons.notifications_outlined,
-                      color: AppColors.mono.white, // Use white bell icon
-                    ),
-                    onPressed: () {
-                      // Handle notification icon press
-                    },
-                  ),
-                  SizedBox(width: 8),
-
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                    onTap: () {
-                      // Open profile overlay
-                      showProfileOverlay();
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(currentUserData!.image), // Use user's image
-                    ),
-                  ),
-                  ),
-                ],
-              ),
-        ) : Container(),
-      ),
-      bottomNavigationBar: reBottomNavigation(
+      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected,),
+      bottomNavigationBar:  MediaQuery.of(context).size.width < 1000 ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
-      ),
+      ) : null,
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: [
           Container(
+            decoration: MediaQuery.of(context).size.width < 1000 ?BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/background.png'), // Replace with your own image path
+                fit: BoxFit.cover,
+              ),
+            ) : null,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ListTile(
-                            title: Text('Argumentácia'),
-                            leading: Radio(
-                              value: 0,
-                              groupValue: capitolsId,
-                              onChanged: (value) {
-                                setState(() {
-                                  capitolsId = value as int;
-                                });
-                              },
-                            ),
-                          ),
-                          ListTile(
-                            title: Text('Manipulácia'),
-                            leading: Radio(
-                              value: 1,
-                              groupValue: capitolsId,
-                              onChanged: (value) {
-                                setState(() {
-                                  capitolsId = value as int;
-                                });
-                              },
-                            ),
-                          ),
-                     
                     Align(
                     alignment: Alignment.center,
                     child: Container(
-                      height: 350,
                       width: 700,
+                      height: 250,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: AppColors.mono.lightGrey,
-                          width: 2,
-                        ),
+                        color: MediaQuery.of(context).size.width < 1000 ?  null : Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       margin: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       child: Center(
                         child: !weeklyBool ? Column(
                           mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
@@ -304,6 +244,7 @@ class _HomeState extends State<Home> {
                       height: 350,
                       width: 700,
                       decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color: AppColors.mono.lightGrey,
@@ -311,31 +252,42 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       margin: EdgeInsets.all(16),
-                      child: Column(children: [
-                        Image.asset(
-                          'assets/badges/badgeArg.png',
-                          width: 200,
-                          height: 200,
-                        ),
-                        Text(
-                          capitolTitle ?? '',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(
-                            color: AppColors.mono.grey
-                          ),
-                        ),
-                        Text(
-                           'Splň týždennú výzvu pre zobrazenie skóre',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium!
-                              .copyWith(
-                            color: AppColors.mono.black,
-                          ),
-                        ),
-                      ],)
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
+                          crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
+                          children: [
+                              Image.asset(
+                                'assets/badges/badgeArg.png',
+                              ),
+                              Text(
+                                capitolTitle ?? '',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                  color: AppColors.mono.grey
+                                ),
+                              ),
+                              Text(
+                                'Splň týždennú výzvu pre',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                  color: AppColors.mono.black,
+                                ),
+                              ),
+                              Text(
+                                'zobrazenie skóre',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                  color: AppColors.mono.black,
+                                ),
+                              ),
+                            ],
+                          )
                     ) :  Container(
                           height: 350,
                           width: 700,
@@ -384,10 +336,34 @@ class _HomeState extends State<Home> {
                                 ),
                             ],
                           ),
-                          ],)
-                          
-                        )
-                    
+                        ],
+                      )
+                    ),
+                    ListTile(
+                            title: Text('Argumentácia'),
+                            leading: Radio(
+                              value: 0,
+                              groupValue: capitolsId,
+                              onChanged: (value) {
+                                setState(() {
+                                  capitolsId = value as int;
+                                });
+                              },
+                            ),
+                          ),
+                          ListTile(
+                            title: Text('Manipulácia'),
+                            leading: Radio(
+                              value: 1,
+                              groupValue: capitolsId,
+                              onChanged: (value) {
+                                setState(() {
+                                  capitolsId = value as int;
+                                });
+                              },
+                            ),
+                          ),
+                     
                   ],
                 ),
               ),
@@ -401,6 +377,16 @@ class _HomeState extends State<Home> {
     );
   }
 
+   void _onNavigationItemSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
   void _onItemTapped(int index) {
     _pageController.animateToPage(
       index,
@@ -414,34 +400,5 @@ class _HomeState extends State<Home> {
       _selectedIndex = index;
     });
   }
-
-void showProfileOverlay() {
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(30), // Set the preferred height of the app bar
-          child: AppBar(
-            backgroundColor: Colors.transparent, // Make the app bar transparent
-            elevation: 0, // Remove the app bar elevation
-            leading: SizedBox(
-              height: 30, // Set the height of the button
-              width: 60, // Set the width of the button
-              child: IconButton(
-                icon: Icon(Icons.arrow_back),
-                color: Colors.grey, // Set the color of the back button to black
-                onPressed: () {
-                  Navigator.of(context).pop(); // Navigate back when the back button is pressed
-                },
-              ),
-            ),
-          ),
-        ),
-        body: Profile(), // Display the Profile widget
-      ),
-    ),
-  );
-}
-
 
 }

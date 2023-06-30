@@ -73,7 +73,7 @@ class _ProfileState extends State<Profile> {
                 child: Column(
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile_image.png'),
+                      backgroundImage: AssetImage('assets/profilePicture.png'),
                       radius: 80,
                     ),
                     SizedBox(height: 16),

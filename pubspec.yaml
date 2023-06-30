@@ -32,15 +32,11 @@ flutter:
     - .env
     - assets/testAnswer.png
     - assets/placeholder.png
-    - assets/profile_image.png
+    - assets/profilePicture.png
     - assets/logo.png
+    - assets/logoFilled.png
+    - assets/background.png
     - assets/star.png
-    - assets/badges/badgeArgActive.png
-    - assets/badges/badgeArg.png
-    - assets/badges/badgeArgDis.png
-    - assets/badges/badgeManActive.png
-    - assets/badges/badgeMan.png
-    - assets/badges/badgeManDis.png
-    - assets/graphs/graph1.png
-    - assets/graphs/graph2.png
-    - assets/graphs/graph3.png
+    - assets/badges/
+    - assets/graphs/
+    - assets/icons/

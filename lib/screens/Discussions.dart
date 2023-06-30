@@ -313,14 +313,13 @@ Widget build(BuildContext context) {
                   Container(
                     margin: EdgeInsets.only(right: 16.0),
                     child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile_image.png'),
+                      backgroundImage: AssetImage('assets/profilePicture.png'),
                       radius: 24.0,
                     ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      
                       Text(
                         post.user,
                         style: TextStyle(

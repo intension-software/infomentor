@@ -110,25 +110,27 @@ class _TestState extends State<Test> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor:Theme.of(context).primaryColor,
+          backgroundColor: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.background,
           elevation: 0,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: AppColors.mono.white,
+              color: MediaQuery.of(context).size.width < 1000 ? AppColors.mono.white : AppColors.mono.black,
             ),
             onPressed: () => widget.overlay()
           ),
         ),
       backgroundColor: lastScreen ? Theme.of(context).primaryColor : AppColors.mono.white,
-      body: !lastScreen ? SingleChildScrollView(
+      body: !lastScreen ? Container(
+        
+        child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch, // Added this line
             children: [
             Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor
-              ),
+                color: MediaQuery.of(context).size.width < 1000 ?  Theme.of(context).primaryColor : null,
+        ),
               child: Column(
                 children: [
                   Padding(
@@ -139,7 +141,7 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineMedium!
                           .copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                 ),
               ),
@@ -162,7 +164,7 @@ class _TestState extends State<Test> {
                           .textTheme
                           .labelSmall!
                           .copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
@@ -174,7 +176,7 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
@@ -186,13 +188,23 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
                 ],
               ),
             ),
+            MediaQuery.of(context).size.width < 1000 ? Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(1000.0),
+                  bottomRight: Radius.circular(1000.0),
+                )
+              ),
+            ) : Container(),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -377,6 +389,7 @@ class _TestState extends State<Test> {
             ),
           ],
         ),
+      )
       ) : Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -439,7 +452,7 @@ class _TestState extends State<Test> {
             ),
           ],
         )
-    );
+      );
   }
 
   int countTrueValues(List<bool>? boolList) {

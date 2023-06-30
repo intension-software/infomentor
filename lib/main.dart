@@ -67,22 +67,22 @@ class MainApp extends StatelessWidget {
         // Define the default `TextTheme`. Use this to specify the default
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
-          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          displayMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          displaySmall: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
+          displayMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+          displaySmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
 
-          titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+          titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
+          titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
 
 
-          headlineLarge: TextStyle(fontSize: 24, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.bold),
-          headlineMedium: TextStyle(fontSize: 20, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.bold),
-          headlineSmall: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.bold),
+          headlineLarge: TextStyle(fontSize: 24, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
+          headlineMedium: TextStyle(fontSize: 20, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
+          headlineSmall: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
 
-          labelLarge: TextStyle(fontSize: 16),
-          labelMedium: TextStyle(fontSize: 14),
-          labelSmall: TextStyle(fontSize: 12),
+          labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+          labelMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
+          labelSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
 
           bodyLarge: TextStyle(fontSize: 16),
           bodyMedium: TextStyle(fontSize: 14),

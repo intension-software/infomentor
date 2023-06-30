@@ -114,46 +114,36 @@ Image reImage(String image, double width, double height) {
   );
 }
 
-class reBottomNavigation extends StatefulWidget {
-  final int selectedIndex;
-  final ValueChanged<int> onItemTapped;
+class reStateIcon extends StatefulWidget {
+  final Function onClick;
+  final String currentImage;
+  final String newImage;
 
-  const reBottomNavigation({
-    Key? key,
-    required this.selectedIndex,
-    required this.onItemTapped,
-  }) : super(key: key);
+  reStateIcon({required this.onClick, required this.currentImage, required this.newImage});
 
   @override
-  _reBottomNavigationState createState() => _reBottomNavigationState();
+  _reStateIconState createState() => _reStateIconState();
 }
 
-class _reBottomNavigationState extends State<reBottomNavigation> {
+class _reStateIconState extends State<reStateIcon> {
+  bool isCurrentImage = true;
+
+  void changeImage() {
+    setState(() {
+      isCurrentImage = !isCurrentImage;
+    });
+    widget.onClick();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Domov',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.star_border_outlined),
-          label: 'Výzva',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.chat_bubble_outline),
-          label: 'Diskusia',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.menu_book_rounded),
-          label: 'Vzdelávanie',
-        ),
-      ],
-      currentIndex: widget.selectedIndex,
-      unselectedItemColor: AppColors.mono.grey,
-      selectedItemColor: Theme.of(context).primaryColor,
-      onTap: widget.onItemTapped,
+    final String currentImage = isCurrentImage ? widget.currentImage : widget.newImage;
+
+    return GestureDetector(
+      onTap: changeImage,
+      child: Image.asset(
+        currentImage,
+      ),
     );
   }
 }
