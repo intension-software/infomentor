@@ -39,7 +39,7 @@ class _MobileBottomNavigationState extends State<MobileBottomNavigation> {
           label: 'Vzdelávanie',
         ),
       ],
-      currentIndex: widget.selectedIndex,
+      currentIndex: widget.selectedIndex != 4 ? widget.selectedIndex : 0,
       unselectedItemColor: AppColors.mono.grey,
       selectedItemColor: Theme.of(context).primaryColor,
       onTap: widget.onItemTapped,

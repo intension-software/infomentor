@@ -41,6 +41,7 @@ class UserData {
   int points;
   List<UserCapitolsData> capitols;
   List<String> materials;
+  List<String> badges;
 
   UserData({
     required this.email,
@@ -52,6 +53,7 @@ class UserData {
     required this.points,
     required this.capitols,
     required this.materials,
+    required this.badges,
   });
 }
 
@@ -86,6 +88,9 @@ Future<UserData> fetchUser(String userId) async {
         List<String> materials =
             List<String>.from(
                 userSnapshot.get('materials') as List<dynamic>? ?? []);
+        List<String> badges =
+            List<String>.from(
+                userSnapshot.get('badges') as List<dynamic>? ?? []);
 
         // Create a UserData instance
         UserData userData = UserData(
@@ -98,6 +103,7 @@ Future<UserData> fetchUser(String userId) async {
           points: points,
           capitols: [],
           materials: materials,
+          badges: badges,
         );
 
         // Iterate over the capitols data

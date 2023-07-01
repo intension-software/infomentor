@@ -18,6 +18,7 @@ class _ProfileState extends State<Profile> {
  UserData? currentUserData;
   int capitolOne = 0;
   bool _isDisposed = false;
+  List<String> badges = [];
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _ProfileState extends State<Profile> {
         if (mounted && !_isDisposed) {
           setState(() {
             currentUserData = userData;
+            badges = currentUserData!.badges;
           });
         }
       } else {
@@ -85,6 +87,7 @@ class _ProfileState extends State<Profile> {
                     padding: EdgeInsets.all(24),
                     width: 900, 
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       SvgPicture.asset('assets/profilePicture.svg', width: 150),
                       SizedBox(height: 16),
@@ -273,29 +276,66 @@ class _ProfileState extends State<Profile> {
                         ],
                       ),
                       SizedBox(height: 24),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        Text(
+                          'Ukončené kapitoly',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                  badges[0],
+                                  width: 100,
+                                  height: 100,
+                                ),
+                                SvgPicture.asset(
+                                  badges[1],
+                                  width: 100,
+                                  height: 100,
+                                ),
+                                SvgPicture.asset(
+                                  badges[2],
+                                  width: 100,
+                                  height: 100,
+                                ),
+                                SvgPicture.asset(
+                                  badges[3],
+                                  width: 100,
+                                  height: 100,
+                                ),
+                                 SvgPicture.asset(
+                                  badges[4],
+                                  width: 100,
+                                  height: 100,
+                                ),SvgPicture.asset(
+                                  badges[5],
+                                  width: 100,
+                                  height: 100,
+                                ),SvgPicture.asset(
+                                  badges[6],
+                                  width: 100,
+                                  height: 100,
+                                ),
+                                ],
+                              ),
+                        ),
+
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: 10.0,
+                        runSpacing: 10.0,
                         children: [
-                          Text(
-                            'Ukončené kapitoly',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            height: 50,
-                            width: double.infinity,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [],
-                            ),
-                          ),
+                         
                         ],
                       ),
                       SizedBox(height: 24),

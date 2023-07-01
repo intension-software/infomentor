@@ -12,11 +12,11 @@ import 'package:infomentor/widgets/MobileAppBar.dart';
 import 'package:infomentor/widgets/DesktopAppBar.dart';
 import 'package:infomentor/widgets/MobileBottomNavigation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:typed_data';
+/* import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:ui' as ui;
-import 'package:xml/xml.dart' as xml;
+import 'package:xml/xml.dart' as xml;*/
 
 
 
