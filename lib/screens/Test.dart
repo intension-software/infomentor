@@ -475,32 +475,8 @@ class _TestState extends State<Test> {
             widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points++;
             widget.userData!.points++;
         }
-        if (widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions.length - 1 == countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions)) {
-          widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
-          switch (int.parse(widget.capitolsId)) {
-            case 0:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeArgActive.svg';
-              break;
-            case 1:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeManActive.svg';
-              break;
-            case 2:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeCritActive.svg';
-              break;
-            case 3:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeDataActive.svg';
-              break;
-            case 4:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeGramActive.svg';
-              break;
-            case 5:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeMediaActive.svg';
-              break;
-            case 6:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeSocialActive.svg';
-              break;
-          }
-      }
+        if (widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions.length - 1 == countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions)) widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
+
         widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex] = true;
         
         _answer = _answer;
@@ -530,6 +506,29 @@ class _TestState extends State<Test> {
       });
       if (areAllCompleted(widget.userData!)) {
         widget.userData!.capitols[int.parse(widget.capitolsId)].completed = true;
+        switch (int.parse(widget.capitolsId)) {
+            case 0:
+              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeArgActive.svg';
+              break;
+            case 1:
+              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeManActive.svg';
+              break;
+            case 2:
+              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeCritActive.svg';
+              break;
+            case 3:
+              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeDataActive.svg';
+              break;
+            case 4:
+              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeGramActive.svg';
+              break;
+            case 5:
+              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeMediaActive.svg';
+              break;
+            case 6:
+              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeSocialActive.svg';
+              break;
+          }
       }
       saveUserDataToFirestore(widget.userData!);
       _showLastScreen();
