@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/screens/Learning.dart';
 import 'package:infomentor/screens/Challenges.dart';
+import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/backend/fetchCapitols.dart';
@@ -10,6 +11,13 @@ import 'package:infomentor/Colors.dart';
 import 'package:infomentor/widgets/MobileAppBar.dart';
 import 'package:infomentor/widgets/DesktopAppBar.dart';
 import 'package:infomentor/widgets/MobileBottomNavigation.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'dart:ui' as ui;
+import 'package:xml/xml.dart' as xml;
+
 
 
 class Home extends StatefulWidget {
@@ -107,6 +115,24 @@ class _HomeState extends State<Home> {
     }
   }
 
+  /* Future<Uint8List> svgToBytes(String svgPath) async {
+  final rawSvg = await rootBundle.loadString(svgPath);
+  final svgRoot = await svg.fromSvgString(rawSvg, rawSvg);
+  final svgPicture = svgRoot.draw();
+  final pictureRecorder = ui.PictureRecorder();
+  final canvas = Canvas(pictureRecorder);
+  svgPicture.draw(canvas, ui.Rect.zero);
+  final picture = pictureRecorder.endRecording();
+  final image = await picture.toImage(
+    svgPicture.viewport.width.toInt(),
+    svgPicture.viewport.height.toInt(),
+  );
+  final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+  return byteData!.buffer.asUint8List();
+}*/
+
+
+
   void dispose() {
     _pageController.dispose(); // Cancel the page controller
     super.dispose();
@@ -126,12 +152,12 @@ class _HomeState extends State<Home> {
         onPageChanged: _onPageChanged,
         children: [
           Container(
-            decoration: MediaQuery.of(context).size.width < 1000 ?BoxDecoration(
+            /* decoration: MediaQuery.of(context).size.width < 1000 ?BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/background.png'), // Replace with your own image path
+                image: MemoryImage(await svgToBytes('assets/background.svg')), // Replace with your own image path
                 fit: BoxFit.cover,
               ),
-            ) : null,
+            ) : null, */
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
@@ -256,8 +282,8 @@ class _HomeState extends State<Home> {
                           mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
                           crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
                           children: [
-                              Image.asset(
-                                'assets/badges/badgeArg.png',
+                              SvgPicture.asset(
+                                'assets/badges/badgeArg.svg',
                               ),
                               Text(
                                 capitolTitle ?? '',
@@ -310,8 +336,8 @@ class _HomeState extends State<Home> {
                               Row(
                             children: [
                               
-                              Image.asset(
-                                'assets/badges/badgeArg.png',
+                              SvgPicture.asset(
+                                'assets/badges/badgeArg.svg',
                                 width: 200,
                                 fit: BoxFit.contain,
                               ),
@@ -372,6 +398,7 @@ class _HomeState extends State<Home> {
           Challenges(capitolsId: capitolsId.toString(), fetch: fetchUserData()),
           Discussions(),
           Learning(),
+          Profile()
         ],
       ),
     );

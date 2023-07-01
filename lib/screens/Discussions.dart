@@ -5,6 +5,8 @@ import 'package:infomentor/backend/fetchUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async'; // Add this import statement
 import 'package:infomentor/Colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 
 
@@ -145,10 +147,7 @@ class _DiscussionsState extends State<Discussions> {
                                 children: [
                                   Container(
                                     margin: EdgeInsets.only(right: 16.0),
-                                    child: CircleAvatar(
-                                      backgroundImage: AssetImage('assets/profilePicture.png'),
-                                      radius: 24.0,
-                                    ),
+                                    child: SvgPicture.asset('assets/profilePicture.svg')
                                   ),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,10 +309,7 @@ Widget build(BuildContext context) {
                 children: [
                   Container(
                     margin: EdgeInsets.only(right: 16.0),
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/profilePicture.png'),
-                      radius: 24.0,
-                    ),
+                    child: SvgPicture.asset('assets/profilePicture.svg'),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

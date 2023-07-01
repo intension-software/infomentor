@@ -4,6 +4,8 @@ import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/screens/Login.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -13,8 +15,9 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  UserData? currentUserData;
+ UserData? currentUserData;
   int capitolOne = 0;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -27,21 +30,27 @@ class _ProfileState extends State<Profile> {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
-      if (user != null && mounted) {
+      if (user != null && mounted && !_isDisposed) {
         UserData userData = await fetchUser(user.uid);
-        setState(() {
-          currentUserData = userData;
-        });
+        if (mounted && !_isDisposed) {
+          setState(() {
+            currentUserData = userData;
+          });
+        }
       } else {
-        setState(() {
-          currentUserData = null; // Set currentUserData to null when the user is not logged in
-        });
+        if (mounted && !_isDisposed) {
+          setState(() {
+            currentUserData = null; // Set currentUserData to null when the user is not logged in
+          });
+        }
         print('User is not logged in.');
       }
     } catch (e) {
-      setState(() {
-        currentUserData = null; // Set currentUserData to null on error
-      });
+      if (mounted && !_isDisposed) {
+        setState(() {
+          currentUserData = null; // Set currentUserData to null on error
+        });
+      }
       print('Error fetching user data: $e');
     }
   }
@@ -50,9 +59,11 @@ class _ProfileState extends State<Profile> {
     try {
       FetchResult one = await fetchCapitols("0");
 
-      setState(() {
-        capitolOne = one.capitolsData!.points;
-      });
+      if (mounted && !_isDisposed) {
+        setState(() {
+          capitolOne = one.capitolsData!.points;
+        });
+      }
     } catch (e) {
       print('Error fetching question data: $e');
     }
@@ -60,7 +71,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   void dispose() {
-    // Cancel any ongoing operations or listeners here
+    _isDisposed = true;
     super.dispose();
   }
 
@@ -75,10 +86,7 @@ class _ProfileState extends State<Profile> {
                     width: 900, 
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage('assets/profilePicture.png'),
-                        radius: 80,
-                      ),
+                      SvgPicture.asset('assets/profilePicture.svg', width: 150),
                       SizedBox(height: 16),
                       Center(
                         child: Column(

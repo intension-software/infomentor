@@ -4,6 +4,7 @@ import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/Colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -42,10 +43,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     SizedBox(width: 4),
-                    Icon(
-                      Icons.star,
-                      color: AppColors.yellow.light, // Use yellow star icon
-                    ),
+                    SvgPicture.asset('assets/icons/starYellowIcon'),
                     SizedBox(width: 8),
                     IconButton(
                       icon: Icon(
@@ -65,9 +63,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                         // Open profile overlay
                         showProfileOverlay(context);
                       },
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(currentUserData!.image), // Use user's image
-                      ),
+                        child: SvgPicture.asset(currentUserData!.image), // Use user's image
                     ),
                     ),
                     SizedBox(width: 16),

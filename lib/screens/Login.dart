@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -56,8 +56,8 @@ class _LoginState extends State<Login> {
     body: Column(
       children: <Widget>[
         SizedBox(height: 30),
-        Image.asset(
-          'assets/logo.png',
+        SvgPicture.asset(
+          'assets/logo.svg',
           width: 200,
         ),
         Expanded(

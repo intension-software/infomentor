@@ -4,7 +4,7 @@ import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/Colors.dart';
-import 'package:infomentor/widgets/ReWidgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final FetchResult? capitol;
@@ -44,15 +44,15 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(width: 20),
-                      Image.asset(
-                        'assets/logoFilled.png',
+                      SvgPicture.asset(
+                        'assets/logoFilled.svg',
                         height: 30,
                       ),
                       SizedBox(width: 20),
-                      buildNavItem(0, "assets/icons/homeIcon.png", "assets/icons/homeFilledIcon.png", "Domov", context),
-                      buildNavItem(1, "assets/icons/starIcon.png", "assets/icons/starWhiteIcon.png", "Výzva", context),
-                      buildNavItem(2, "assets/icons/textBubblesIcon.png", "assets/icons/textBubblesFilledIcon.png", "Diskusia", context),
-                      buildNavItem(3, "assets/icons/bookIcon.png", "assets/icons/bookFilledIcon.png", "Vzdelávanie", context),
+                      buildNavItem(0, "assets/icons/homeIcon.svg", "assets/icons/homeFilledIcon.svg", "Domov", context),
+                      buildNavItem(1, "assets/icons/starIcon.svg", "assets/icons/starWhiteIcon.svg", "Výzva", context),
+                      buildNavItem(2, "assets/icons/textBubblesIcon.svg", "assets/icons/textBubblesFilledIcon.svg", "Diskusia", context),
+                      buildNavItem(3, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Vzdelávanie", context),
                       Spacer(),
                       Text(
                         '${widget.currentUserData!.points}/${widget.capitolLength ?? 0}',
@@ -61,21 +61,19 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                             ),
                       ),
                       SizedBox(width: 8),
-                      Image.asset('assets/icons/starYellowIcon.png'),
+                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                       SizedBox(width: 16),
-                      Image.asset('assets/icons/bellIcon.png'),
+                      SvgPicture.asset('assets/icons/bellIcon.svg'),
                       SizedBox(width: 16),
-                      Image.asset('assets/icons/infoIcon.png'),
+                      SvgPicture.asset('assets/icons/infoIcon.svg'),
                       SizedBox(width: 20),
                       MouseRegion(
                         cursor: SystemMouseCursors.click,
                         child: GestureDetector(
                           onTap: () {
-                            showProfileOverlay(context);
+                            widget.onNavigationItemSelected(4);
                           },
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(widget.currentUserData!.image),
-                          ),
+                          child: SvgPicture.asset(widget.currentUserData!.image),
                         ),
                       ),
                       SizedBox(width: 16),
@@ -109,7 +107,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          isSelected ? Image.asset(filledIcon) : Image.asset(icon),
+          isSelected ? SvgPicture.asset(filledIcon) : SvgPicture.asset(icon),
           SizedBox(width: 8),
           Text(
             text,
@@ -122,34 +120,4 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
     ),
   );
 }
-
-
-
-  void showProfileOverlay(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(30),
-            child: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: SizedBox(
-                height: 30,
-                width: 60,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.grey,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ),
-          body: Profile(),
-        ),
-      ),
-    );
-  }
 }
