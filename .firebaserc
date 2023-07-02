@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "infomentor-311a7"
+    "default": "infomentor-d71f7"
   },
   "targets": {
     "infomentor-311a7": {
@@ -13,7 +13,7 @@
     "infomentor-d71f7": {
       "hosting": {
         "dev": [
-          "dev-infomentor"
+          "infomentor-d71f7"
         ]
       }
     }

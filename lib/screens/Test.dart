@@ -185,7 +185,7 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onBackground : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
@@ -197,7 +197,7 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onBackground : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),

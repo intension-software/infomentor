@@ -7,11 +7,6 @@ import 'package:infomentor/Colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-
-
-
-
 void main() async {
   await dotenv.load();
 
@@ -27,13 +22,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: FirebaseOptions(
-      apiKey: apiKey,
-      authDomain: authDomain,
-      projectId: projectId,
-      storageBucket: storageBucket,
-      messagingSenderId: messagingSenderId,
-      appId: appId,
-      measurementId: measerumentId
+      apiKey: "AIzaSyCKxORmtJ4yQBMBT87i1tQiw1675VM39II",
+  authDomain: "infomentor-d71f7.firebaseapp.com",
+  projectId: "infomentor-d71f7",
+  storageBucket: "infomentor-d71f7.appspot.com",
+  messagingSenderId: "383337818314",
+  appId: "1:383337818314:web:a6e8c3e5cd1323fee1ac33",
+  measurementId: "G-DF2Y7P0QX9"
     ),
   );
   
@@ -51,20 +46,17 @@ class MainApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: AppColors.primary.light,
         colorScheme: ColorScheme.light().copyWith(
-          // SECONDARY
           primaryContainer: AppColors.primary.light,
           onPrimaryContainer: AppColors.mono.white,
           onPrimary: AppColors.mono.white,
           background: AppColors.mono.white,
           onBackground: AppColors.mono.black,
           error: AppColors.red.main,
-          // Add more custom colors as needed
         ),
 
         // Define the default font family.
         fontFamily: GoogleFonts.inter().fontFamily,
 
-        // Define the default `TextTheme`. Use this to specify the default
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
           displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
