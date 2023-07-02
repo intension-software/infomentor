@@ -12,11 +12,6 @@ import 'package:infomentor/widgets/MobileAppBar.dart';
 import 'package:infomentor/widgets/DesktopAppBar.dart';
 import 'package:infomentor/widgets/MobileBottomNavigation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-/* import 'dart:typed_data';
-import 'package:flutter/services.dart';
-import 'dart:convert';
-import 'dart:ui' as ui;
-import 'package:xml/xml.dart' as xml;*/
 
 
 
@@ -141,7 +136,16 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     
-    return Scaffold(
+    return Stack(
+      children: [
+        MediaQuery.of(context).size.width < 1000 ? Positioned.fill(
+          child: SvgPicture.asset(
+            'assets/background.svg',
+            fit: BoxFit.cover,
+          ),
+        ) : Container(),
+      Scaffold(
+        backgroundColor: Colors.transparent,
       appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected,),
       bottomNavigationBar:  MediaQuery.of(context).size.width < 1000 ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
@@ -152,12 +156,6 @@ class _HomeState extends State<Home> {
         onPageChanged: _onPageChanged,
         children: [
           Container(
-            /* decoration: MediaQuery.of(context).size.width < 1000 ?BoxDecoration(
-              image: DecorationImage(
-                image: MemoryImage(await svgToBytes('assets/background.svg')), // Replace with your own image path
-                fit: BoxFit.cover,
-              ),
-            ) : null, */
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
@@ -265,7 +263,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
 
-
+                    SizedBox(height: 24),
                     !weeklyBool ? Container(
                       height: 350,
                       width: 700,
@@ -401,6 +399,8 @@ class _HomeState extends State<Home> {
           Profile()
         ],
       ),
+    )
+    ]
     );
   }
 

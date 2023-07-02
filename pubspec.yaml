@@ -37,7 +37,8 @@ flutter:
     - assets/logo.svg
     - assets/logoFilled.svg
     - assets/background.svg
-    - assets/star.png
+    - assets/lastScreenBackground.svg
+    - assets/star.svg
     - assets/badges/
     - assets/graphs/
     - assets/icons/

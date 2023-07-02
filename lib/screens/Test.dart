@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/Colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 
@@ -108,7 +109,18 @@ class _TestState extends State<Test> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Stack(
+      children: [
+        (MediaQuery.of(context).size.width < 1000 && !lastScreen) ? Positioned.fill(
+          child:  SvgPicture.asset(
+            'assets/background.svg',
+            fit: BoxFit.cover,
+          ),
+        ) : Container(),
+
+        
+      Scaffold(
+        
       appBar: AppBar(
           backgroundColor: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.background,
           elevation: 0,
@@ -120,7 +132,7 @@ class _TestState extends State<Test> {
             onPressed: () => widget.overlay()
           ),
         ),
-      backgroundColor: lastScreen ? Theme.of(context).primaryColor : AppColors.mono.white,
+      backgroundColor: MediaQuery.of(context).size.width < 1000 ? lastScreen ?  Theme.of(context).primaryColor : Colors.transparent : lastScreen ?  Theme.of(context).primaryColor : Theme.of(context).colorScheme.background,
       body: !lastScreen ? Container(
         
         child: SingleChildScrollView(
@@ -128,13 +140,10 @@ class _TestState extends State<Test> {
           crossAxisAlignment: CrossAxisAlignment.stretch, // Added this line
             children: [
             Container(
-              decoration: BoxDecoration(
-                color: MediaQuery.of(context).size.width < 1000 ?  Theme.of(context).primaryColor : null,
-        ),
               child: Column(
                 children: [
                   Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(4),
                 child: Text(
                   title ?? '',
                    style: Theme.of(context)
@@ -149,7 +158,7 @@ class _TestState extends State<Test> {
                   image!.isEmpty
                       ? Container() // Placeholder for empty image field
                       :  Padding(
-                          padding: EdgeInsets.all(8),
+                          padding: EdgeInsets.all(4),
                           child: Image.asset(
                             width: 500,
                             height: 400,
@@ -157,54 +166,45 @@ class _TestState extends State<Test> {
                           ),
                         ),
                 Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(4),
                   child: Text(
                     definition ?? '',
                      style: Theme.of(context)
                           .textTheme
                           .labelSmall!
                           .copyWith(
-                            color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+                            color: Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(4),
                   child: Text(
                     question ?? '',
                     style: Theme.of(context)
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(4),
                   child: Text(
                     subQuestion ?? '',
                      style: Theme.of(context)
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
                 ],
               ),
             ),
-            MediaQuery.of(context).size.width < 1000 ? Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(1000.0),
-                  bottomRight: Radius.circular(1000.0),
-                )
-              ),
-            ) : Container(),
+            SizedBox(height: 100),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -218,7 +218,7 @@ class _TestState extends State<Test> {
                       return Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          border: _answer == index ? Border.all(color: Theme.of(context).colorScheme.error) : Border.all(color: AppColors.mono.lightGrey),
+                          border: _answer == index ? Border.all(color: AppColors.green.main) : Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
                           color: AppColors.green.main,
                         ),
@@ -242,7 +242,7 @@ class _TestState extends State<Test> {
                       return Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          border: _answer == index ? Border.all(color: Theme.of(context).colorScheme.error) : Border.all(color: AppColors.mono.lightGrey),
+                          border: _answer == index ? Border.all(color: AppColors.green.main) : Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
                           color: AppColors.green.main,
                         ),
@@ -262,7 +262,7 @@ class _TestState extends State<Test> {
                     if (answersImage != null && index < answersImage!.length) {
                       String? item = answersImage?[index];
                       return Container(
-                        margin: EdgeInsets.all(8),
+                        margin: EdgeInsets.all(2),
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
@@ -286,7 +286,7 @@ class _TestState extends State<Test> {
                     } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
                       String? item = answers?[(index - (answersImage?.length ?? 0))];
                       return Container(
-                        margin: EdgeInsets.all(8),
+                        margin: EdgeInsets.all(2),
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
@@ -401,11 +401,7 @@ class _TestState extends State<Test> {
               ),
             ),
             SizedBox(height: 20),
-            Icon(
-              Icons.star,
-              size: 50,
-              color: AppColors.yellow.light,
-            ),
+            SvgPicture.asset('assets/star.svg', height: 50,),
             SizedBox(height: 10),
             Text(
               "Super!",
@@ -426,11 +422,7 @@ class _TestState extends State<Test> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.star,
-                  size: 20,
-                  color: AppColors.yellow.light,
-                ),
+                SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                 SizedBox(width: 5),
                 Text(
                   "+${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}",
@@ -452,7 +444,15 @@ class _TestState extends State<Test> {
             ),
           ],
         )
-      );
+      ),
+      lastScreen ? Positioned.fill(
+          child:  SvgPicture.asset(
+            'assets/lastScreenBackground.svg',
+            fit: BoxFit.cover,
+          ),
+         ) : Container(),
+      ]
+    );
   }
 
   int countTrueValues(List<bool>? boolList) {

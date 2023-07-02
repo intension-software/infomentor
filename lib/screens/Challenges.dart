@@ -5,6 +5,8 @@ import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/Colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class Challenges extends StatefulWidget {
   final String capitolsId;
@@ -271,10 +273,10 @@ Widget build(BuildContext context) {
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
-                child: Image.asset(
-                  'assets/star.png',
-                  width: 100.0,
-                  height: 100.0,
+                child: SvgPicture.asset(
+                  'assets/star.svg',
+                  width: 85.0,
+                  height: 85.0,
                 ),
               ),
             ),
