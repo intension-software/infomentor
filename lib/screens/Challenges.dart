@@ -134,7 +134,7 @@ class _ChallengesState extends State<Challenges> {
             FractionallySizedBox(
               widthFactor: 1.0,
               child: Container(
-                decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+                decoration: BoxDecoration(color: Color(color ?? 0)),
                 child: Column(
                   children: [
                     SizedBox(height: 16),
@@ -254,11 +254,7 @@ Widget build(BuildContext context) {
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: Center(
-                      child: Icon(
-                        Icons.star,
-                        color: AppColors.yellow.light,
-                        size: 40,
-                      ),
+                      child: SvgPicture.asset('assets/icons/starYellowIcon.svg', height: 30,)
                     ),
                   ),
                 ),

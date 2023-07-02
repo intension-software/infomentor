@@ -36,24 +36,15 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                     SizedBox(width: 8),
                     Spacer(),
                     Text(
-                      '${currentUserData!.points} / ${capitolLength ?? 0}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.yellow.light,
+                        '${currentUserData!.points}/${capitolLength ?? 0}',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: AppColors.yellow.light,
+                            ),
                       ),
-                    ),
                     SizedBox(width: 4),
-                    SvgPicture.asset('assets/icons/starYellowIcon'),
+                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                     SizedBox(width: 8),
-                    IconButton(
-                      icon: Icon(
-                        Icons.notifications_outlined,
-                        color: AppColors.mono.white, // Use white bell icon
-                      ),
-                      onPressed: () {
-                        // Handle notification icon press
-                      },
-                    ),
+                     SvgPicture.asset('assets/icons/bellWhiteIcon.svg'),
                     SizedBox(width: 8),
 
                     MouseRegion(

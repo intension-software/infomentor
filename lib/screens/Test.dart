@@ -118,6 +118,20 @@ class _TestState extends State<Test> {
           ),
         ) : Container(),
 
+        lastScreen ? Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor
+            ),
+          ),) : Container(),
+
+        lastScreen ? Positioned.fill(
+          child:  SvgPicture.asset(
+            'assets/lastScreenBackground.svg',
+            fit: BoxFit.cover,
+          ),
+         ) : Container(),
+
         
       Scaffold(
         
@@ -132,7 +146,7 @@ class _TestState extends State<Test> {
             onPressed: () => widget.overlay()
           ),
         ),
-      backgroundColor: MediaQuery.of(context).size.width < 1000 ? lastScreen ?  Theme.of(context).primaryColor : Colors.transparent : lastScreen ?  Theme.of(context).primaryColor : Theme.of(context).colorScheme.background,
+      backgroundColor: MediaQuery.of(context).size.width < 1000 ? Colors.transparent : lastScreen ?  Colors.transparent : Theme.of(context).colorScheme.background,
       body: !lastScreen ? Container(
         
         child: SingleChildScrollView(
@@ -401,7 +415,7 @@ class _TestState extends State<Test> {
               ),
             ),
             SizedBox(height: 20),
-            SvgPicture.asset('assets/star.svg', height: 50,),
+            SvgPicture.asset('assets/star.svg', height: 100,),
             SizedBox(height: 10),
             Text(
               "Super!",
@@ -445,12 +459,7 @@ class _TestState extends State<Test> {
           ],
         )
       ),
-      lastScreen ? Positioned.fill(
-          child:  SvgPicture.asset(
-            'assets/lastScreenBackground.svg',
-            fit: BoxFit.cover,
-          ),
-         ) : Container(),
+      
       ]
     );
   }
