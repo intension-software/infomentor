@@ -1,6 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+class UserQuestionsData {
+  String answer;
+  bool completed;
+
+  UserQuestionsData({
+    required this.answer,
+    required this.completed
+  });
+}
+
 class UserCapitolsData {
   String id;
   String name;
@@ -21,7 +31,7 @@ class UserCapitolsTestData {
   String name;
   bool completed;
   int points;
-  List<bool> questions;
+  List<UserQuestionsData> questions;
 
   UserCapitolsTestData({
     required this.name,
@@ -56,7 +66,6 @@ class UserData {
     required this.badges,
   });
 }
-
 
 Future<UserData> fetchUser(String userId) async {
   try {
@@ -130,16 +139,23 @@ Future<UserData> fetchUser(String userId) async {
               List<dynamic>? questions = testData['questions'] as List<dynamic>?;
 
               if (questions != null) {
-                // Create a list to hold the questions completion status
-                List<bool> questionsDataList = [];
+                // Create a list to hold the UserQuestionsData instances
+                List<UserQuestionsData> questionsDataList = [];
 
                 // Iterate over the questions data
                 for (var questionData in questions) {
-                  // Extract the question completion status
-                  bool questionCompleted = questionData as bool? ?? false;
+                  // Extract the question answer and completion status
+                  String questionAnswer = questionData['answer'] as String? ?? '';
+                  bool questionCompleted = questionData['completed'] as bool? ?? false;
 
-                  // Add the question completion status to the list
-                  questionsDataList.add(questionCompleted);
+                  // Create a UserQuestionsData instance
+                  UserQuestionsData question = UserQuestionsData(
+                    answer: questionAnswer,
+                    completed: questionCompleted,
+                  );
+
+                  // Add the UserQuestionsData instance to the list
+                  questionsDataList.add(question);
                 }
 
                 // Create a UserCapitolsTestData instance with the test name, completion status, points, and questions
@@ -147,7 +163,7 @@ Future<UserData> fetchUser(String userId) async {
                   name: testName,
                   completed: testCompleted,
                   points: testPoints,
-                  questions: questionsDataList,
+                  questions: questionsDataList,  // Updated from questionsDataList
                 );
 
                 // Add the UserCapitolsTestData instance to the list

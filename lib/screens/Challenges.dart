@@ -205,7 +205,17 @@ class StarButton extends StatelessWidget {
     this.userData,
   });
 
- 
+ int countTrueValues(List<UserQuestionsData>? questionList) {
+    int count = 0;
+    if (questionList != null) {
+      for (UserQuestionsData question in questionList) {
+        if (question.completed == true) {
+          count++;
+        }
+      }
+    }
+    return count;
+}
 
   @override
 Widget build(BuildContext context) {
@@ -303,17 +313,17 @@ Widget build(BuildContext context) {
     buttonCenter.dy,
   );
 
-  int countTrueValues(List<bool>? boolList) {
+  int countTrueValues(List<UserQuestionsData>? questionList) {
     int count = 0;
-    if (boolList != null) {
-      for (bool value in boolList) {
-        if (value == true) {
+    if (questionList != null) {
+      for (UserQuestionsData question in questionList) {
+        if (question.completed == true) {
           count++;
         }
       }
     }
     return count;
-  }
+}
 
   showMenu<int>(
   context: context,

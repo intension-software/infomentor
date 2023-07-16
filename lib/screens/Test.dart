@@ -28,18 +28,6 @@ class Test extends StatefulWidget {
   State<Test> createState() => _TestState();
 }
 
-int countTrueValues(List<bool>? boolList) {
-    int count = 0;
-    if (boolList != null) {
-      for (bool value in boolList) {
-        if (value == true) {
-          count++;
-        }
-      }
-    }
-    return count;
-  }
-
 class _TestState extends State<Test> {
   int? _answer;
   bool? isCorrect;
@@ -75,6 +63,10 @@ class _TestState extends State<Test> {
         subQuestion = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].subQuestion;
         title = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].title;
         questionsCount = result.capitolsData?.tests[widget.testIndex].points;
+        if (widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].completed == true) {
+            _answer = int.parse(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].answer);
+            pressed = true;
+        }
       });
     } catch (e) {
       print('Error fetching question data: $e');
@@ -143,7 +135,17 @@ class _TestState extends State<Test> {
               Icons.arrow_back,
               color: MediaQuery.of(context).size.width < 1000 ? AppColors.mono.white : AppColors.mono.black,
             ),
-            onPressed: () => widget.overlay()
+            onPressed: () => 
+              questionIndex > 0 ? 
+                setState(() {
+                  questionIndex--;
+                  fetchQuestionData(questionIndex);
+                 })
+
+              : 
+                widget.overlay()
+              
+              
           ),
         ),
       backgroundColor: MediaQuery.of(context).size.width < 1000 ? Colors.transparent : lastScreen ?  Colors.transparent : Theme.of(context).colorScheme.background,
@@ -464,17 +466,17 @@ class _TestState extends State<Test> {
     );
   }
 
-  int countTrueValues(List<bool>? boolList) {
-        int count = 0;
-        if (boolList != null) {
-          for (bool value in boolList) {
-            if (value == true) {
-              count++;
-            }
-          }
+  int countTrueValues(List<UserQuestionsData>? questionList) {
+    int count = 0;
+    if (questionList != null) {
+      for (UserQuestionsData question in questionList) {
+        if (question.completed == true) {
+          count++;
         }
-        return count;
       }
+    }
+    return count;
+}
 
 
   void onAnswerPressed() {
@@ -486,7 +488,8 @@ class _TestState extends State<Test> {
         }
         if (widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions.length - 1 == countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions)) widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
 
-        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex] = true;
+        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].completed = true;
+        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].answer = _answer.toString();
 
         if (areAllCompleted(widget.userData!)) {
         widget.userData!.capitols[int.parse(widget.capitolsId)].completed = true;
@@ -596,7 +599,12 @@ class _TestState extends State<Test> {
                 'name': userCapitolsTestData.name,
                 'completed': userCapitolsTestData.completed,
                 'points': userCapitolsTestData.points,
-                'questions': userCapitolsTestData.questions,
+                'questions': userCapitolsTestData.questions.map((userQuestionsData) {
+                  return {
+                    'answer': userQuestionsData.answer,
+                    'completed': userQuestionsData.completed
+                  };
+                }).toList(),
               };
             }).toList(),
           };
