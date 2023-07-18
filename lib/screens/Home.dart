@@ -206,13 +206,10 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             SizedBox(height: 16), // Add some spacing between the items
-                            reButton(
-                              context,
-                              "ZAČAŤ",
-                              0xff3cad9a,
-                              0xffffffff,
-                              0xffffffff,
-                              () {},
+                            ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'ZAČAŤ', leftIcon: false, rightIcon: false, onTap:
+                              () {
+                                  _onNavigationItemSelected(1);
+                              },
                             ),
                           ],
                         ) : Column(
@@ -323,41 +320,57 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                           margin: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16),
                           child: Column(children: [
-                            Text(
-                                  capitolTitle ?? '',
-                                  style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium!
-                                      ,
-                                ),
+                            
                               Row(
                             children: [
-                              
                               SvgPicture.asset(
                                 'assets/badges/badgeArg.svg',
-                                width: 200,
+                                width: 80,
                                 fit: BoxFit.contain,
                               ),
                               SizedBox(width: 10),
-                              Expanded(
-                                child:  Container(
-                                  height: 20,
-                                  child: LinearProgressIndicator(
-                                    value: (weeklyCapitolLength != 0) ? completedCount / weeklyCapitolLength : 0.0,
-                                    backgroundColor: AppColors.blue.lighter,
-                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
-                                  ),
-                              ),
-                              
-                              ),
-                              Text(
-                                  "${completedCount} / ${ weeklyCapitolLength} Hotových",
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                  capitolTitle ?? '',
                                   style: Theme.of(context)
                                         .textTheme
-                                        .labelMedium!
-                                      ,
+                                        .headlineSmall!.copyWith(
+                                          color: AppColors.mono.darkGrey,
+                                        ),
                                 ),
+                                SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                  Container(
+                                    width:  MediaQuery.of(context).size.width < 630 ? 80 : 300,
+                                    height: 20,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: LinearProgressIndicator(
+                                        value: (weeklyCapitolLength != 0) ? completedCount / weeklyCapitolLength : 0.0,
+                                        backgroundColor: AppColors.blue.lighter,
+                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
+                                      ),
+                                    )
+                                  ),
+                                  SizedBox(width: MediaQuery.of(context).size.width < 630 ? 5 : 10),
+                                  Text(
+                                    "${completedCount}/${weeklyCapitolLength} výziev hotových",
+                                    style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall!
+                                          .copyWith(
+                                                  color: AppColors.mono.grey,
+                                              ),
+                                  ),
+                                  ]
+                                ,)
+                                ],
+                              ),
                             ],
                           ),
                         ],

@@ -282,7 +282,8 @@ class _DiscussionsState extends State<Discussions> {
 
   @override
 Widget build(BuildContext context) {
-  return ListView.builder(
+  return Container( 
+    child: ListView.builder(
     itemCount: _posts.length,
     itemBuilder: (context, index) {
       PostsData post = _posts[index];
@@ -350,6 +351,7 @@ Widget build(BuildContext context) {
       )
       );
     },
+  )
   );
 }
 }

@@ -64,46 +64,91 @@ Container reTextField(
           : TextInputType.emailAddress,
     ),
   );
-
-
 }
 
+class ReButton extends StatefulWidget {
+  final String? text;
+  final Color? defaultColor;
+  final Color? hoverColor;
+  final Color? focusedColor;
+  final Color? disabledColor;
+  final Color? activeColor;
+  final Color? textColor;
+  final Color? backgroundColor;
+  final Color? iconColor;
+  final Function? onTap;
+  final bool leftIcon;
+  final bool rightIcon;
+  final bool isDisabled;
 
+  ReButton({
+    this.text = '',
+    this.defaultColor = Colors.green,
+    this.hoverColor = Colors.green,
+    this.focusedColor = Colors.green,
+    this.disabledColor = Colors.grey,
+    this.activeColor = Colors.green,
+    this.textColor = Colors.white,
+    this.backgroundColor = Colors.green,
+    this.iconColor = Colors.white,
+    this.onTap,
+    this.leftIcon = false,
+    this.rightIcon = false,
+    this.isDisabled = false,
+  });
 
+  @override
+  _ReButtonState createState() => _ReButtonState();
+}
 
-Container reButton(BuildContext context, String text, int color, int pressColor, int textColor, dynamic onTap) {
-  return Container(
+class _ReButtonState extends State<ReButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
       width: 200,
       height: 50,
-      decoration: BoxDecoration(
-        color: Color(color),
-        borderRadius: BorderRadius.circular(90),
-      ),
       child: ElevatedButton(
-        onPressed: () => onTap()
-        ,
-        child: Center(
-          child: Text(
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
+        onPressed: widget.isDisabled ? null : () => widget.onTap!(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (widget.leftIcon) Icon(Icons.close, color: widget.iconColor), // Replace with your desired icon
+            Text(
+              widget.text!,
+              style: TextStyle(
+                color: widget.textColor!,
+              ),
+              textAlign: TextAlign.center,
             ),
-            text,
-            textAlign: TextAlign.center,
-            selectionColor: Color(textColor),
-          ),
+            if (widget.rightIcon) Icon(Icons.arrow_forward, color: widget.iconColor), // Replace with your desired icon
+          ],
         ),
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.pressed)) {
-              return Color(pressColor);
+            if (states.contains(MaterialState.disabled)) {
+              return widget.disabledColor!;
+            } else if (states.contains(MaterialState.pressed)) {
+              return widget.activeColor!;
+            } else if (states.contains(MaterialState.hovered)) {
+              return widget.hoverColor!;
+            } else {
+              return widget.defaultColor!;
             }
-            return Color(color);
           }),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)))
-        )
-      )
+          side: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.pressed)) {
+              return BorderSide(color: widget.focusedColor!, width: 2);
+            } else {
+              return BorderSide.none;
+            }
+          }),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+        ),
+      ),
     );
+  }
 }
+
 
 Image reImage(String image, double width, double height) {
   return Image.asset(

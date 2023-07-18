@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:infomentor/screens/Test.dart';
-import 'package:infomentor/widgets/ReWidgets.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:infomentor/Colors.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/screens/Test.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:infomentor/Colors.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 
 class Challenges extends StatefulWidget {
   final String capitolsId;
@@ -52,7 +52,7 @@ class _ChallengesState extends State<Challenges> {
     }
   }
 
-   int countTrueTests(List<UserCapitolsTestData>? boolList) {
+  int countTrueTests(List<UserCapitolsTestData>? boolList) {
     int count = 0;
     if (boolList != null) {
       for (UserCapitolsTestData testData in boolList) {
@@ -68,7 +68,6 @@ class _ChallengesState extends State<Challenges> {
     refreshData();
     overlayEntry.remove();
     isOverlayVisible = false;
-    
   }
 
   Future<void> fetchUserData() async {
@@ -125,59 +124,83 @@ class _ChallengesState extends State<Challenges> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: 
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(color: Theme.of(context).colorScheme.background),
-          child: Column(
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.background),
+        child: Column(
           children: [
             FractionallySizedBox(
               widthFactor: 1.0,
               child: Container(
-                decoration: BoxDecoration(color: Color(color ?? 0)),
+                decoration: BoxDecoration(color: Theme.of(context).primaryColor),
                 child: Column(
                   children: [
                     SizedBox(height: 16),
                     Text(
                       title ?? '',
                       style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                     ),
                     SizedBox(height: 16),
                     Container(
                       height: 10,
                       child: LinearProgressIndicator(
-                        value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[int.parse(widget.capitolsId)].tests)  / testsLength : 0, /*+ capitolTwo*/ // Assuming the maximum points is 34
+                        value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[int.parse(widget.capitolsId)].tests) / testsLength : 0,
                         backgroundColor: AppColors.blue.lighter,
                         valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
-                      )
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
             Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                  child: ListView.builder(
-                  reverse: true,
-                  itemCount: testsLength ?? 0,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: StarButton(
-                        number: index,
-                        color: color as int,
-                        userData: currentUserData,
-                        onPressed: (int number) => toggleOverlayVisibility(number),
-                        capitolsId: widget.capitolsId,
-                      ),
-                    );
-                  },
-                ),
-                )
+              child: ListView.builder(
+                reverse: true,
+                itemCount: testsLength,
+                itemBuilder: (BuildContext context, int index) {
+                  
+
+                  
+
+                  EdgeInsets padding = EdgeInsets.only(
+                    left: index % 2 == 0 || index == 0 ? 0.0 : 90.0,
+                    right: index % 2 == 0 || index == 0  ? 90.0 : 0.0,
+                  );
+                  return Column(
+                    children: [
+                    index == testsLength ? SizedBox(height: 100,) : Container(),
+                    Container(
+                    padding: padding,
+                    height: 116,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned.fill(
+                          child: OverflowBox(
+                            maxHeight: double.infinity,
+                            child: index % 2 == 0 || index == 0
+                                ? !currentUserData!.capitols[int.parse(widget.capitolsId)].tests[index].completed ? SvgPicture.asset('assets/roadmap/leftRoad.svg') : SvgPicture.asset('assets/roadmap/leftRoadFilled.svg')
+                                : !currentUserData!.capitols[int.parse(widget.capitolsId)].tests[index].completed ? SvgPicture.asset('assets/roadmap/rightRoad.svg') : SvgPicture.asset('assets/roadmap/rightRoadFilled.svg'),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 30, right: index % 2 == 0 ? 10 : 0, left: index % 2 == 0 ? 0 : 10,),
+                          child: StarButton(
+                            number: index,
+                            color: color as int,
+                            userData: currentUserData,
+                            onPressed: (int number) => toggleOverlayVisibility(number),
+                            capitolsId: widget.capitolsId,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                  ]
+                  );
+                },
               ),
             ),
           ],
@@ -187,9 +210,6 @@ class _ChallengesState extends State<Challenges> {
   }
 }
 
-
-
- 
 class StarButton extends StatelessWidget {
   final int number;
   final int color;
@@ -223,7 +243,7 @@ Widget build(BuildContext context) {
     child: userData != null &&
             !userData!.capitols[int.parse(capitolsId)].tests[number].completed
         ? Stack(
-            alignment: Alignment.center,
+          alignment: Alignment.center,
             children: [
               Container(
                 width: double.infinity,
@@ -264,7 +284,7 @@ Widget build(BuildContext context) {
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: Center(
-                      child: SvgPicture.asset('assets/icons/starYellowIcon.svg', height: 30,)
+                      child: countTrueValues(userData!.capitols[int.parse(capitolsId)].tests[number].questions) > 0 ? SvgPicture.asset('assets/icons/starYellowIcon.svg', height: 30,) : SvgPicture.asset('assets/icons/starGreyIcon.svg', height: 30,),
                     ),
                   ),
                 ),
@@ -290,6 +310,8 @@ Widget build(BuildContext context) {
   );
 }
 
+
+
   void showPopupMenu(BuildContext context) {
   final RenderBox button = context.findRenderObject() as RenderBox;
   final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
@@ -304,7 +326,7 @@ Widget build(BuildContext context) {
   final double menuWidth = MediaQuery.of(context).size.width; // Adjust the width according to your needs
 
   // Calculate the horizontal offset to center the menu
-  final double offsetX = (button.size.width - menuWidth ) / 2 + 150;
+  final double offsetX = (button.size.width - menuWidth ) / 2 + 190;
 
   final RelativeRect position = RelativeRect.fromLTRB(
     buttonCenter.dx - offsetX,
@@ -332,30 +354,35 @@ Widget build(BuildContext context) {
   items: <PopupMenuEntry<int>>[
     PopupMenuItem<int>(
       child: Container(
-        width: 300, // Adjust the width as needed
+        padding: EdgeInsets.only(top: 16, bottom: 16, right: 10, left: 10),
         decoration: BoxDecoration(
-          color: Color(color), // Use the same color as reButton
+          color: Color(color), // Use the same color as ReButton
           borderRadius: BorderRadius.circular(8), // Set rounded border radius
         ),
         child: Center(
           child: Column(
+
             children: [
               Text(
                 'týždenná výzva',
-                style: TextStyle(color: Colors.white), // Set text color to white
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                 color: Theme.of(context).colorScheme.onPrimary,
+                  ),
               ),
               Text(
                 userData?.capitols[int.parse(capitolsId)].tests[number].name ?? '',
-                style: TextStyle(color: Colors.white), // Set text color to white
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                    ), // Set text color to white
               ),
               if (userData != null &&
                   !userData!.capitols[int.parse(capitolsId)].tests[number].completed)
-                reButton(context, "ZAČAŤ", color, 0xffffffff, 0xffffffff, () {
+                ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'ZAČAŤ', leftIcon: false, rightIcon: false, onTap: () {
                   onPressed(number);
                   Navigator.of(context).pop();
                 }),
               if (userData != null &&
-                  userData!.capitols[int.parse(capitolsId)].tests[number].completed)
+                  userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)
                 Column(
                   children: [
                     Text(
@@ -366,8 +393,18 @@ Widget build(BuildContext context) {
                       "${userData!.capitols[int.parse(capitolsId)].tests[number].points} / ${userData!.capitols[int.parse(capitolsId)].tests[number].questions.length}",
                       style: TextStyle(color: Colors.white), // Set text color to white
                     ),
+                    ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'PREZRIEŤ', leftIcon: false, rightIcon: false, onTap: () {
+                  onPressed(number);
+                  Navigator.of(context).pop();
+                }),
                   ],
                 ),
+              if (userData != null &&
+                  userData!.capitols[int.parse(capitolsId)].tests[number].completed &&  userData!.capitols[int.parse(capitolsId)].completed)
+                ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text:  'PREZRIEŤ', leftIcon: false, rightIcon: false, onTap: () {
+                  onPressed(number);
+                  Navigator.of(context).pop();
+                }),
             ],
           ),
         ),
@@ -433,3 +470,4 @@ class TooltipShape extends ShapeBorder {
         borderRadius: BorderRadius.circular(_borderRadius * t),
       );
 }
+

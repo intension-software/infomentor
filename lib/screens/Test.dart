@@ -42,7 +42,7 @@ class _TestState extends State<Test> {
   String? question;
   String? subQuestion;
   String? title;
-  int? questionsCount;
+  int? questionsPoint;
   bool _disposed = false;
   bool pressed = false;
 
@@ -62,7 +62,7 @@ class _TestState extends State<Test> {
         question = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].question;
         subQuestion = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].subQuestion;
         title = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].title;
-        questionsCount = result.capitolsData?.tests[widget.testIndex].points;
+        questionsPoint = result.capitolsData?.tests[widget.testIndex].points;
         if (widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].completed == true) {
             _answer = int.parse(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].answer);
             pressed = true;
@@ -76,7 +76,13 @@ class _TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-    questionIndex = countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions);
+    if (countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions) == widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions.length) {
+      questionIndex = 0;
+    } else {
+      questionIndex = countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions);
+    }
+
+    
     fetchQuestionData(questionIndex);
   }
 
@@ -103,12 +109,6 @@ class _TestState extends State<Test> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        (MediaQuery.of(context).size.width < 1000 && !lastScreen) ? Positioned.fill(
-          child:  SvgPicture.asset(
-            'assets/background.svg',
-            fit: BoxFit.cover,
-          ),
-        ) : Container(),
 
         lastScreen ? Positioned.fill(
           child: Container(
@@ -126,39 +126,62 @@ class _TestState extends State<Test> {
 
         
       Scaffold(
-        
       appBar: AppBar(
-          backgroundColor: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.background,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: MediaQuery.of(context).size.width < 1000 ? AppColors.mono.white : AppColors.mono.black,
+  backgroundColor: MediaQuery.of(context).size.width  < 1000 || lastScreen
+    ? Theme.of(context).primaryColor
+    : Theme.of(context).colorScheme.background,
+  elevation: 0,
+  flexibleSpace: Container(
+    height: 120,  // adjust this to make the AppBar taller
+    child: !lastScreen ? Column(
+      mainAxisAlignment: MainAxisAlignment.center,  // this centers the Row vertically
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            questionsPoint ?? 0,
+            (index) => Container(
+              margin: EdgeInsets.symmetric(horizontal: 2.0),
+              width: 30,
+              height: 10,
+              decoration: BoxDecoration(
+                color: questionIndex >= index ? AppColors.green.main : AppColors.mono.lightGrey,
+                borderRadius: BorderRadius.circular(5),
+              ),
             ),
-            onPressed: () => 
-              questionIndex > 0 ? 
-                setState(() {
-                  questionIndex--;
-                  fetchQuestionData(questionIndex);
-                 })
-
-              : 
-                widget.overlay()
-              
-              
           ),
         ),
-      backgroundColor: MediaQuery.of(context).size.width < 1000 ? Colors.transparent : lastScreen ?  Colors.transparent : Theme.of(context).colorScheme.background,
+      ],
+    ) : null,
+  ),
+  leading: IconButton(
+    icon: Icon(
+      Icons.arrow_back,
+      color: MediaQuery.of(context).size.width < 1000 || lastScreen ? AppColors.mono.white : AppColors.mono.black,
+    ),
+    onPressed: () => 
+      questionIndex > 0 ? 
+        setState(() {
+          questionIndex--;
+          fetchQuestionData(questionIndex);
+        })
+      : widget.overlay(),
+  ),
+),
+
+      backgroundColor: MediaQuery.of(context).size.width < 1000 ? lastScreen ? Colors.transparent : Theme.of(context).colorScheme.background : lastScreen ?  Colors.transparent : Theme.of(context).colorScheme.background,
       body: !lastScreen ? Container(
         
         child: SingleChildScrollView(
-        child: Column(
+        child: Center(child: Container( width: 800,child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch, // Added this line
             children: [
             Container(
+              decoration: BoxDecoration(color: MediaQuery.of(context).size.width < 1000 ? Theme.of(context).primaryColor : Colors.transparent),
               child: Column(
                 children: [
-                  Padding(
+                  Container(
+                    margin: EdgeInsets.all(8),
                 padding: EdgeInsets.all(4),
                 child: Text(
                   title ?? '',
@@ -181,19 +204,26 @@ class _TestState extends State<Test> {
                             image!,
                           ),
                         ),
-                Padding(
+                definition != '' ? Container(
+                  margin: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.green.light),
+                    color: Theme.of(context).colorScheme.background
+                    ),
                   padding: EdgeInsets.all(4),
                   child: Text(
                     definition ?? '',
                      style: Theme.of(context)
                           .textTheme
-                          .labelSmall!
+                          .bodyMedium!
                           .copyWith(
                             color: Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
-                ),
-                Padding(
+                ) : Container(),
+                Container(
+                  margin: EdgeInsets.all(8),
                   padding: EdgeInsets.all(4),
                   child: Text(
                     question ?? '',
@@ -201,11 +231,12 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onBackground : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
-                Padding(
+                Container(
+                  margin: EdgeInsets.all(8),
                   padding: EdgeInsets.all(4),
                   child: Text(
                     subQuestion ?? '',
@@ -213,14 +244,14 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onBackground : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
                 ],
               ),
             ),
-            SizedBox(height: 100),
+            MediaQuery.of(context).size.width < 1000 && !lastScreen ? SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.fill, height: 70,) : Container(),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -278,7 +309,7 @@ class _TestState extends State<Test> {
                     if (answersImage != null && index < answersImage!.length) {
                       String? item = answersImage?[index];
                       return Container(
-                        margin: EdgeInsets.all(2),
+                        margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
@@ -302,7 +333,7 @@ class _TestState extends State<Test> {
                     } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
                       String? item = answers?[(index - (answersImage?.length ?? 0))];
                       return Container(
-                        margin: EdgeInsets.all(2),
+                        margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.mono.lightGrey),
                           borderRadius: BorderRadius.circular(10),
@@ -385,26 +416,23 @@ class _TestState extends State<Test> {
             ),
             SizedBox(height: 20),
 
-            if (pressed) Text(explanation ?? ""),
+            if (pressed) Container(margin: EdgeInsets.all(8) ,child: Text(explanation ?? "", style: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),)),
             SizedBox(height: 20),
 
-            pressed ? reButton(
-              context,
-              'ĎALEJ',
-              0xff3cad9a,
-              0xffffffff,
-              0xffffffff,
+            pressed ? ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'ĎALEJ', leftIcon: false, rightIcon: false,onTap:
               onNextButtonPressed,
-            ) : reButton(
-              context,
-              'HOTOVO',
-              0xff3cad9a,
-              0xffffffff,
-              0xffffffff,
+            ) : ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'HOTOVO', leftIcon: false, rightIcon: false, onTap:
               onAnswerPressed,
             ),
           ],
         ),
+        )
+        )
       )
       ) : Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -420,7 +448,7 @@ class _TestState extends State<Test> {
             SvgPicture.asset('assets/star.svg', height: 100,),
             SizedBox(height: 10),
             Text(
-              "Super!",
+              countTrueValues(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions) != widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions.length ? "Super!" : 'Mali ste',
               style: TextStyle(
                 color: AppColors.mono.white,
                 fontSize: 24,
@@ -428,7 +456,7 @@ class _TestState extends State<Test> {
             ),
             SizedBox(height: 10),
             Text(
-              "${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}/${questionsCount} správnych odpovedí",
+              "${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}/${questionsPoint} správnych odpovedí",
               style: TextStyle(
                 color: AppColors.mono.white,
                 fontSize: 20,
@@ -450,12 +478,7 @@ class _TestState extends State<Test> {
               ],
             ),
             SizedBox(height: 20),
-            reButton(
-              context,
-              'ZAVRIEŤ',
-              0xff3cad9a,
-              0xffffffff,
-              0xffffffff,
+            ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'ZAVRIEŤ', leftIcon: false, rightIcon: false, onTap:
               () => widget.overlay(),
             ),
           ],
@@ -527,7 +550,7 @@ class _TestState extends State<Test> {
   }
 
   void onNextButtonPressed() {
-    if (questionIndex + 1 < (questionsCount ?? 0)) {
+    if (questionIndex + 1 < (questionsPoint ?? 0)) {
       setState(() {
         questionIndex++;
         pressed = false;

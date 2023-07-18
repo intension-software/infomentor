@@ -23,8 +23,10 @@ class _LearningState extends State<Learning> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
+      body: Center( 
+        child: Container(
+        alignment: Alignment.center,
+        width: 1300,
         child: Column(
           children: [
             ToggleButtons(
@@ -125,6 +127,7 @@ class _LearningState extends State<Learning> {
           ],
         ),
       ),
+    )
     );
   }
 

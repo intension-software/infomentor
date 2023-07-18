@@ -42,3 +42,6 @@ flutter:
     - assets/badges/
     - assets/graphs/
     - assets/icons/
+    - assets/tutorial/
+    - assets/roadmap/
+    - assets/bottomBackground.svg

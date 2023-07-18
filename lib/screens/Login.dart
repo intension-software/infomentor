@@ -134,12 +134,7 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
-        reButton(
-          context,
-          "PRIHLÁSIŤ SA",
-          0xff3cad9a,
-          0xffffffff,
-          0xffffffff,
+        ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'PRIHLÁSIŤ', leftIcon: false, rightIcon: false, onTap:
           handleLogin,
         ),
         SizedBox(height: 30),
