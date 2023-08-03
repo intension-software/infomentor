@@ -34,6 +34,7 @@ class ClassData {
   String school;
   List<String> students;
   String teacher;
+  List<String> materials;
 
   ClassData({
     required this.name,
@@ -41,10 +42,11 @@ class ClassData {
     required this.school,
     required this.students,
     required this.teacher,
+    required this.materials,
   });
 }
 
-Future<List<ClassData>> fetchClasses(String classId) async {
+Future<ClassData> fetchClass(String classId) async {
   try {
     // Reference to the class document in Firestore
     DocumentReference classRef =
@@ -54,51 +56,45 @@ Future<List<ClassData>> fetchClasses(String classId) async {
     DocumentSnapshot classSnapshot = await classRef.get();
 
     if (classSnapshot.exists) {
-      // Extract the classes field from the class document
+      // Extract the data from the class document
       final data = classSnapshot.data() as Map<String, dynamic>?;
 
       if (data != null) {
+        final posts = data['posts'] as List<dynamic>; 
 
-        if (data.containsKey('posts')) { // Update field name to "posts"
-          final posts = data['posts'] as List<dynamic>; // Update field name to "posts"
+        // Create ClassData instance from the data
+        List<PostsData> postsDataList = posts.map((postItem) {
+          List<Map<String, dynamic>> comments =
+              List<Map<String, dynamic>>.from(
+                  postItem['comments'] as List<dynamic>? ?? []);
 
-          // Create ClassData instances from the posts data
-          List<ClassData> classDataList = posts.map((postItem) {
-            List<Map<String, dynamic>> comments =
-                List<Map<String, dynamic>>.from(
-                    postItem['comments'] as List<dynamic>? ?? []);
-
-            // Create CommentsData instances from the comments data
-            List<CommentsData> commentsDataList = comments.map((commentItem) {
-              return CommentsData(
-                date: commentItem['date'] as Timestamp? ?? Timestamp.now(),
-                like: commentItem['like'] as bool? ?? false,
-                user: commentItem['user'] as String? ?? '',
-                value: commentItem['value'] as String? ?? '',
-              );
-            }).toList();
-
-            return ClassData(
-              name: postItem['name'] as String? ?? '', // Update field name to "name"
-              school: postItem['school'] as String? ?? '', // Update field name to "school"
-              students: List<String>.from(postItem['students'] as List<dynamic>? ?? []),
-              teacher: postItem['teacher'] as String? ?? '',
-              posts: [
-                PostsData(
-                  comments: commentsDataList,
-                  date: postItem['date'] as Timestamp? ?? Timestamp.now(),
-                  id: postItem['id'] as String? ?? '',
-                  user: postItem['user'] as String? ?? '',
-                  value: postItem['value'] as String? ?? '',
-                ),
-              ],
+          // Create CommentsData instances from the comments data
+          List<CommentsData> commentsDataList = comments.map((commentItem) {
+            return CommentsData(
+              date: commentItem['date'] as Timestamp? ?? Timestamp.now(),
+              like: commentItem['like'] as bool? ?? false,
+              user: commentItem['user'] as String? ?? '',
+              value: commentItem['value'] as String? ?? '',
             );
           }).toList();
 
-          return classDataList;
-        } else {
-          throw Exception('Field "posts" does not exist in the class document.'); // Update field name to "posts"
-        }
+          return PostsData(
+            comments: commentsDataList,
+            date: postItem['date'] as Timestamp? ?? Timestamp.now(),
+            id: postItem['id'] as String? ?? '',
+            user: postItem['user'] as String? ?? '',
+            value: postItem['value'] as String? ?? '',
+          );
+        }).toList();
+
+        return ClassData(
+          name: data['name'] as String? ?? '',
+          school: data['school'] as String? ?? '',
+          students: List<String>.from(data['students'] as List<dynamic>? ?? []),
+          teacher: data['teacher'] as String? ?? '',
+          posts: postsDataList,
+          materials: List<String>.from(data['materials'] as List<dynamic>? ?? [])
+        );
       } else {
         throw Exception('Retrieved document data is null.');
       }
@@ -110,6 +106,7 @@ Future<List<ClassData>> fetchClasses(String classId) async {
     throw Exception('Failed to fetch classes');
   }
 }
+
 
 
 

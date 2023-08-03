@@ -5,12 +5,16 @@ import 'package:infomentor/backend/fetchUser.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:infomentor/widgets/DropDown.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final FetchResult? capitol;
   final UserData? currentUserData;
   final int? capitolLength;
   final Function(int) onNavigationItemSelected;
+  final VoidCallback? onUserDataChanged;
 
   DesktopAppBar({
     Key? key,
@@ -18,6 +22,7 @@ class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.currentUserData,
     required this.capitolLength,
     required this.onNavigationItemSelected,
+    this.onUserDataChanged,
   }) : super(key: key);
 
   @override
@@ -54,29 +59,36 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                       buildNavItem(2, "assets/icons/textBubblesIcon.svg", "assets/icons/textBubblesFilledIcon.svg", "Diskusia", context),
                       buildNavItem(3, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Vzdelávanie", context),
                       Spacer(),
-                      Text(
-                        '${widget.currentUserData!.points}/${widget.capitolLength ?? 0}',
-                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                              color: AppColors.yellow.light,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if(!widget.currentUserData!.teacher) Text(
+                            '${widget.currentUserData!.points}/${widget.capitolLength ?? 0}',
+                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: AppColors.yellow.light,
+                                ),
+                          ),
+                          SizedBox(width: 8),
+                          if(!widget.currentUserData!.teacher) SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                          if(widget.currentUserData!.teacher)DropDown(currentUserData: widget.currentUserData, onUserDataChanged: widget.onUserDataChanged,),
+                          SizedBox(width: 16),
+                          SvgPicture.asset('assets/icons/bellIcon.svg'),
+                          SizedBox(width: 16),
+                          SvgPicture.asset('assets/icons/infoIcon.svg'),
+                          SizedBox(width: 20),
+                          if(!widget.currentUserData!.teacher) MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {
+                                widget.onNavigationItemSelected(4);
+                                _selectedIndex = -1;
+                              },
+                              child: SvgPicture.asset(widget.currentUserData!.image),
                             ),
-                      ),
-                      SizedBox(width: 8),
-                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
-                      SizedBox(width: 16),
-                      SvgPicture.asset('assets/icons/bellIcon.svg'),
-                      SizedBox(width: 16),
-                      SvgPicture.asset('assets/icons/infoIcon.svg'),
-                      SizedBox(width: 20),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: () {
-                            widget.onNavigationItemSelected(4);
-                          },
-                          child: SvgPicture.asset(widget.currentUserData!.image),
-                        ),
-                      ),
-                      SizedBox(width: 16),
+                          ),
+                          SizedBox(width: 16),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -120,4 +132,5 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
     ),
   );
 }
+
 }

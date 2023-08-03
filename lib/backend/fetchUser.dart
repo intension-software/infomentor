@@ -42,27 +42,31 @@ class UserCapitolsTestData {
 }
 
 class UserData {
+  String id;
   String email;
   String name;
   bool active;
+  List<String> classes;
   String schoolClass;
   String image;
   String surname;
+  bool teacher;
   int points;
   List<UserCapitolsData> capitols;
-  List<String> materials;
   List<String> badges;
 
   UserData({
+    required this.id,
     required this.email,
     required this.name,
     required this.active,
+    required this.classes,
     required this.schoolClass,
     required this.image,
     required this.surname,
+    required this.teacher,
     required this.points,
     required this.capitols,
-    required this.materials,
     required this.badges,
   });
 }
@@ -74,6 +78,7 @@ Future<UserData> fetchUser(String userId) async {
 
     if (user != null) {
       // Extract the email from the Firebase Auth user
+      String id = userId;
       String email = user.email ?? '';
 
       // Reference to the user document in Firestore
@@ -86,6 +91,9 @@ Future<UserData> fetchUser(String userId) async {
         // Extract the fields from the user document
         String name = userSnapshot.get('name') as String? ?? '';
         bool active = userSnapshot.get('active') as bool? ?? false;
+        List<String> classes =
+            List<String>.from(
+                userSnapshot.get('classes') as List<dynamic>? ?? []);
         String schoolClass =
             userSnapshot.get('schoolClass') as String? ?? '';
         String image = userSnapshot.get('image') as String? ?? '';
@@ -94,24 +102,24 @@ Future<UserData> fetchUser(String userId) async {
         List<Map<String, dynamic>> capitols =
             List<Map<String, dynamic>>.from(
                 userSnapshot.get('capitols') as List<dynamic>? ?? []);
-        List<String> materials =
-            List<String>.from(
-                userSnapshot.get('materials') as List<dynamic>? ?? []);
         List<String> badges =
             List<String>.from(
                 userSnapshot.get('badges') as List<dynamic>? ?? []);
+        bool teacher = userSnapshot.get('teacher') as bool? ?? false;
 
         // Create a UserData instance
         UserData userData = UserData(
+          id: id,
           email: email,
           name: name,
           active: active,
+          classes: classes,
           schoolClass: schoolClass,
           image: image,
           surname: surname,
+          teacher: teacher,
           points: points,
           capitols: [],
-          materials: materials,
           badges: badges,
         );
 

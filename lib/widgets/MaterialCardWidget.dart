@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/Colors.dart';
+import 'package:infomentor/backend/fetchClass.dart';
 
 
 class MaterialCardWidget extends StatefulWidget {
@@ -35,7 +36,7 @@ class MaterialCardWidget extends StatefulWidget {
 
 class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   bool isHeartFilled = false;
-  UserData? userData;
+  ClassData? classData;
   String? userId;
   
 
@@ -45,10 +46,10 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       userId = currentUser.uid;
-      fetchUser(userId!).then((user) {
+      fetchClass(userId!).then((schoolClass) {
         setState(() {
-          userData = user;
-          isHeartFilled = userData!.materials.contains(widget.materialId);
+          classData = schoolClass;
+          isHeartFilled = classData!.materials.contains(widget.materialId);
         });
       });
     }
@@ -304,52 +305,46 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
 
     setState(() {
       if (isHeartFilled) {
-        userData!.materials.remove(materialId);
+        classData!.materials.remove(materialId);
       } else {
-        userData!.materials.add(materialId);
+        classData!.materials.add(materialId);
       }
 
       isHeartFilled = !isHeartFilled;
     });
 
-    saveUserDataToFirestore(userData!);
+    saveClassDataToFirestore(classData!);
   }
 
-  Future<void> saveUserDataToFirestore(UserData userData) async {
+  Future<void> saveClassDataToFirestore(ClassData userData) async {
   try {
     // Reference to the user document in Firestore
     DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
     // Convert userData object to a Map
-    Map<String, dynamic> userDataMap = {
-      'email': userData.email,
-      'name': userData.name,
-      'active': userData.active,
-      'schoolClass': userData.schoolClass,
-      'image': userData.image,
-      'surname': userData.surname,
-      'points': userData.points,
-      'capitols': userData.capitols.map((userCapitolsData) {
+    Map<String, dynamic> classDataMap = {
+      'materials': classData!.materials,
+      'name': classData!.name,
+      'posts': classData!.posts.map((classPostsData) {
         return {
-          'id': userCapitolsData.id,
-          'name': userCapitolsData.name,
-          'image': userCapitolsData.image,
-          'completed': userCapitolsData.completed,
-          'tests': userCapitolsData.tests.map((userCapitolsTestData) {
+          'id': classPostsData.id,
+          'date': classPostsData.date,
+          'user': classPostsData.user,
+          'value': classPostsData.value,
+          'comments': classPostsData.comments.map((classCommentsData) {
             return {
-              'name': userCapitolsTestData.name,
-              'completed': userCapitolsTestData.completed,
-              'points': userCapitolsTestData.points,
-              'questions': userCapitolsTestData.questions,
+              'date': classCommentsData.date,
+              'like': classCommentsData.like,
+              'user': classCommentsData.user,
+              'value': classCommentsData.value,
             };
           }).toList(),
         };
       }).toList(),
-      'materials': userData.materials,
     };
 
     // Update the user document in Firestore with the new userDataMap
-    await userRef.update(userDataMap);
+    await userRef.update(classDataMap);
   } catch (e) {
     print('Error saving user data to Firestore: $e');
     rethrow;

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/widgets/MaterialCardWidget.dart';
 import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/fetchClass.dart';
 
 
 class Learning extends StatefulWidget {
@@ -12,6 +13,28 @@ class Learning extends StatefulWidget {
 
 class _LearningState extends State<Learning> {
   bool showAll = true;
+  UserData? currentUserData;
+
+  Future<void> fetchUserData() async {
+    try {
+      // Retrieve the Firebase Auth user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // Fetch the user data using the fetchUser function
+        UserData userData = await fetchUser(user.uid);
+        if (mounted) {
+          setState(() {
+            currentUserData = userData;
+          });
+        }
+      } else {
+        print('User is not logged in.');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -50,12 +73,12 @@ class _LearningState extends State<Learning> {
 
                     if (!showAll) {
                       // Fetch the user's data
-                      return FutureBuilder<UserData>(
-                        future: fetchUser(FirebaseAuth.instance.currentUser!.uid),
+                      return FutureBuilder<ClassData>(
+                        future: fetchClass(currentUserData!.schoolClass),
                         builder: (context, userSnapshot) {
                           if (userSnapshot.hasData) {
-                            UserData userData = userSnapshot.data!;
-                            List<String> favoriteMaterialIds = userData.materials;
+                            ClassData classData = userSnapshot.data!;
+                            List<String> favoriteMaterialIds = classData.materials;
 
                             // Filter the materials that match the user's favorites
                             materials = materials

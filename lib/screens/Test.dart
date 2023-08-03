@@ -231,7 +231,7 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000)  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
@@ -244,7 +244,7 @@ class _TestState extends State<Test> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                            color: (MediaQuery.of(context).size.width < 1000 && definition == '' || image == '')  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+                            color: (MediaQuery.of(context).size.width < 1000)  ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
                           ),
                   ),
                 ),
@@ -252,7 +252,7 @@ class _TestState extends State<Test> {
               ),
             ),
             MediaQuery.of(context).size.width < 1000 && !lastScreen ? SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.fill, height: 70,) : Container(),
-            ListView.builder(
+            !widget.userData!.teacher ? ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: (answersImage?.length ?? 0) + (answers?.length ?? 0),
@@ -262,97 +262,19 @@ class _TestState extends State<Test> {
                     // Show the tile in green if index matches correct
                     if (answersImage != null && index < answersImage!.length) {
                       String? item = answersImage?[index];
-                      return Container(
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: _answer == index ? Border.all(color: AppColors.green.main) : Border.all(color: AppColors.mono.lightGrey),
-                          borderRadius: BorderRadius.circular(10),
-                          color: AppColors.green.main,
-                        ),
-                        child: Column(
-                          children: [
-                            if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
-                            ListTile(
-                              title: Text('Obrázok ${index + 1}'),
-                              leading: Radio(
-                                value: index,
-                                groupValue: _answer,
-                                fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-                                onChanged: null,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                      return reTileImage(AppColors.green.main, _answer, index, item, context);
                     } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
                       String? item = answers?[(index - (answersImage?.length ?? 0))];
-                      return Container(
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: _answer == index ? Border.all(color: AppColors.green.main) : Border.all(color: AppColors.mono.lightGrey),
-                          borderRadius: BorderRadius.circular(10),
-                          color: AppColors.green.main,
-                        ),
-                        child: ListTile(
-                          title: Text(item ?? ''),
-                          leading: Radio(
-                            value: index,
-                            groupValue: _answer,
-                            fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-                            onChanged: null,
-                          ),
-                        ),
-                      );
+                      return reTile(AppColors.green.main, _answer, index, item, context);
                     }
                   } else if (index == _answer && _answer != correct) {
                     // Show the tile in red if index matches _answer but is different from correct
                     if (answersImage != null && index < answersImage!.length) {
                       String? item = answersImage?[index];
-                      return Container(
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.mono.lightGrey),
-                          borderRadius: BorderRadius.circular(10),
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        child: Column(
-                          children: [
-                            if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
-                            ListTile(
-                              title: Text('Obrázok ${index + 1}'),
-                              leading: Radio(
-                                value: index,
-                                groupValue: _answer,
-                                fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-                                onChanged: null,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                      return reTileImage(Theme.of(context).colorScheme.error, _answer, index, item, context);
                     } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
                       String? item = answers?[(index - (answersImage?.length ?? 0))];
-                      return Container(
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.mono.lightGrey),
-                          borderRadius: BorderRadius.circular(10),
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        child: ListTile(
-                          title: Text(item ?? ''),
-                          leading: Radio(
-                            value: index,
-                            groupValue: _answer,
-                            fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-                            onChanged: (int? value) {
-                              setState(() {
-                                _answer = value;
-                              });
-                            },
-                          ),
-                        ),
-                      );
+                      return reTile(Theme.of(context).colorScheme.error, _answer, index, item, context);
                     }
                   }
                 } else {
@@ -413,10 +335,38 @@ class _TestState extends State<Test> {
 
                 return Container(); // Placeholder for empty answer fields or non-matching tiles
               },
+            ) : 
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: (answersImage?.length ?? 0) + (answers?.length ?? 0),
+              itemBuilder: (BuildContext context, index) {
+                  if (index == correct) {
+                    // Show the tile in green if index matches correct
+                    if (answersImage != null && index < answersImage!.length) {
+                      String? item = answersImage?[index];
+                      return reTileImage(AppColors.green.main, _answer, index, item, context);
+                    } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
+                      String? item = answers?[(index - (answersImage?.length ?? 0))];
+                      return reTile(AppColors.green.main, _answer, index, item, context);
+                    }
+                  } else {
+                    // Show the tile in red if index matches _answer but is different from correct
+                    if (answersImage != null && index < answersImage!.length) {
+                      String? item = answersImage?[index];
+                      return reTileImage(Theme.of(context).colorScheme.error, _answer, index, item, context);
+                    } else if (answers != null && index - (answersImage?.length ?? 0) < answers!.length) {
+                      String? item = answers?[(index - (answersImage?.length ?? 0))];
+                      return reTile(Theme.of(context).colorScheme.error, _answer, index, item, context);
+                    }
+                  }
+
+                return Container(); // Placeholder for empty answer fields or non-matching tiles
+              },
             ),
             SizedBox(height: 20),
 
-            if (pressed) Container(margin: EdgeInsets.all(8) ,child: Text(explanation ?? "", style: Theme.of(context)
+            if ((pressed && explanation != "") || widget.userData!.teacher) Container(margin: EdgeInsets.all(8) ,child: Text(explanation ?? "", style: Theme.of(context)
               .textTheme
               .bodySmall!
               .copyWith(
@@ -424,7 +374,7 @@ class _TestState extends State<Test> {
               ),)),
             SizedBox(height: 20),
 
-            pressed ? ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'ĎALEJ', leftIcon: false, rightIcon: false,onTap:
+            pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'ĎALEJ', leftIcon: false, rightIcon: false,onTap:
               onNextButtonPressed,
             ) : ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'HOTOVO', leftIcon: false, rightIcon: false, onTap:
               onAnswerPressed,
@@ -545,7 +495,7 @@ class _TestState extends State<Test> {
         pressed = true;
 
       });
-      saveUserDataToFirestore(widget.userData!);
+      if (!widget.userData!.teacher) saveUserDataToFirestore(widget.userData!);
     }
   }
 
@@ -559,15 +509,15 @@ class _TestState extends State<Test> {
       fetchQuestionData(questionIndex);
     } else {
 
-
+ 
       setState(() {
-        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
+        if (!widget.userData!.teacher) widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
         questionIndex = 0;
         _answer = null;
         pressed = false;
       });
      
-      saveUserDataToFirestore(widget.userData!);
+      if (!widget.userData!.teacher) saveUserDataToFirestore(widget.userData!);
       _showLastScreen();
     }
   }
@@ -604,12 +554,14 @@ class _TestState extends State<Test> {
 
       // Convert userData object to a Map
       Map<String, dynamic> userDataMap = {
+        'badges': userData.badges,
         'email': userData.email,
         'name': userData.name,
         'active': userData.active,
         'schoolClass': userData.schoolClass,
         'image': userData.image,
         'surname': userData.surname,
+        'teacher': userData.teacher,
         'points': userData.points,
         'capitols': userData.capitols.map((userCapitolsData) {
           return {
@@ -632,7 +584,6 @@ class _TestState extends State<Test> {
             }).toList(),
           };
         }).toList(),
-        'materials': userData.materials,
       };
 
       // Update the user document in Firestore with the new userDataMap

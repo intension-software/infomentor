@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:infomentor/backend/fetchClasses.dart';
+import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async'; // Add this import statement
@@ -11,7 +11,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 
 class Discussions extends StatefulWidget {
-  const Discussions({Key? key}) : super(key: key);
+  final UserData? currentUserData;
+
+  Discussions({
+    Key? key,
+    required this.currentUserData,
+  }) : super(key: key);
 
   @override
   _DiscussionsState createState() => _DiscussionsState();
@@ -19,7 +24,6 @@ class Discussions extends StatefulWidget {
 
 class _DiscussionsState extends State<Discussions> {
   List<PostsData> _posts = [];
-  UserData? userData;
   bool _showOverlay = false;
   PostsData? _selectedPost;
   OverlayEntry? _overlayEntry;
@@ -28,7 +32,7 @@ class _DiscussionsState extends State<Discussions> {
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    fetchPosts();
   }
 
   @override
@@ -37,34 +41,12 @@ class _DiscussionsState extends State<Discussions> {
     super.dispose();
   }
 
-  Future<void> fetchUserData() async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-
-      if (user != null) {
-        userData = await fetchUser(user.uid);
-        if (mounted) {
-          setState(() {
-            userData = userData;
-          });
-          fetchPosts();
-        }
-      } else {
-        print('User is not logged in.');
-      }
-    } catch (e) {
-      print('Error fetching user data: $e');
-    }
-  }
-
   Future<void> fetchPosts() async {
     try {
-      List<ClassData> classes = await fetchClasses(userData!.schoolClass);
+      ClassData classes = await fetchClass(widget.currentUserData!.schoolClass);
       List<PostsData> posts = [];
 
-      for (ClassData classData in classes) {
-        posts.addAll(classData.posts);
-      }
+      posts.addAll(classes.posts);
 
       posts.sort((a, b) => b.date.compareTo(a.date));
 
@@ -215,13 +197,13 @@ class _DiscussionsState extends State<Discussions> {
                         CommentsData newComment = CommentsData(
                           date: Timestamp.now(),
                           like: false,
-                          user: userData!.name,
+                          user: widget.currentUserData!.name,
                           value: commentController.text,
                         );
 
                         try {
                           await addComment(
-                              userData!.schoolClass, _selectedPost!.id, newComment);
+                              widget.currentUserData!.schoolClass, _selectedPost!.id, newComment);
 
                           setState(() {
                             _selectedPost!.comments.add(newComment);
@@ -249,7 +231,7 @@ class _DiscussionsState extends State<Discussions> {
   Stream<List<CommentsData>> fetchCommentsStream(String postId) {
   return FirebaseFirestore.instance
       .collection('classes')
-      .doc(userData!.schoolClass)
+      .doc(widget.currentUserData!.schoolClass)
       .snapshots()
       .map((classSnapshot) {
     if (classSnapshot.exists) {

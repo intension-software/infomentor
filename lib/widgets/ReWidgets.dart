@@ -149,6 +149,50 @@ class _ReButtonState extends State<ReButton> {
   }
 }
 
+Container reTileImage(Color color, int? _answer, int index, String? item, context) {
+  return Container(
+      margin: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: _answer == index ? Border.all(color: color) : Border.all(color: AppColors.mono.lightGrey),
+        borderRadius: BorderRadius.circular(10),
+        color: color,
+      ),
+      child: Column(
+        children: [
+          if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
+          ListTile(
+            title: Text('Obrázok ${index + 1}'),
+            leading: Radio(
+              value: index,
+              groupValue: _answer,
+              fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+              onChanged: null,
+            ),
+          ),
+        ],
+      ),
+    );
+}
+
+Container reTile(Color color, int? _answer, int index, String? item, context) {
+  return  Container(
+    margin: EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      border: _answer == index ? Border.all(color: color) : Border.all(color: AppColors.mono.lightGrey),
+      borderRadius: BorderRadius.circular(10),
+      color: color,
+    ),
+    child: ListTile(
+      title: Text(item ?? ''),
+      leading: Radio(
+        value: index,
+        groupValue: _answer,
+        fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+        onChanged: null,
+      ),
+    ),
+  );
+}
 
 Image reImage(String image, double width, double height) {
   return Image.asset(

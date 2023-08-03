@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/fetchClass.dart'; // Import the schoolClassData class and fetchschoolClass function
 
 class MaterialData {
   String materialId;
@@ -30,7 +30,7 @@ class MaterialData {
   }
 }
 
-Future<List<MaterialData>> fetchMaterials(UserData user) async {
+Future<List<MaterialData>> fetchMaterials(ClassData schoolClass) async {
   try {
     // Reference to the "materials" collection in Firestore
     CollectionReference materialsRef =
@@ -58,9 +58,9 @@ Future<List<MaterialData>> fetchMaterials(UserData user) async {
     }).toList();
 
     // Filter the materials based on the favorited material IDs
-    if (!user.materials.isEmpty) {
+    if (!schoolClass.materials.isEmpty) {
       materials = materials
-          .where((material) => user.materials.contains(material.materialId))
+          .where((material) => schoolClass.materials.contains(material.materialId))
           .toList();
     }
 
