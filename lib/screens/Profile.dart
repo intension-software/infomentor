@@ -529,21 +529,30 @@ class _ProfileState extends State<Profile> {
                     )
                       )
                       ,if (students != null)Center(
-                        child: Column( 
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(height: 50,),
                             Container(
-                              width: 1000,
+                              width: 900,
                               alignment: Alignment.topLeft,
                               child: IconButton(
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: AppColors.mono.black,
+                                    color: AppColors.mono.darkGrey,
                                   ),
                                   onPressed: () => 
                                     _onNavigationItemSelected(0),
                                 ),
-                            ), 
+                            ),
+                            Text(
+                              'Rebríček',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(height: 30,),
                             SingleChildScrollView(
                             child:Container(
                             width: 900,

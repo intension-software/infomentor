@@ -150,7 +150,7 @@ class _HomeState extends State<Home> {
         ) : Container(),
       Scaffold(
         backgroundColor: Colors.transparent,
-      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected, onUserDataChanged: _onUserDataChanged,),
+      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected, onUserDataChanged: _onUserDataChanged, selectedIndex: _selectedIndex),
       bottomNavigationBar:  MediaQuery.of(context).size.width < 1000 ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
@@ -213,7 +213,6 @@ class _HomeState extends State<Home> {
                             ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'ZAČAŤ', leftIcon: false, rightIcon: false, onTap:
                               () {
                                   _onNavigationItemSelected(1);
-                                  _selectedIndex = 1;
                               },
                             ),
                           ],

@@ -145,6 +145,7 @@ Future<void> fetchOptions() async {
             }).toList(),
           };
         }).toList(),
+        'materials': userData.materials,
       };
       await userRef.update(userDataMap);
     } catch (e) {

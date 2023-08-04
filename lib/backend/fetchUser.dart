@@ -53,6 +53,7 @@ class UserData {
   bool teacher;
   int points;
   List<UserCapitolsData> capitols;
+  List<String> materials;
   List<String> badges;
 
   UserData({
@@ -67,6 +68,7 @@ class UserData {
     required this.teacher,
     required this.points,
     required this.capitols,
+     required this.materials,
     required this.badges,
   });
 }
@@ -102,6 +104,9 @@ Future<UserData> fetchUser(String userId) async {
         List<Map<String, dynamic>> capitols =
             List<Map<String, dynamic>>.from(
                 userSnapshot.get('capitols') as List<dynamic>? ?? []);
+        List<String> materials =
+            List<String>.from(
+                userSnapshot.get('materials') as List<dynamic>? ?? []);
         List<String> badges =
             List<String>.from(
                 userSnapshot.get('badges') as List<dynamic>? ?? []);
@@ -120,6 +125,7 @@ Future<UserData> fetchUser(String userId) async {
           teacher: teacher,
           points: points,
           capitols: [],
+          materials: materials,
           badges: badges,
         );
 

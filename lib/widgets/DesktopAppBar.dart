@@ -15,6 +15,8 @@ class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final int? capitolLength;
   final Function(int) onNavigationItemSelected;
   final VoidCallback? onUserDataChanged;
+  int selectedIndex;
+
 
   DesktopAppBar({
     Key? key,
@@ -22,6 +24,7 @@ class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.currentUserData,
     required this.capitolLength,
     required this.onNavigationItemSelected,
+    required this.selectedIndex,
     this.onUserDataChanged,
   }) : super(key: key);
 
@@ -33,7 +36,6 @@ class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _DesktopAppBarState extends State<DesktopAppBar> {
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +83,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                             child: GestureDetector(
                               onTap: () {
                                 widget.onNavigationItemSelected(4);
-                                _selectedIndex = -1;
+                                widget.selectedIndex = -1;
                               },
                               child: SvgPicture.asset(widget.currentUserData!.image),
                             ),
@@ -99,7 +101,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
   }
 
   Widget buildNavItem(int index, String icon, String filledIcon, String text, BuildContext context) {
-  final bool isSelected = index == _selectedIndex;
+  final bool isSelected = index == widget.selectedIndex;
 
   return Container(
     width: 150,
@@ -112,7 +114,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
     child: InkWell(
       onTap: () {
         setState(() {
-          _selectedIndex = index;
+          widget.selectedIndex = index;
         });
         widget.onNavigationItemSelected(index);
       },

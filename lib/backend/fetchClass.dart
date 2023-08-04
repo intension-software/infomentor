@@ -129,7 +129,6 @@ Future<void> addComment(String classId, String postId, CommentsData comment) asy
             List<Map<String, dynamic>>.from(
                 classData['posts'] as List<dynamic>? ?? []);
 
-        print('Current posts: $posts');
 
         // Find the post with the matching postId
         int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
@@ -181,33 +180,44 @@ Future<void> addPost(String classId, PostsData post) async {
     DocumentSnapshot classSnapshot = await classRef.get();
 
     if (classSnapshot.exists) {
-      // Extract the classes field from the class document
-      List<Map<String, dynamic>> classes =
-          List<Map<String, dynamic>>.from(
-              classSnapshot.get('classes') as List<dynamic>? ?? []);
+      // Extract the data from the class document
+      Map<String, dynamic> classData = classSnapshot.data() as Map<String, dynamic>;
 
-      // Find the class with the matching classId
-      int classIndex = classes.indexWhere((classItem) => classItem['classId'] == classId);
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts =
+            List<Map<String, dynamic>>.from(classData['posts'] as List<dynamic>? ?? []);
 
-      if (classIndex != -1) {
-        // Add the post to the class
-        classes[classIndex]['posts'].add({
-          'comments': [],
-          'date': FieldValue.serverTimestamp(),
+        // Add the new post to the posts list
+        posts.add({
+          'comments': post.comments.map((comment) => {
+            'date': comment.date,
+            'like': comment.like,
+            'user': comment.user,
+            'value': comment.value
+          }).toList(),
+          'date': post.date,
+          'id': post.id,
           'user': post.user,
           'value': post.value,
         });
 
+        // Update the posts field within the class data
+        classData['posts'] = posts;
+
         // Update the class document in Firestore
-        await classRef.update({'classes': classes});
+        await classRef.update(classData);
 
         return;
+      } else {
+        throw Exception('Retrieved class data is null.');
       }
+    } else {
+      throw Exception('Class document does not exist.');
     }
-
-    throw Exception('Class does not exist.');
   } catch (e) {
     print('Error adding post: $e');
     throw Exception('Failed to add post');
   }
 }
+
