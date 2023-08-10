@@ -85,7 +85,6 @@ class _ProfileState extends State<Profile> {
 
   Future<void> fetchStudents() async {
     try {
-      print('fetchStudents started');
       User? user = FirebaseAuth.instance.currentUser;
 
       if (user != null && currentUserData != null && currentUserData!.schoolClass != null) {

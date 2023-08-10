@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/screens/Learning.dart';
 import 'package:infomentor/screens/Challenges.dart';
+import 'package:infomentor/screens/Results.dart';
+import 'package:infomentor/screens/Admin.dart';
 import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
@@ -412,8 +414,10 @@ class _HomeState extends State<Home> {
           ),
           Challenges(capitolsId: capitolsId.toString(), fetch: fetchUserData()),
           Discussions(currentUserData: currentUserData),
-          Learning(),
-          Profile()
+          Learning(currentUserData: currentUserData),
+          Profile(),
+          Results(),
+          Admin(),
         ],
       ),
     )

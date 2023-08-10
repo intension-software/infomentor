@@ -1,17 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/widgets/MaterialCardWidget.dart';
+import 'package:infomentor/widgets/MaterialForm.dart';
 import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/fetchMaterials.dart';
+import 'package:infomentor/backend/fetchClass.dart';
+import 'package:infomentor/Colors.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 
 class Learning extends StatefulWidget {
+  final UserData? currentUserData;
+
+
+  Learning({
+    Key? key,
+    required this.currentUserData,
+  }) : super(key: key);
+
   @override
   _LearningState createState() => _LearningState();
 }
 
 class _LearningState extends State<Learning> {
   bool showAll = true;
+   ClassData? currentClassData ;
+   final PageController _pageController = PageController();
+   int _selectedIndex = 0;
+
+  fetchCurrentClass() async {
+    try {
+        ClassData classData = await fetchClass(widget.currentUserData!.schoolClass!);
+    if (classData != null) {
+        // Fetch the user data using the fetchUser function
+        if (mounted) {
+          setState(() {
+            currentClassData = classData;
+          });
+        }
+      } else {
+        print('User is not logged in.');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCurrentClass();
+  }
 
   @override
   void dispose() {
@@ -22,14 +61,20 @@ class _LearningState extends State<Learning> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center( 
+    return PageView(
+    controller: _pageController,
+    onPageChanged: _onPageChanged,
+      children: [
+       Center( 
         child: Container(
         alignment: Alignment.center,
         width: 1300,
         child: Column(
           children: [
-            ToggleButtons(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+              ToggleButtons(
               children: [
                 Text('All'),
                 Text('Favorite'),
@@ -41,12 +86,41 @@ class _LearningState extends State<Learning> {
                 });
               },
             ),
+             if (widget.currentUserData!.teacher)Container(
+              width: 900,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  width: 260,
+                  child: widget.currentUserData!.teacher ? ReButton(
+                    activeColor: AppColors.mono.white, 
+                    defaultColor: AppColors.primary.main, 
+                    disabledColor: AppColors.mono.lightGrey, 
+                    focusedColor: AppColors.primary.light, 
+                    hoverColor: AppColors.mono.lighterGrey, 
+                    textColor: Theme.of(context).colorScheme.onPrimary, 
+                    iconColor: AppColors.mono.black, 
+                    text: '+ PRIDAŤ OBSAH', 
+                    leftIcon: false, 
+                    rightIcon: false, 
+                    onTap: () {
+                      _onNavigationItemSelected(1);
+                      _selectedIndex = 1;
+                    },
+                  ) : null,
+                ),
+              )
+            ),
+              ]
+            ),
             Expanded(
-              child: FutureBuilder<List<LearningData>>(
-                future: fetchMaterials(),
+              child: currentClassData == null 
+            ? Center(child: CircularProgressIndicator())
+            : FutureBuilder<List<MaterialData>>(
+                future: fetchMaterials(currentClassData!),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    List<LearningData> materials = snapshot.data!;
+                    List<MaterialData> materials = snapshot.data!;
 
                     if (!showAll) {
                       // Fetch the user's data
@@ -66,7 +140,7 @@ class _LearningState extends State<Learning> {
                             return ListView.builder(
                               itemCount: materials.length,
                               itemBuilder: (context, index) {
-                                LearningData material = materials[index];
+                                MaterialData material = materials[index];
 
                                 return MaterialCardWidget(
                                   image: material.image,
@@ -77,7 +151,7 @@ class _LearningState extends State<Learning> {
                                   type: material.type,
                                   association: material.association,
                                   video: material.video,
-                                  materialId: material.materialId,
+                                  materialId: material.materialId!,
                                 );
                               },
                             );
@@ -97,7 +171,7 @@ class _LearningState extends State<Learning> {
                     return ListView.builder(
                       itemCount: materials.length,
                       itemBuilder: (context, index) {
-                        LearningData material = materials[index];
+                        MaterialData material = materials[index];
 
                         return MaterialCardWidget(
                           image: material.image,
@@ -108,7 +182,7 @@ class _LearningState extends State<Learning> {
                           type: material.type,
                           association: material.association,
                           video: material.video,
-                          materialId: material.materialId,
+                          materialId: material.materialId!,
                         );
                       },
                     );
@@ -127,67 +201,44 @@ class _LearningState extends State<Learning> {
           ],
         ),
       ),
-    )
+    ),
+    Center(
+      child: Column(
+        children: [
+          Container(
+            width: 900,
+            alignment: Alignment.topLeft,
+            child: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.mono.darkGrey,
+                ),
+                onPressed: () => 
+                  _onNavigationItemSelected(0),
+              ),
+          ),
+    MaterialForm(currentUserData: widget.currentUserData),
+
+        ]
+      )
+    ),
+      ]
     );
   }
-
-  Future<List<LearningData>> fetchMaterials() async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      String userId = user?.uid ?? '';
-
-      // Reference to the "materials" collection in Firestore
-      CollectionReference materialsRef = FirebaseFirestore.instance.collection('materials');
-
-      // Retrieve the materials documents
-      QuerySnapshot snapshot = await materialsRef.get();
-
-      // Extract the data from the documents
-      List<LearningData> materials = snapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        String materialId = doc.id;
-
-        return LearningData(
-          materialId: materialId,
-          image: data['image'] as String? ?? '',
-          title: data['title'] as String? ?? '',
-          description: data['description'] as String? ?? '',
-          link: data['link'] as String? ?? '',
-          subject: data['subject'] as String? ?? '',
-          type: data['type'] as String? ?? '',
-          association: data['association'] as String? ?? '',
-          video: data['video'] as String? ?? '',
-        );
-      }).toList();
-
-      return materials;
-    } catch (e) {
-      print('Error fetching materials: $e');
-      throw Exception('Failed to fetch materials');
-    }
+   void _onPageChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
-}
 
-class LearningData {
-  final String materialId;
-  final String image;
-  final String title;
-  final String description;
-  final String link;
-  final String subject;
-  final String type;
-  final String association;
-  final String video;
-
-  LearningData({
-    required this.materialId,
-    required this.image,
-    required this.title,
-    required this.description,
-    required this.link,
-    required this.subject,
-    required this.type,
-    required this.association,
-    required this.video,
-  });
+  void _onNavigationItemSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
 }

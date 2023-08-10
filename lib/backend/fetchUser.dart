@@ -42,6 +42,7 @@ class UserCapitolsTestData {
 }
 
 class UserData {
+  bool admin;
   String id;
   String email;
   String name;
@@ -57,6 +58,7 @@ class UserData {
   List<String> badges;
 
   UserData({
+    required this.admin,
     required this.id,
     required this.email,
     required this.name,
@@ -111,9 +113,11 @@ Future<UserData> fetchUser(String userId) async {
             List<String>.from(
                 userSnapshot.get('badges') as List<dynamic>? ?? []);
         bool teacher = userSnapshot.get('teacher') as bool? ?? false;
+        bool admin = userSnapshot.get('admin') as bool? ?? false;
 
         // Create a UserData instance
         UserData userData = UserData(
+          admin: admin,
           id: id,
           email: email,
           name: name,
@@ -211,3 +215,5 @@ Future<UserData> fetchUser(String userId) async {
     rethrow;
   }
 }
+
+

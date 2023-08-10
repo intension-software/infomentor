@@ -60,6 +60,8 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                       buildNavItem(1, "assets/icons/starIcon.svg", "assets/icons/starWhiteIcon.svg", "Výzva", context),
                       buildNavItem(2, "assets/icons/textBubblesIcon.svg", "assets/icons/textBubblesFilledIcon.svg", "Diskusia", context),
                       buildNavItem(3, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Vzdelávanie", context),
+                      if(widget.currentUserData!.teacher)buildNavItem(5, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Výsledky", context),
+                      if(widget.currentUserData!.admin)buildNavItem(6, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Admin", context),
                       Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchClass.dart'; // Import the schoolClassData class and fetchschoolClass function
 
 class MaterialData {
-  String materialId;
+  String? materialId;
   String association;
   String description;
   String image;
@@ -13,7 +13,7 @@ class MaterialData {
   String video;
 
   MaterialData({
-    required this.materialId,
+    this.materialId,
     required this.association,
     required this.description,
     required this.image,
@@ -36,8 +36,16 @@ Future<List<MaterialData>> fetchMaterials(ClassData schoolClass) async {
     CollectionReference materialsRef =
         FirebaseFirestore.instance.collection('materials');
 
+    // Only proceed if there are material IDs to look up
+    if (schoolClass.materials.isEmpty) {
+      return [];
+    }
+
+    // Construct a query to fetch only the materials whose IDs match those in the schoolClass's materials list
+    Query materialsQuery = materialsRef.where(FieldPath.documentId, whereIn: schoolClass.materials);
+
     // Retrieve the materials documents
-    QuerySnapshot snapshot = await materialsRef.get();
+    QuerySnapshot snapshot = await materialsQuery.get();
 
     // Extract the data from the documents
     List<MaterialData> materials = snapshot.docs.map((doc) {
@@ -57,17 +65,11 @@ Future<List<MaterialData>> fetchMaterials(ClassData schoolClass) async {
       );
     }).toList();
 
-    // Filter the materials based on the favorited material IDs
-    if (!schoolClass.materials.isEmpty) {
-      materials = materials
-          .where((material) => schoolClass.materials.contains(material.materialId))
-          .toList();
-    }
-
     return materials;
   } catch (e) {
     print('Error fetching materials: $e');
     throw Exception('Failed to fetch materials');
   }
 }
+
 

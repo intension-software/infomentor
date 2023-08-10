@@ -48,13 +48,10 @@ Future<void> fetchOptions() async {
   try {
     if (widget.currentUserData != null && widget.currentUserData!.classes != null) {
           dropdownValue = widget.currentUserData!.schoolClass;
-      print('Classes in user data: ${widget.currentUserData!.classes}');  // debug print statement
       options = await Future.wait(widget.currentUserData!.classes.map((id) async {
-        print('Fetching class with ID: $id');  // debug print statement
         ClassData classData = await fetchClass(id);
         return OptionsData(id: id, data: classData);
       }).toList());
-      print('Options fetched: $options');  // debug print statement
       setState(() {});
     } else {
       print('Error: Current user data or classes is null');
