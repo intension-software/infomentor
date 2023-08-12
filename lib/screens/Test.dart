@@ -8,7 +8,15 @@ import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
+List<String> badgePaths = [
+  'assets/badges/badgeArgActive.svg',
+  'assets/badges/badgeManActive.svg',
+  'assets/badges/badgeCritActive.svg',
+  'assets/badges/badgeDataActive.svg',
+  'assets/badges/badgeGramActive.svg',
+  'assets/badges/badgeMediaActive.svg',
+  'assets/badges/badgeSocialActive.svg'
+];
 
 class Test extends StatefulWidget {
   final int testIndex;
@@ -456,6 +464,7 @@ class _TestState extends State<Test> {
     if (_answer != null) {
       setState(() {
       if (_answer == correct) {
+        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].correct = true;
             widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points++;
             widget.userData!.points++;
         }
@@ -465,31 +474,15 @@ class _TestState extends State<Test> {
         widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].questions[questionIndex].answer = _answer.toString();
 
         if (areAllCompleted(widget.userData!)) {
-        widget.userData!.capitols[int.parse(widget.capitolsId)].completed = true;
-        switch (int.parse(widget.capitolsId)) {
-            case 0:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeArgActive.svg';
-              break;
-            case 1:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeManActive.svg';
-              break;
-            case 2:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeCritActive.svg';
-              break;
-            case 3:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeDataActive.svg';
-              break;
-            case 4:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeGramActive.svg';
-              break;
-            case 5:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeMediaActive.svg';
-              break;
-            case 6:
-              widget.userData!.badges[int.parse(widget.capitolsId)] = 'assets/badges/badgeSocialActive.svg';
-              break;
+          widget.userData!.capitols[int.parse(widget.capitolsId)].completed = true;
+
+          // Ensure that badges list is long enough
+          while (widget.userData!.badges.length <= int.parse(widget.capitolsId)) {
+            widget.userData!.badges.add('');
           }
-      }
+
+          widget.userData!.badges[int.parse(widget.capitolsId)] = badgePaths[int.parse(widget.capitolsId)];
+        }
         
         _answer = _answer;
         pressed = true;
@@ -555,13 +548,14 @@ class _TestState extends State<Test> {
       // Convert userData object to a Map
       Map<String, dynamic> userDataMap = {
         'badges': userData.badges,
+        'admin': userData.admin,
+        'teacher': userData.teacher,
         'email': userData.email,
         'name': userData.name,
         'active': userData.active,
         'schoolClass': userData.schoolClass,
         'image': userData.image,
         'surname': userData.surname,
-        'teacher': userData.teacher,
         'points': userData.points,
         'capitols': userData.capitols.map((userCapitolsData) {
           return {
@@ -577,7 +571,8 @@ class _TestState extends State<Test> {
                 'questions': userCapitolsTestData.questions.map((userQuestionsData) {
                   return {
                     'answer': userQuestionsData.answer,
-                    'completed': userQuestionsData.completed
+                    'completed': userQuestionsData.completed,
+                    'correct': userQuestionsData.correct,
                   };
                 }).toList(),
               };

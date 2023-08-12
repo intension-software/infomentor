@@ -37,6 +37,9 @@ class UserForm extends StatefulWidget {
 class _UserFormState extends State<UserForm> {
   final _formKey = GlobalKey<FormState>();
 
+  List<String>? classStudents;
+  List<String>? classTeachers;
+
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
@@ -112,7 +115,9 @@ class _UserFormState extends State<UserForm> {
                       email: _emailController.text,
                       name: _nameController.text,
                       active: false,
-                      classes: [],
+                      classes: [
+                        widget.currentUserData!.schoolClass,
+                      ],
                       schoolClass: widget.currentUserData!.schoolClass,
                       image: 'assets/profilePicture.svg',
                       surname: _surnameController.text,
@@ -130,9 +135,9 @@ class _UserFormState extends State<UserForm> {
                               name: '1.1 Časti debatného argumentu',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                             UserCapitolsTestData(
@@ -140,8 +145,8 @@ class _UserFormState extends State<UserForm> {
                               name: '1.2 Časti debatného argumentu',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                             UserCapitolsTestData(
@@ -149,13 +154,13 @@ class _UserFormState extends State<UserForm> {
                               name: 'Čo je argument (úvod do argumentu)',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                             UserCapitolsTestData(
@@ -163,9 +168,9 @@ class _UserFormState extends State<UserForm> {
                               name: '1.1  Silné a slabé argumenty',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                             UserCapitolsTestData(
@@ -173,9 +178,9 @@ class _UserFormState extends State<UserForm> {
                               name: '1.2  Silné a slabé argumenty',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                             UserCapitolsTestData(
@@ -183,13 +188,11 @@ class _UserFormState extends State<UserForm> {
                               name: '1. Predpoklady (výroková logika II.)',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                             UserCapitolsTestData(
@@ -197,13 +200,13 @@ class _UserFormState extends State<UserForm> {
                               name: '1. Závery (výroková logika I.)',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                           ],
@@ -219,7 +222,7 @@ class _UserFormState extends State<UserForm> {
                               name: 'Korelácia a Kauzalita',
                               points: 0,
                               questions: [
-                                UserQuestionsData(answer: '', completed: false),
+                                UserQuestionsData(answer: '', completed: false, correct: false),
                               ],
                             ),
                           ],
@@ -273,6 +276,8 @@ class _UserFormState extends State<UserForm> {
       'email': email,
       'password': password,
     });
+
+    updateClassToFirestore(data.schoolClass, result.data['uid']);
     
     // Set the user's ID from Firebase
     data.id = result.data['uid'];
@@ -300,7 +305,8 @@ class _UserFormState extends State<UserForm> {
           'points': test.points,
           'questions': test.questions.map((question) => {
             'answer': question.answer,
-            'completed': question.completed
+            'completed': question.completed,
+            'correct': question.correct
           }).toList(),
         }).toList(),
       }).toList(),
@@ -312,5 +318,36 @@ class _UserFormState extends State<UserForm> {
     throw Exception('Failed to register user');
   }
 }
+
+Future<void> updateClassToFirestore(String classId, String userId) async {
+  try {
+    ClassData currentClass = await fetchClass(classId);
+    if (mounted) {
+      setState(() {
+        classStudents = currentClass.students;
+        classTeachers = currentClass.teachers;
+        if (!_isTeacher) classStudents!.add(userId);
+        if (_isTeacher) classTeachers!.add(userId);
+      });
+    }
+
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    Map<String, dynamic> updateData = {};
+    if (!_isTeacher) {
+      updateData['students'] = FieldValue.arrayUnion([userId]);
+    } else {
+      updateData['teachers'] = FieldValue.arrayUnion([userId]);
+    }
+
+    await classRef.update(updateData);
+
+  } catch (e) {
+    print('Error adding material to class: $e');
+    throw Exception('Failed to add user');
+  }
+}
+
 
 }

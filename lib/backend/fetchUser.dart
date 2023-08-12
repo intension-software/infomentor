@@ -4,10 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 class UserQuestionsData {
   String answer;
   bool completed;
+  bool correct;
 
   UserQuestionsData({
     required this.answer,
-    required this.completed
+    required this.completed,
+    required this.correct
   });
 }
 
@@ -165,11 +167,13 @@ Future<UserData> fetchUser(String userId) async {
                   // Extract the question answer and completion status
                   String questionAnswer = questionData['answer'] as String? ?? '';
                   bool questionCompleted = questionData['completed'] as bool? ?? false;
+                  bool questionCorrect = questionData['correct'] as bool? ?? false;
 
                   // Create a UserQuestionsData instance
                   UserQuestionsData question = UserQuestionsData(
                     answer: questionAnswer,
                     completed: questionCompleted,
+                    correct: questionCorrect,
                   );
 
                   // Add the UserQuestionsData instance to the list

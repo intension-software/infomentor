@@ -33,7 +33,7 @@ class ClassData {
   List<PostsData> posts;
   String school;
   List<String> students;
-  String teacher;
+  List<String> teachers;
   List<String> materials;
 
   ClassData({
@@ -41,7 +41,7 @@ class ClassData {
     required this.posts,
     required this.school,
     required this.students,
-    required this.teacher,
+    required this.teachers,
     required this.materials,
   });
 }
@@ -91,7 +91,7 @@ Future<ClassData> fetchClass(String classId) async {
           name: data['name'] as String? ?? '',
           school: data['school'] as String? ?? '',
           students: List<String>.from(data['students'] as List<dynamic>? ?? []),
-          teacher: data['teacher'] as String? ?? '',
+          teachers: List<String>.from(data['teachers'] as List<dynamic>? ?? []),
           posts: postsDataList,
           materials: List<String>.from(data['materials'] as List<dynamic>? ?? [])
         );
