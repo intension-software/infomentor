@@ -379,6 +379,7 @@ class _HomeState extends State<Home> {
                               ),
                             ],
                           ),
+                          
                         ],
                       )
                     ),
@@ -415,7 +416,22 @@ class _HomeState extends State<Home> {
           Challenges(capitolsId: capitolsId.toString(), fetch: fetchUserData()),
           Discussions(currentUserData: currentUserData),
           Learning(currentUserData: currentUserData),
-          Profile(),
+          SingleChildScrollView(
+                child:Column(
+            children: [
+              Profile(),
+              ElevatedButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                  setState(() {
+                    fetchUserData();
+                  });
+                  },
+                  child: Text('SignOut'),
+                ),
+              ],
+            )
+          ),
           Results(),
           Admin(currentUserData: currentUserData,),
         ],

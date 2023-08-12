@@ -147,12 +147,11 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: currentUserData != null
-          ? Column(
-                  children: <Widget>[
-                    Flexible(
-              child:PageView(
+    return currentUserData != null
+          ? Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+              child: PageView(
                     controller: _pageController,
                     onPageChanged: _onPageChanged,
                     children: [ 
@@ -509,19 +508,7 @@ class _ProfileState extends State<Profile> {
                                     )
                                   ],
                                 ),
-                            ElevatedButton(
-                              onPressed: () {
-                                FirebaseAuth.instance.signOut();
-                                setState(() {
-                                  fetchUserData();
-                                });
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => Login()),
-                                );
-                              },
-                              child: Text('SignOut'),
-                            ),
+                            
                           ],
                         ),
                       ),
@@ -637,12 +624,9 @@ class _ProfileState extends State<Profile> {
               ]
             )
           )
-                  ]
-          )
           : Center(
               child: CircularProgressIndicator(),
-            ),
-    );
+            );
   }
 
   void _onPageChanged(int index) {
