@@ -12,14 +12,14 @@ class UserQuestionsData {
 }
 
 class UserCapitolsData {
-  String id;
+  String? id;
   String name;
   String image;
   bool completed;
   List<UserCapitolsTestData> tests;
 
   UserCapitolsData({
-    required this.id,
+    this.id,
     required this.name,
     required this.image,
     required this.completed,

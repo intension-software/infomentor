@@ -417,7 +417,7 @@ class _HomeState extends State<Home> {
           Learning(currentUserData: currentUserData),
           Profile(),
           Results(),
-          Admin(),
+          Admin(currentUserData: currentUserData,),
         ],
       ),
     )
