@@ -11,8 +11,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 class Challenges extends StatefulWidget {
   final String capitolsId;
   final Future<void> fetch;
+  final UserData? currentUserData;
 
-  const Challenges({Key? key, required this.capitolsId, required this.fetch});
+  const Challenges({Key? key, required this.capitolsId, required this.fetch, required this.currentUserData});
 
   @override
   State<Challenges> createState() => _ChallengesState();
@@ -23,19 +24,16 @@ class _ChallengesState extends State<Challenges> {
   late OverlayEntry overlayEntry;
   int testsLength = 0;
   String? title;
-  UserData? currentUserData;
   int? color;
 
   @override
   void initState() {
     super.initState();
     fetchQuestionData();
-    fetchUserData();
   }
 
   Future<void> refreshData() async {
     await fetchQuestionData();
-    await fetchUserData();
     await widget.fetch;
   }
 
@@ -70,27 +68,6 @@ class _ChallengesState extends State<Challenges> {
     isOverlayVisible = false;
   }
 
-  Future<void> fetchUserData() async {
-    try {
-      // Retrieve the Firebase Auth user
-      User? user = FirebaseAuth.instance.currentUser;
-
-      if (user != null) {
-        // Fetch the user data using the fetchUser function
-        UserData userData = await fetchUser(user.uid);
-        if (mounted) {
-          setState(() {
-            currentUserData = userData;
-          });
-        }
-      } else {
-        print('User is not logged in.');
-      }
-    } catch (e) {
-      print('Error fetching user data: $e');
-    }
-  }
-
   Future<void> fetchQuestionData() async {
     try {
       FetchResult result = await fetchCapitols(widget.capitolsId);
@@ -114,7 +91,7 @@ class _ChallengesState extends State<Challenges> {
           child: Container(
             color: Colors.black.withOpacity(0.5),
             alignment: Alignment.center,
-            child: Test(testIndex: testIndex, overlay: toggle, capitolsId: widget.capitolsId, userData: currentUserData),
+            child: Test(testIndex: testIndex, overlay: toggle, capitolsId: widget.capitolsId, userData: widget.currentUserData),
           ),
         ),
       ),
@@ -124,11 +101,14 @@ class _ChallengesState extends State<Challenges> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.background),
+    body: Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background
+      ),
         child: Column(
-          children: [
+          children: <Widget>[
+            // Your FractionallySizedBox here (not modified for brevity)
             FractionallySizedBox(
               widthFactor: 1.0,
               child: Container(
@@ -146,7 +126,7 @@ class _ChallengesState extends State<Challenges> {
                     Container(
                       height: 10,
                       child: LinearProgressIndicator(
-                        value: testsLength != 0 ? countTrueTests(currentUserData!.capitols[int.parse(widget.capitolsId)].tests) / testsLength : 0,
+                        value: testsLength != 0 ? countTrueTests(widget.currentUserData!.capitols[int.parse(widget.capitolsId)].tests) / testsLength : 0,
                         backgroundColor: AppColors.blue.lighter,
                         valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
                       ),
@@ -156,57 +136,71 @@ class _ChallengesState extends State<Challenges> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
+              child: SingleChildScrollView(
                 reverse: true,
-                itemCount: testsLength,
-                itemBuilder: (BuildContext context, int index) {
-                  
-
-                  
-
-                  EdgeInsets padding = EdgeInsets.only(
-                    left: index % 2 == 0 || index == 0 ? 0.0 : 90.0,
-                    right: index % 2 == 0 || index == 0  ? 90.0 : 0.0,
-                  );
-                  return Column(
-                    children: [
-                    index == testsLength ? SizedBox(height: 100,) : Container(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Container(
-                    padding: padding,
-                    height: 116,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned.fill(
-                          child: OverflowBox(
-                            maxHeight: double.infinity,
-                            child: index % 2 == 0 || index == 0
-                                ? !currentUserData!.capitols[int.parse(widget.capitolsId)].tests[index].completed ? SvgPicture.asset('assets/roadmap/leftRoad.svg') : SvgPicture.asset('assets/roadmap/leftRoadFilled.svg')
-                                : !currentUserData!.capitols[int.parse(widget.capitolsId)].tests[index].completed ? SvgPicture.asset('assets/roadmap/rightRoad.svg') : SvgPicture.asset('assets/roadmap/rightRoadFilled.svg'),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 30, right: index % 2 == 0 ? 10 : 0, left: index % 2 == 0 ? 0 : 10,),
-                          child: StarButton(
-                            number: index,
-                            color: color as int,
-                            userData: currentUserData,
-                            onPressed: (int number) => toggleOverlayVisibility(number),
-                            capitolsId: widget.capitolsId,
-                          ),
-                        )
-                      ],
+                      width: 500,
+                      height: MediaQuery.of(context).size.height,
+                        child: ListView.builder(
+                        reverse: true,
+                        itemCount: testsLength,
+                        itemBuilder: (BuildContext context, int index) {
+                          EdgeInsets padding = EdgeInsets.only(
+                            left: index % 2 == 0 || index == 0 ? 0.0 : 90.0,
+                            right: index % 2 == 0 || index == 0  ? 90.0 : 0.0,
+                          );
+                          return Column(
+                            children: [
+                            index == testsLength ? SizedBox(height: 100,) : Container(),
+                            Container(
+                            padding: padding,
+                            height: 116,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Positioned.fill(
+                                  child: OverflowBox(
+                                    maxHeight: double.infinity,
+                                    child: index % 2 == 0 || index == 0
+                                        ? !(widget.currentUserData?.capitols?[int.parse(widget.capitolsId)]?.tests?[index]?.completed ?? false) ? SvgPicture.asset('assets/roadmap/leftRoad.svg') : SvgPicture.asset('assets/roadmap/leftRoadFilled.svg')
+                                        : !(widget.currentUserData?.capitols?[int.parse(widget.capitolsId)]?.tests?[index]?.completed ?? false) ? SvgPicture.asset('assets/roadmap/rightRoad.svg') : SvgPicture.asset('assets/roadmap/rightRoadFilled.svg'),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 30, right: index % 2 == 0 ? 10 : 0, left: index % 2 == 0 ? 0 : 10,),
+                                  child: StarButton(
+                                    number: index,
+                                    color: color as int,
+                                    userData: widget.currentUserData,
+                                    onPressed: (int number) => toggleOverlayVisibility(number),
+                                    capitolsId: widget.capitolsId,
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                          ]
+                          );
+                        },
+                      )
                     ),
-                  )
-                  ]
-                  );
-                },
-              ),
-            ),
-          ],
+                    widget.currentUserData!.teacher ? Container(
+                      width: 500,
+                      height: 500,
+                      decoration: BoxDecoration(color: Colors.blue),
+                      child: Text('Hey'),
+                    ) : Container(),
+                  ],
+                ),
+              )
+        )
+          ] 
         ),
       ),
-    );
+  );
   }
 }
 
@@ -326,7 +320,7 @@ Widget build(BuildContext context) {
   final double menuWidth = MediaQuery.of(context).size.width; // Adjust the width according to your needs
 
   // Calculate the horizontal offset to center the menu
-  final double offsetX = (button.size.width - menuWidth ) / 2 + 190;
+  final double offsetX = (button.size.width - menuWidth ) / 2 + 900;
 
   final RelativeRect position = RelativeRect.fromLTRB(
     buttonCenter.dx - offsetX,

@@ -53,6 +53,11 @@ class _UserFormState extends State<UserForm> {
   String? _class;
   String? _imagePath;
 
+  @override
+  void dispose() {
+  super.dispose();
+}
+
   // ... [rest of the code for fetching classes, etc. remains the same]
 
   @override

@@ -42,11 +42,7 @@ class _DiscussionsState extends State<Discussions> {
     fetchPosts();
   }
 
-  @override
-  void dispose() {
-    _overlayEntry?.remove();
-    super.dispose();
-  }
+  
 
   Future<void> fetchPosts() async {
     try {
@@ -56,30 +52,39 @@ class _DiscussionsState extends State<Discussions> {
       posts.addAll(classes.posts);
 
       posts.sort((a, b) => b.date.compareTo(a.date));
-
-      setState(() {
-        _posts = posts;
-      });
+      if(mounted) {
+        setState(() {
+          _posts = posts;
+        });
+      }
     } catch (e) {
       print('Error fetching posts: $e');
     }
   }
 
   void _toggleCommentsOverlay([PostsData? post]) {
-    setState(() {
-      if (_showOverlay && _selectedPost == post) {
-        _showOverlay = false;
-        _overlayEntry?.remove();
-        _overlayEntry = null;
-        _selectedPost = null;
-      } else {
-        _selectedPost = post;
-        _showOverlay = true;
-        if (_overlayEntry == null) {
-          _createOverlayEntry();
+    if(mounted) {
+      setState(() {
+        if (_showOverlay && _selectedPost == post) {
+          _showOverlay = false;
+          _overlayEntry?.remove();
+          _overlayEntry = null;
+          _selectedPost = null;
+        } else {
+          _selectedPost = post;
+          _showOverlay = true;
+          if (_overlayEntry == null) {
+            _createOverlayEntry();
+          }
         }
-      }
-    });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _overlayEntry?.remove();
+    super.dispose();
   }
 
   void _createOverlayEntry() {

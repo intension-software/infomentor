@@ -413,7 +413,7 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          Challenges(capitolsId: capitolsId.toString(), fetch: fetchUserData()),
+          Challenges(capitolsId: capitolsId.toString(), fetch: fetchUserData(), currentUserData: currentUserData,),
           Discussions(currentUserData: currentUserData),
           Learning(currentUserData: currentUserData),
           SingleChildScrollView(

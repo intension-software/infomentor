@@ -92,6 +92,10 @@ class _MaterialFormState extends State<MaterialForm> {
       setState(() {});  // Trigger rebuild when any text changes
     });
   }
+  @override
+  void dispose() {
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
