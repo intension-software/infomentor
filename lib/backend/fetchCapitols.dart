@@ -1,36 +1,52 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class QuestionsData {
-  List<String> answers;
-  List<String> answersImage;
+class CorrectData {
   int correct;
-  String definition;
-  String explanation;
-  String image;
-  String question;
-  String subQuestion;
-  String title;
+  int index;
+
+  CorrectData({
+    required this.correct,
+    required this.index
+  });
+}
+
+class QuestionsData {
+  List<String>? answers;
+  List<String>? answersImage;
+  List<String>? matchmaking;
+  List<String>? matches;
+  List<CorrectData>? correct;
+  String? definition;
+  List<String>? explanation;
+  List<String>? images;
+  String? question;
+  String? subQuestion;
+  String? title;
   
 
   QuestionsData({
-    required this.answers,
-    required this.answersImage,
-    required this.correct,
-    required this.definition,
-    required this.explanation,
-    required this.image,
-    required this.question,
-    required this.subQuestion,
-    required this.title,
+    this.answers,
+    this.answersImage,
+    this.matchmaking,
+    this.matches,
+    this.correct,
+    this.definition,
+    this.explanation,
+    this.images,
+    this.question,
+    this.subQuestion,
+    this.title,
   });
 }
 
 class TestsData {
+  String introduction;
   String name;
   int points;
   List<QuestionsData> questions;
 
   TestsData({
+    required this.introduction,
     required this.name,
     required this.points,
     required this.questions,
@@ -39,10 +55,10 @@ class TestsData {
 
 class CapitolsData {
   String name;
-  int color;
-  int colorLight;
-  int colorLighter;
+  String color;
   String badge;
+  String badgeActive;
+  String badgeDis;
   int points;
   List<TestsData> tests;
   int weeklyChallenge;
@@ -50,9 +66,9 @@ class CapitolsData {
   CapitolsData({
     required this.name,
     required this.color,
-    required this.colorLight,
-    required this.colorLighter,
     required this.badge,
+    required this.badgeActive,
+    required this.badgeDis,
     required this.points,
     required this.tests,
     required this.weeklyChallenge,
@@ -84,10 +100,10 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
       if (data != null) {
         // Extract the values from the data
         String name = data['name'] as String? ?? '';
-        int color = data['color'] as int;
-        int colorLight = data['color'] as int;
-        int colorLighter = data['color'] as int;
+        String color = data['color'] as String? ?? '';
         String badge = data['badge'] as String? ?? '';
+        String badgeActive = data['badgeActive'] as String? ?? '';
+        String badgeDis = data['badgeDis'] as String? ?? '';
         int points = data['points'] as int? ?? 0;
         int weeklyChallenge = data['weeklyChallenge'] as int? ?? 0;
         
@@ -102,6 +118,7 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
           // Iterate over the tests data
           for (var testData in tests) {
             // Extract the test name and points
+            String testIntroduction = testData['introduction'] as String? ?? '';
             String testName = testData['name'] as String? ?? '';
             int testPoints = testData['points'] as int? ?? 0;
 
@@ -113,41 +130,66 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
               // Create a list to hold the QuestionsData instances
               List<QuestionsData> questionsDataList = [];
 
-              // Iterate over the questions data
-              for (var questionData in questions) {
-                // Extract the values from the questionData
-                List<String> answers = List<String>.from(
-                    questionData['answers'] as List<dynamic>? ?? []);
-                List<String> answersImage = List<String>.from(
-                    questionData['answersImage'] as List<dynamic>? ?? []);
-                int correct = questionData['correct'] as int? ?? 0;
-                String definition = questionData['definition'] as String? ?? '';
-                String explanation = questionData['explanation'] as String? ?? '';
-                String image = questionData['image'] as String? ?? '';
-                String question = questionData['question'] as String? ?? '';
-                String subQuestion =
-                    questionData['subQuestion'] as String? ?? '';
-                String title = questionData['title'] as String? ?? '';
+             for (var questionData in questions) {
+              // Extract the values from the questionData
+              List<String> answers = List<String>.from(
+                  questionData['answers'] as List<dynamic>? ?? []);
+              List<String> answersImage = List<String>.from(
+                  questionData['answersImage'] as List<dynamic>? ?? []);
+              List<String> matchmaking = List<String>.from(
+                  questionData['matchmaking'] as List<dynamic>? ?? []);
+              List<String> matches = List<String>.from(
+                  questionData['matches'] as List<dynamic>? ?? []);
+              String definition = questionData['definition'] as String? ?? '';
+              List<String> explanation = List<String>.from(
+                  questionData['explanation'] as List<dynamic>? ?? []);
+              List<String> images = List<String>.from(
+                  questionData['images'] as List<dynamic>? ?? []);
+              String questionText = questionData['question'] as String? ?? '';
+              String subQuestion =
+                  questionData['subQuestion'] as String? ?? '';
+              String title = questionData['title'] as String? ?? '';
 
-                // Create a QuestionsData instance with the extracted values
-                QuestionsData questionsData = QuestionsData(
-                  answers: answers,
-                  answersImage: answersImage,
-                  correct: correct,
-                  definition: definition,
-                  explanation: explanation,
-                  image: image,
-                  question: question,
-                  subQuestion: subQuestion,
-                  title: title,
-                );
+              List<dynamic>? correct = 
+                  questionData['correct'] as List<dynamic>?;
 
-                // Add the QuestionsData instance to the list
-                questionsDataList.add(questionsData);
+
+              List<CorrectData> correctDataList = [];
+
+
+              if (correct != null) {
+
+                  for (var item in correct) {
+                      CorrectData cData = CorrectData(
+                          correct: item['correct'] as int,
+                          index: item['index'] as int
+                      );
+                      correctDataList.add(cData);
+                  }
               }
+
+              // Create a QuestionsData instance with the extracted values
+              QuestionsData questionsData = QuestionsData(
+                answers: answers,
+                answersImage: answersImage,
+                matchmaking: matchmaking, // Add the extracted matchmaking data here
+                matches: matches,
+                correct: correctDataList,
+                definition: definition,
+                explanation: explanation,
+                images: images,
+                question: questionText,
+                subQuestion: subQuestion,
+                title: title,
+              );
+
+              // Add the QuestionsData instance to the list
+              questionsDataList.add(questionsData);
+          }
 
               // Create a TestsData instance with the test name, points, and the list of questions
               TestsData testData = TestsData(
+                introduction: testIntroduction,
                 name: testName,
                 points: testPoints,
                 questions: questionsDataList,
@@ -162,9 +204,9 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
           CapitolsData capitolsData = CapitolsData(
             name: name,
             color: color,
-            colorLight: colorLight,
-            colorLighter: colorLighter,
             badge: badge,
+            badgeActive: badgeActive,
+            badgeDis: badgeDis,
             points: points,
             tests: testsDataList,
             weeklyChallenge: weeklyChallenge,

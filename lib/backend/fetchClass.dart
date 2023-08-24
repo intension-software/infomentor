@@ -35,6 +35,7 @@ class ClassData {
   List<String> students;
   List<String> teachers;
   List<String> materials;
+  List<int> capitolOrder;
 
   ClassData({
     required this.name,
@@ -43,6 +44,7 @@ class ClassData {
     required this.students,
     required this.teachers,
     required this.materials,
+    required this.capitolOrder
   });
 }
 
@@ -93,7 +95,8 @@ Future<ClassData> fetchClass(String classId) async {
           students: List<String>.from(data['students'] as List<dynamic>? ?? []),
           teachers: List<String>.from(data['teachers'] as List<dynamic>? ?? []),
           posts: postsDataList,
-          materials: List<String>.from(data['materials'] as List<dynamic>? ?? [])
+          materials: List<String>.from(data['materials'] as List<dynamic>? ?? []),
+          capitolOrder: List<int>.from(data['capitolOrder'] as List<dynamic>? ?? [])
         );
       } else {
         throw Exception('Retrieved document data is null.');

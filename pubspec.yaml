@@ -22,6 +22,8 @@ dependencies:
   flutter_svg: ^2.0.7
   file_picker: ^5.3.3
   cloud_functions: ^4.3.4
+  percent_indicator: ^4.2.3
+  dropdown_button2: ^2.3.8
   
 
 dev_dependencies:
@@ -47,3 +49,4 @@ flutter:
     - assets/tutorial/
     - assets/roadmap/
     - assets/bottomBackground.svg
+    - assets/notifications/

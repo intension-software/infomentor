@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Test.dart';
 import 'package:infomentor/Colors.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 
 Container reTextField(
   String text,
@@ -149,50 +149,160 @@ class _ReButtonState extends State<ReButton> {
   }
 }
 
-Container reTileImage(Color color, int? _answer, int index, String? item, context) {
+Container reTileImage(Color color, Color borderColor, int index, String? item, BuildContext context, {List<dynamic>? percentage, bool? correct}) {
   return Container(
-      margin: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: _answer == index ? Border.all(color: color) : Border.all(color: AppColors.mono.lightGrey),
-        borderRadius: BorderRadius.circular(10),
-        color: color,
-      ),
-      child: Column(
-        children: [
-          if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
-          ListTile(
-            title: Text('Obrázok ${index + 1}'),
-            leading: Radio(
-              value: index,
-              groupValue: _answer,
-              fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-              onChanged: null,
-            ),
-          ),
-        ],
-      ),
-    );
-}
-
-Container reTile(Color color, int? _answer, int index, String? item, context) {
-  return  Container(
     margin: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      border: _answer == index ? Border.all(color: color) : Border.all(color: AppColors.mono.lightGrey),
+      border: Border.all(color: borderColor),
+      borderRadius: BorderRadius.circular(10),
+      color: color,
+    ),
+    child: Column(
+      children: [
+        if (item != null && item.isNotEmpty) Image.asset(item, fit: BoxFit.cover),
+        ListTile(
+          title: Text('Obrázok ${index + 1}',
+          style: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(
+              color: borderColor,
+            )
+          ),
+          leading: percentage == [] || percentage == null ? correct == null ? Radio(
+        value: index,
+        groupValue: null,
+        fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+        onChanged: null,
+      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(
+              color: borderColor,
+            )
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Container reTileMatchmaking(
+  Color color,
+  Color borderColor,
+  int _answer,
+  int index,
+  String? text,
+  BuildContext context,
+  List<String> matches,
+  bool? correct,
+  {List<dynamic>? percentage}) {
+
+  return Container(
+  margin: EdgeInsets.all(8),
+  decoration: BoxDecoration(
+    border: Border.all(color: AppColors.mono.lightGrey),
+    borderRadius: BorderRadius.circular(10),
+  ),
+  child: Column(
+    children: [
+      if (text != null && text.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(text,
+          style: Theme.of(context)
+            .textTheme
+            .headlineSmall!,
+          ),
+        ),
+      MouseRegion(
+        cursor: SystemMouseCursors.basic,  // This will prevent the cursor from changing on hover
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: borderColor),
+            color: color,
+          ),
+          child: ListTile(
+             leading: percentage == [] || percentage == null ? correct == null ? Radio(
+                value: index,
+                groupValue: _answer,
+                activeColor: AppColors.mono.lightGrey,
+                onChanged: null,
+              ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(
+              color: borderColor,
+            )
+          ),  // replace with your desired icon
+            title: Text(matches[_answer ?? 0],
+            style: Theme.of(context)
+              .textTheme
+              .headlineSmall!
+              .copyWith(
+                color: borderColor,
+            ),
+            ),  // default text displayed
+            contentPadding: EdgeInsets.zero,  // to remove any default padding in ListTile
+          ),
+        ),
+      )
+    ],
+  ),
+);
+
+
+}
+
+
+Container reTile(Color color, Color borderColor, int index, String? item, BuildContext context, {List<dynamic>? percentage, bool? correct}) {
+  return Container(
+    margin: EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      border: Border.all(color: borderColor,width: 1),
       borderRadius: BorderRadius.circular(10),
       color: color,
     ),
     child: ListTile(
-      title: Text(item ?? ''),
-      leading: Radio(
+      title: borderColor == AppColors.mono.lightGrey ? Text(item ?? '',
+        style: Theme.of(context)
+          .textTheme
+          .bodyLarge!
+          .copyWith(
+            color:  AppColors.mono.black,
+        ),
+      ) : Text(item ?? '',
+        style: Theme.of(context)
+          .textTheme
+          .headlineSmall!
+          .copyWith(
+            color: borderColor,
+        ),
+      ), 
+      leading: percentage == [] || percentage == null ? correct == null ? Radio(
         value: index,
-        groupValue: _answer,
-        fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+        groupValue: null,
+        activeColor: AppColors.mono.lightGrey,
         onChanged: null,
-      ),
+      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: borderColor == AppColors.mono.lightGrey ? Theme.of(context)
+            .textTheme
+            .bodyLarge!
+            .copyWith(
+              color: borderColor,
+            ): Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(
+              color: borderColor,
+            )
+          ),
     ),
   );
 }
+
 
 Image reImage(String image, double width, double height) {
   return Image.asset(

@@ -60,8 +60,8 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                       buildNavItem(1, "assets/icons/starIcon.svg", "assets/icons/starWhiteIcon.svg", "Výzva", context),
                       buildNavItem(2, "assets/icons/textBubblesIcon.svg", "assets/icons/textBubblesFilledIcon.svg", "Diskusia", context),
                       buildNavItem(3, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Vzdelávanie", context),
-                      if(widget.currentUserData!.teacher)buildNavItem(5, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Výsledky", context),
-                      if(widget.currentUserData!.admin)buildNavItem(6, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Admin", context),
+                      if(widget.currentUserData!.teacher)buildNavItem(6, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Výsledky", context),
+                      if(widget.currentUserData!.admin)buildNavItem(7, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Admin", context),
                       Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +76,16 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           if(!widget.currentUserData!.teacher) SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                           if(widget.currentUserData!.teacher)DropDown(currentUserData: widget.currentUserData, onUserDataChanged: widget.onUserDataChanged,),
                           SizedBox(width: 16),
-                          SvgPicture.asset('assets/icons/bellIcon.svg'),
+                          MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {
+                                widget.onNavigationItemSelected(4);
+                                widget.selectedIndex = -1;
+                              },
+                              child: SvgPicture.asset('assets/icons/bellIcon.svg'),
+                            )
+                          ),
                           SizedBox(width: 16),
                           SvgPicture.asset('assets/icons/infoIcon.svg'),
                           SizedBox(width: 20),
@@ -84,7 +93,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                             cursor: SystemMouseCursors.click,
                             child: GestureDetector(
                               onTap: () {
-                                widget.onNavigationItemSelected(4);
+                                widget.onNavigationItemSelected(5);
                                 widget.selectedIndex = -1;
                               },
                               child: SvgPicture.asset(widget.currentUserData!.image),

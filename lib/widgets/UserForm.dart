@@ -114,136 +114,178 @@ class _UserFormState extends State<UserForm> {
                   // Handle submission of form
                   // TODO: Handle data processing here
                   registerUser(
-                    UserData(
-                      admin: _isAdmin,
-                      id: '',
-                      email: _emailController.text,
-                      name: _nameController.text,
-                      active: false,
-                      classes: [
-                        widget.currentUserData!.schoolClass,
-                      ],
-                      schoolClass: widget.currentUserData!.schoolClass,
-                      image: 'assets/profilePicture.svg',
-                      surname: _surnameController.text,
-                      teacher: _isTeacher,
-                      points: 0,
-                      capitols: [
-                        UserCapitolsData(
-                          completed: false,
-                          id: '0',
-                          image: '',
-                          name: 'Argumentácia',
-                          tests: [
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: '1.1 Časti debatného argumentu',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: '1.2 Časti debatného argumentu',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: 'Čo je argument (úvod do argumentu)',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: '1.1  Silné a slabé argumenty',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: '1.2  Silné a slabé argumenty',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: '1. Predpoklady (výroková logika II.)',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: '1. Závery (výroková logika I.)',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                          ],
-                        ),
-                        UserCapitolsData(
-                          completed: false,
-                          id: '1',
-                          image: '',
-                          name: 'Manipulácia',
-                          tests: [
-                            UserCapitolsTestData(
-                              completed: false,
-                              name: 'Korelácia a Kauzalita',
-                              points: 0,
-                              questions: [
-                                UserQuestionsData(answer: '', completed: false, correct: false),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                      materials: [],
-                      badges: [
-                        'assets/badges/badgeArgDis.svg',
-                        'assets/badges/badgeManDis.svg',
-                        'assets/badges/badgeCritDis.svg',
-                        'assets/badges/badgeDataDis.svg',
-                        'assets/badges/badgeGramDis.svg',
-                        'assets/badges/badgeMediaDis.svg',
-                        'assets/badges/badgeSocialDis.svg',
-                      ]
-                    ),
+                   UserData(
+                    admin: _isAdmin,
+                    id: '',
+                    email: _emailController.text,
+                    name: _nameController.text,
+                    active: false,
+                    classes: [
+                      widget.currentUserData!.schoolClass,
+                    ],
+                    schoolClass: widget.currentUserData!.schoolClass,
+                    image: 'assets/profilePicture.svg',
+                    surname: _surnameController.text,
+                    teacher: _isTeacher,
+                    points: 0,
+                    capitols: [
+                      UserCapitolsData(
+                        completed: false,
+                        id: '1',
+                        image: '',
+                        name: 'Kritické Myslenie',
+                        tests: [
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: 'Úvod do kritického myslenia',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false, false, false, false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false, false, false, false, false, false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: 'Kognitívne skreslenia',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                            ],
+                          ),
+                        ],
+                      ),
+                      UserCapitolsData(
+                        completed: false,
+                        id: '1',
+                        image: '',
+                        name: 'Argumentácia',
+                        tests: [
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: 'Analýza a Tvrdenie',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: '1.1 Časti debatného argumentu',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: 'Čo je argument (úvod do argumentu)',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: 'Dôkaz',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: '1.1  Silné a slabé argumenty',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: '1.2  Silné a slabé argumenty',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: '1. Závery (výroková logika I.)',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                            ],
+                          ),
+                          UserCapitolsTestData(
+                            completed: false,
+                            name: '1. Predpoklady (výroková logika II.)',
+                            points: 0,
+                            questions: [
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                              UserQuestionsData(answer: [], completed: false, correct: [false]),
+                            ],
+                          ),
+                        ],
+                      ),
+                      
+                    ],
+                    materials: [],
+                    notifications: [],
+                    badges: [
+                      'assets/badges/badgeArgDis.svg',
+                      'assets/badges/badgeManDis.svg',
+                      'assets/badges/badgeCritDis.svg',
+                      'assets/badges/badgeDataDis.svg',
+                      'assets/badges/badgeGramDis.svg',
+                      'assets/badges/badgeMediaDis.svg',
+                      'assets/badges/badgeSocialDis.svg',
+                    ]
+                  ),
                     _emailController.text,
                     _passwordController.text
                   );
@@ -315,6 +357,7 @@ class _UserFormState extends State<UserForm> {
           }).toList(),
         }).toList(),
       }).toList(),
+      'notifications': data.notifications,
       'materials': data.materials,
       'badges': data.badges,
     });

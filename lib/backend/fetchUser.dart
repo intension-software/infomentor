@@ -1,10 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+class UserNotificationsData {
+  String id;
+  bool seen;
+
+  UserNotificationsData({
+    required this.id,
+    required this.seen,
+  });
+}
+
+class UserAnswerData {
+  int? answer;
+  int? index;
+
+  UserAnswerData({
+    required this.answer,
+    required this.index
+  });
+}
+
 class UserQuestionsData {
-  String answer;
+  List<UserAnswerData> answer;
   bool completed;
-  bool correct;
+  List<bool> correct;
 
   UserQuestionsData({
     required this.answer,
@@ -58,6 +78,7 @@ class UserData {
   List<UserCapitolsData> capitols;
   List<String> materials;
   List<String> badges;
+  List<UserNotificationsData> notifications;
 
   UserData({
     required this.admin,
@@ -74,6 +95,7 @@ class UserData {
     required this.capitols,
      required this.materials,
     required this.badges,
+    required this.notifications
   });
 }
 
@@ -83,41 +105,41 @@ Future<UserData> fetchUser(String userId) async {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // Extract the email from the Firebase Auth user
       String id = userId;
       String email = user.email ?? '';
-
-      // Reference to the user document in Firestore
       DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-
-      // Retrieve the user document
       DocumentSnapshot userSnapshot = await userRef.get();
 
       if (userSnapshot.exists) {
-        // Extract the fields from the user document
+        // Extracting the fields
         String name = userSnapshot.get('name') as String? ?? '';
         bool active = userSnapshot.get('active') as bool? ?? false;
-        List<String> classes =
-            List<String>.from(
-                userSnapshot.get('classes') as List<dynamic>? ?? []);
-        String schoolClass =
-            userSnapshot.get('schoolClass') as String? ?? '';
+        List<String> classes = List<String>.from(userSnapshot.get('classes') as List<dynamic>? ?? []);
+        String schoolClass = userSnapshot.get('schoolClass') as String? ?? '';
         String image = userSnapshot.get('image') as String? ?? '';
         String surname = userSnapshot.get('surname') as String? ?? '';
         int points = userSnapshot.get('points') as int? ?? 0;
-        List<Map<String, dynamic>> capitols =
-            List<Map<String, dynamic>>.from(
-                userSnapshot.get('capitols') as List<dynamic>? ?? []);
-        List<String> materials =
-            List<String>.from(
-                userSnapshot.get('materials') as List<dynamic>? ?? []);
-        List<String> badges =
-            List<String>.from(
-                userSnapshot.get('badges') as List<dynamic>? ?? []);
+        List<Map<String, dynamic>> capitols = List<Map<String, dynamic>>.from(userSnapshot.get('capitols') as List<dynamic>? ?? []);
+        List<String> materials = List<String>.from(userSnapshot.get('materials') as List<dynamic>? ?? []);
+        List<String> badges = List<String>.from(userSnapshot.get('badges') as List<dynamic>? ?? []);
         bool teacher = userSnapshot.get('teacher') as bool? ?? false;
         bool admin = userSnapshot.get('admin') as bool? ?? false;
 
-        // Create a UserData instance
+        // Extracting notifications data
+        List<Map<String, dynamic>> rawNotifications = List<Map<String, dynamic>>.from(userSnapshot.get('notifications') as List<dynamic>? ?? []);
+        List<UserNotificationsData> notificationsList = [];
+        for (var notificationData in rawNotifications) {
+          String notificationId = notificationData['id'] as String? ?? '';
+          bool notificationSeen = notificationData['seen'] as bool? ?? false;
+
+          UserNotificationsData notification = UserNotificationsData(
+            id: notificationId,
+            seen: notificationSeen,
+          );
+
+          notificationsList.add(notification);
+        }
+
         UserData userData = UserData(
           admin: admin,
           id: id,
@@ -133,6 +155,7 @@ Future<UserData> fetchUser(String userId) async {
           capitols: [],
           materials: materials,
           badges: badges,
+          notifications: notificationsList,
         );
 
         // Iterate over the capitols data
@@ -163,15 +186,31 @@ Future<UserData> fetchUser(String userId) async {
                 List<UserQuestionsData> questionsDataList = [];
 
                 // Iterate over the questions data
-                for (var questionData in questions) {
-                  // Extract the question answer and completion status
-                  String questionAnswer = questionData['answer'] as String? ?? '';
+               for (var questionData in questions) {
+              // Extract the question answer and completion status
                   bool questionCompleted = questionData['completed'] as bool? ?? false;
-                  bool questionCorrect = questionData['correct'] as bool? ?? false;
+                  List<bool> questionCorrect = List<bool>.from(
+                        questionData['correct'] as List<dynamic>? ?? []);
 
-                  // Create a UserQuestionsData instance
+                  List<UserAnswerData> answersDataList = [];  // Initialized outside the if block
+
+                  List<dynamic>? answers = questionData['answer'] as List<dynamic>?;
+
+                  if (answers != null) {
+                    for (var answerData in answers) {
+                      int answer = answerData['answer'] as int? ?? 0;
+                      int index = answerData['index'] as int? ?? 0;
+
+                      UserAnswerData answerItem = UserAnswerData(
+                        answer: answer,
+                        index: index,
+                      );
+                      answersDataList.add(answerItem);
+                    }
+                  }
+
                   UserQuestionsData question = UserQuestionsData(
-                    answer: questionAnswer,
+                    answer: answersDataList,
                     completed: questionCompleted,
                     correct: questionCorrect,
                   );
@@ -179,6 +218,7 @@ Future<UserData> fetchUser(String userId) async {
                   // Add the UserQuestionsData instance to the list
                   questionsDataList.add(question);
                 }
+
 
                 // Create a UserCapitolsTestData instance with the test name, completion status, points, and questions
                 UserCapitolsTestData testData = UserCapitolsTestData(
