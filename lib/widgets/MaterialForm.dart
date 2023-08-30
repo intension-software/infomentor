@@ -213,7 +213,7 @@ class _MaterialFormState extends State<MaterialForm> {
       label,
       false,
       controller,
-      AppColors.mono.white, // assuming white is the default border color you want
+      AppColors.getColor('mono').white, // assuming white is the default border color you want
       
     );
 }

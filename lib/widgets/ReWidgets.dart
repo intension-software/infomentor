@@ -13,7 +13,7 @@ Container reTextField(
     decoration: BoxDecoration(
       boxShadow: [
         BoxShadow(
-          color: AppColors.mono.black.withOpacity(0.1),
+          color: AppColors.getColor('mono').black.withOpacity(0.1),
           spreadRadius: 2,
           blurRadius: 4,
           offset: Offset(0, 2),
@@ -25,32 +25,32 @@ Container reTextField(
       obscureText: isPasswordType,
       enableSuggestions: !isPasswordType,
       autocorrect: !isPasswordType,
-      style: TextStyle(color: AppColors.mono.black), // Set the text color to black
+      style: TextStyle(color: AppColors.getColor('mono').black), // Set the text color to black
       cursorColor: Colors.transparent, // Set the cursor color to transparent
       decoration: InputDecoration(
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: text,
         hintText: '', // Remove the text in the left corner when active
         filled: true, // Add a background color to the TextField
-        fillColor: AppColors.mono.white, // Set the background color to white
+        fillColor: AppColors.getColor('mono').white, // Set the background color to white
          border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          color: borderColor ?? AppColors.mono.white, // Use the provided borderColor or fallback to white if null
+          color: borderColor ?? AppColors.getColor('mono').white, // Use the provided borderColor or fallback to white if null
           width: 2.0,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          color: borderColor ?? AppColors.mono.white, // Use the provided borderColor or fallback to white if null
+          color: borderColor ?? AppColors.getColor('mono').white, // Use the provided borderColor or fallback to white if null
           width: 2.0,
         ),
       ),
         focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-            color: AppColors.green.main, // Set the focused border color to green
+            color: AppColors.getColor('green').main, // Set the focused border color to green
             width: 2.0,
           ),
         ),
@@ -201,7 +201,7 @@ Container reTileMatchmaking(
   return Container(
   margin: EdgeInsets.all(8),
   decoration: BoxDecoration(
-    border: Border.all(color: AppColors.mono.lightGrey),
+    border: Border.all(color: AppColors.getColor('mono').lightGrey),
     borderRadius: BorderRadius.circular(10),
   ),
   child: Column(
@@ -229,7 +229,7 @@ Container reTileMatchmaking(
              leading: percentage == [] || percentage == null ? correct == null ? Radio(
                 value: index,
                 groupValue: _answer,
-                activeColor: AppColors.mono.lightGrey,
+                activeColor: AppColors.getColor('mono').lightGrey,
                 onChanged: null,
               ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: Theme.of(context)
             .textTheme
@@ -267,12 +267,12 @@ Container reTile(Color color, Color borderColor, int index, String? item, BuildC
       color: color,
     ),
     child: ListTile(
-      title: borderColor == AppColors.mono.lightGrey ? Text(item ?? '',
+      title: borderColor == AppColors.getColor('mono').lightGrey ? Text(item ?? '',
         style: Theme.of(context)
           .textTheme
           .bodyLarge!
           .copyWith(
-            color:  AppColors.mono.black,
+            color:  AppColors.getColor('mono').black,
         ),
       ) : Text(item ?? '',
         style: Theme.of(context)
@@ -285,9 +285,9 @@ Container reTile(Color color, Color borderColor, int index, String? item, BuildC
       leading: percentage == [] || percentage == null ? correct == null ? Radio(
         value: index,
         groupValue: null,
-        activeColor: AppColors.mono.lightGrey,
+        activeColor: AppColors.getColor('mono').lightGrey,
         onChanged: null,
-      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: borderColor == AppColors.mono.lightGrey ? Theme.of(context)
+      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: borderColor == AppColors.getColor('mono').lightGrey ? Theme.of(context)
             .textTheme
             .bodyLarge!
             .copyWith(

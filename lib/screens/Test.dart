@@ -124,9 +124,9 @@ class _TestState extends State<Test> {
         );
 
         // Extracting the results from the map
-        usersCompleted = questionStats['userCompleted'];
-        percentagesAll = questionStats['correctPercentage'];
-        percentages = questionStats['answerPercentages'];
+        usersCompleted = await questionStats['userCompleted'];
+        percentagesAll = await questionStats['correctPercentage'];
+        percentages = await questionStats['answerPercentages'];
       }
       
   }
@@ -176,8 +176,8 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
     FetchResult capitolsData = await fetchCapitols(capitolIndex.toString());
 
     int totalStudents = usersSnapshot.docs.length;
+    int completedStudents = 0; // new variable to keep track of students who have completed the test
     int correctResponses = 0;
-    bool userCompleted = false; // reintroduced this
 
     List<int> answerCounts = List.filled(
       capitolsData.capitolsData!.tests[testIndex].questions[questionIndex].answersImage!.length +
@@ -192,35 +192,42 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
 
       Map<String, dynamic> userMap = userData as Map<String, dynamic>;
       var userTest = userMap['capitols'][capitolIndex]['tests'][testIndex];
-      if (userTest != null && userTest['completed'] == true) {
-        userCompleted = true;
-      }
-
       var userQuestion = userTest?['questions'][questionIndex];
 
-      if (userQuestion != null) {
-        List<dynamic> correctList = userQuestion['correct'];
-        if (correctList.every((e) => e == true)) {
-          correctResponses++;
-        }
+      if (userTest != null && userTest['completed'] == true) {
+        completedStudents++;  // increment if the student has completed the test
 
-        var userAnswers = userQuestion['answer'] as List?; 
-        if (userAnswers != null) {
-          for (var userAnswer in userAnswers) {
-            int? index = userAnswer['index'];  
-            if (index != null && index >= 0 && index < answerCounts.length) {
-              answerCounts[index]++;
+        if (userQuestion != null) {
+          List<dynamic> correctList = userQuestion['correct'];
+          if (correctList.every((e) => e == true)) {
+            correctResponses++;
+          }
+
+          var userAnswers = userQuestion['answer'] as List?;
+          if (userAnswers != null) {
+            for (var userAnswer in userAnswers) {
+              int? index = userAnswer['index'];
+              if (index != null && index >= 0 && index < answerCounts.length) {
+                answerCounts[index]++;
+              }
             }
           }
         }
       }
     }
 
-    List<double> percentages = answerCounts.map((count) => (count / (totalStudents != 0 ? totalStudents : 1)) * 100).toList();
+    // Use 'completedStudents' instead of 'totalStudents' for percentage calculation
+    List<double> percentages = answerCounts.map((count) => (count / (completedStudents != 0 ? completedStudents : 1)) * 100).toList();
+
+    percentages.asMap().forEach((index, value) {
+      percentages[index] = double.parse(value.toStringAsFixed(2));
+    });
+
+    print(double.parse(((correctResponses / (completedStudents != 0 ? completedStudents : 1)) * 100).toStringAsFixed(2)));
 
     return {
-      'userCompleted': userCompleted,
-      'correctPercentage': (correctResponses / totalStudents) * 100,
+      'completedStudents': completedStudents,
+      'correctPercentage': double.parse(((correctResponses / (completedStudents != 0 ? completedStudents : 1)) * 100).toStringAsFixed(2)),
       'answerPercentages': percentages
     };
   } catch (e) {
@@ -228,6 +235,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
     rethrow;
   }
 }
+
 
 
 
@@ -276,13 +284,10 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
 
         screen ? Positioned.fill(
           child:  SvgPicture.asset(
-            'assets/screenBackground.svg',
+            'assets/lastScreenBackground.svg',
             fit: BoxFit.cover,
           ),
          ) : Container(),
-
-         
-
         
       Scaffold(
       appBar: AppBar(
@@ -304,7 +309,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               width: 40,
               height: 10,
               decoration: BoxDecoration(
-                color: questionIndex >= index ? AppColors.green.main : AppColors.primary.lighter,
+                color: questionIndex >= index ? AppColors.getColor('green').main : AppColors.getColor('primary').lighter,
                 borderRadius: BorderRadius.circular(5),
               ),
             ),
@@ -316,7 +321,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
   leading: IconButton(
     icon: Icon(
       Icons.arrow_back,
-      color: (MediaQuery.of(context).size.width < 1000 && (definition != '' || images.length > 0))|| screen ? AppColors.mono.white : AppColors.mono.black,
+      color: (MediaQuery.of(context).size.width < 1000 && (definition != '' || images.length > 0))|| screen ? AppColors.getColor('mono').white : AppColors.getColor('mono').black,
     ),
     onPressed: () => 
       questionIndex > 0 ? 
@@ -353,7 +358,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius:  MediaQuery.of(context).size.width < 1000 ? null : BorderRadius.circular(10),
-                    border: MediaQuery.of(context).size.width < 1000 ? null : Border.all(color: AppColors.mono.grey),
+                    border: MediaQuery.of(context).size.width < 1000 ? null : Border.all(color: AppColors.getColor('mono').grey),
                 ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,7 +392,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                   margin: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: AppColors.mono.grey),
+                                    border: Border.all(color: AppColors.getColor('mono').grey),
                                     color: Theme.of(context).colorScheme.background,
                                   ),
                                   child: ClipRRect(
@@ -403,7 +408,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                             margin: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: AppColors.mono.grey),
+                              border: Border.all(color: AppColors.getColor('mono').grey),
                               color: Theme.of(context).colorScheme.background
                               ),
                             padding: EdgeInsets.all(12),
@@ -440,14 +445,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                       child: Column(
                       children: [
 
-                        if (widget.userData!.teacher && usersCompleted) Container(
+                        if (widget.userData!.teacher) Container(
                           margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           height: 60,
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: AppColors.primary.main,
+                              color: AppColors.getColor('primary').main,
                               width: 2
                             ),
                           ),
@@ -458,17 +463,34 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                           .textTheme
                                           .headlineMedium!
                                           .copyWith(
-                                            color: AppColors.primary.main,
+                                            color: AppColors.getColor('primary').main,
                                           ),
                                 ),
-                                Text('Úspešnosť: ${percentagesAll.toString()}%',
-                                  style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium!
-                                          .copyWith(
-                                            color: Theme.of(context).colorScheme.onBackground,
-                                          ),
-                                )
+                                FutureBuilder<Map<String, dynamic>>(
+                                    future:  getQuestionStats(
+                                    widget.userData!.schoolClass,
+                                    int.parse(widget.capitolsId),
+                                    widget.testIndex,
+                                    questionIndex,
+                                  ),
+                                builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else {
+                                    double? correctPercentage = snapshot.data?['correctPercentage'];
+                                    return Text('Úspešnosť: ${correctPercentage?.toStringAsFixed(2) ?? "N/A"}%',
+                                                style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium!
+                                                        .copyWith(
+                                                          color: Theme.of(context).colorScheme.onBackground,
+                                                        ),
+                                              );
+                                  }
+                                },
+                              )
                               ],
                             )
                         ),
@@ -511,21 +533,21 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                 // Show the tile in green if index matches correct
                                 if (answersImage.isNotEmpty && index < answersImage!.length) {
                                   String? item = answersImage?[index];
-                                  tile = reTileImage(AppColors.green.lighter, AppColors.green.main, index, item, context, correct: true);
+                                  tile = reTileImage(AppColors.getColor('green').lighter, AppColors.getColor('green').main, index, item, context, correct: true);
                                   itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index] : null;;
                                 } else if ((answers?.length ?? 0) > 1 && index - (answersImage?.length ?? 0) < (answers?.length ?? 0)) {
                                   String? item = answers?[(index - (answersImage?.length ?? 0))];
-                                  tile = reTile(AppColors.green.lighter, AppColors.green.main, index, item, context, correct: true);
+                                  tile = reTile(AppColors.getColor('green').lighter, AppColors.getColor('green').main, index, item, context, correct: true);
                                   itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index - answersImage.length] : null;
                                 } else if ((matchmaking?.length ?? 0) > 1 && (matches?.length ?? 0) > 0 && index - (answersImage?.length ?? 0) + ((answers?.length ?? 0)) < (matchmaking?.length ?? 0)) {
                                   String? item = matchmaking?[(index - (answersImage?.length ?? 0) + (answers?.length ?? 0))];
                                   List<String> item2 = matches ?? [];
 
                                   if (_answer.any((answerItem) => answerItem.index == index) && correct!.any((correctItem) => _answer.any((answerItem) => answerItem.answer == correctItem.correct && answerItem.index == correctItem.index && answerItem.index == index))) {
-                                    tile = reTileMatchmaking(AppColors.green.lighter, AppColors.green.main, correct!.firstWhere((item) => item.index == index).correct, index, item, context, item2, true);
+                                    tile = reTileMatchmaking(AppColors.getColor('green').lighter, AppColors.getColor('green').main, correct!.firstWhere((item) => item.index == index).correct, index, item, context, item2, true);
                                     itemText = explanation!.length > 1 && explanation![index - answersImage.length - answers.length].isNotEmpty  ? explanation![index - answersImage.length - answers.length] : null;
                                   } else {
-                                    tile = reTileMatchmaking(AppColors.red.lighter, AppColors.red.main, correct!.firstWhere((item) => item.index == index).correct, index, item, context, item2, false);
+                                    tile = reTileMatchmaking(AppColors.getColor('red').lighter, AppColors.getColor('red').main, correct!.firstWhere((item) => item.index == index).correct, index, item, context, item2, false);
                                     itemText = explanation!.length > 1 && explanation![index - answersImage.length - answers.length].isNotEmpty  ? explanation![index - answersImage.length - answers.length] : null;;
                                   }
                                 } 
@@ -537,7 +559,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                           margin: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(10),
-                                            color: AppColors.primary.lighter,
+                                            color: AppColors.getColor('primary').lighter,
                                           ),
                                           padding: EdgeInsets.all(12),
                                           child: Row(
@@ -566,14 +588,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                     ],
                                   );
                                 }
-                              } else if (correct!.any((item) => item.correct != index) && _answer!.any((item) => item.answer == index)) {
+                              } else if (correct!.any((item) => item.index != index) && _answer!.any((item) => item.index == index)) {
                                   if (answersImage.isNotEmpty && index < answersImage!.length) {
                                     String? item = answersImage?[index];
-                                    tile = reTileImage(AppColors.mono.white, AppColors.red.main, index, item, context, correct: false);
+                                    tile = reTileImage(AppColors.getColor('mono').white, AppColors.getColor('red').main, index, item, context, correct: false);
                                     itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index] : null;;
                                   } else if ((answers?.length ?? 0) > 1 && index - (answersImage?.length ?? 0) < (answers?.length ?? 0)) {
                                     String? item = answers?[(index - (answersImage?.length ?? 0))];
-                                    tile =  reTile(AppColors.red.lighter, AppColors.red.main, index, item, context,correct: false);
+                                    tile =  reTile(AppColors.getColor('red').lighter, AppColors.getColor('red').main, index, item, context,correct: false);
                                     itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index - answersImage.length] : null;
                                   }
                                    if (tile != null) {
@@ -584,7 +606,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                           margin: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(10),
-                                            color: AppColors.primary.lighter,
+                                            color: AppColors.getColor('primary').lighter,
                                           ),
                                           padding: EdgeInsets.all(12),
                                           child: Row(
@@ -616,11 +638,11 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                 } else {
                                    if (answersImage.isNotEmpty && index < answersImage!.length) {
                                     String? item = answersImage?[index];
-                                    tile = reTileImage(AppColors.mono.white, AppColors.mono.lightGrey, index, item, context);
+                                    tile = reTileImage(AppColors.getColor('mono').white, AppColors.getColor('mono').lightGrey, index, item, context);
                                     itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index] : null;;
                                   } else if ((answers?.length ?? 0) > 1 && index - (answersImage?.length ?? 0) < (answers?.length ?? 0)) {
                                     String? item = answers?[(index - (answersImage?.length ?? 0))];
-                                    tile =   reTile(AppColors.mono.white, AppColors.mono.lightGrey, index, item, context); 
+                                    tile =   reTile(AppColors.getColor('mono').white, AppColors.getColor('mono').lightGrey, index, item, context); 
                                     itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index - answersImage.length] : null;
                                   }
                                    if (tile != null) {
@@ -631,7 +653,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                           margin: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(10),
-                                            color: AppColors.primary.lighter,
+                                            color: AppColors.getColor('primary').lighter,
                                           ),
                                           padding: EdgeInsets.all(12),
                                           child: Row(
@@ -693,10 +715,10 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                 decoration: BoxDecoration(
                                   border: _answer.any((e) => e.answer == index)
                                       ? Border.all(color: Theme.of(context).primaryColor)
-                                      : Border.all(color: AppColors.mono.lightGrey),
+                                      : Border.all(color: AppColors.getColor('mono').lightGrey),
                                   color: _answer.any((e) => e.answer == index)
-                                      ? AppColors.primary.lighter
-                                      : AppColors.mono.white,
+                                      ? AppColors.getColor('primary').lighter
+                                      : AppColors.getColor('mono').white,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Column(
@@ -714,7 +736,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                             value: true,
                                             groupValue: _answer.any((e) => e.answer == index),
                                             onChanged: (value) {}, // Disable manual changing by tapping the radio directly
-                                            activeColor: AppColors.primary.main,
+                                            activeColor: AppColors.getColor('primary').main,
                                           ),
                                           SizedBox(width: 32),
                                           Expanded(child: Text('Obrázok ${index + 1},',
@@ -737,7 +759,9 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                           );
                         } else if (answers.isNotEmpty && (index - answersImage.length) < answers!.length) {
                           String? item = answers[(index - answersImage.length)];
-                         return  GestureDetector(
+                         return  MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
                             onTap: () {
                               setState(() {
                                 bool isSelected = _answer.any((e) => e.answer == index);
@@ -766,15 +790,13 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                 decoration: BoxDecoration(
                                   border: _answer.any((e) => e.index == index)
                                       ? Border.all(color: Theme.of(context).primaryColor)
-                                      : Border.all(color: AppColors.mono.lightGrey),
+                                      : Border.all(color: AppColors.getColor('mono').lightGrey),
                                   color: _answer.any((e) => e.index == index)
-                                      ? AppColors.primary.lighter
-                                      : AppColors.mono.white,
+                                      ? AppColors.getColor('primary').lighter
+                                      : AppColors.getColor('mono').white,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child:Padding(
+                                child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                                   child: Row(
                                     children: [
@@ -782,17 +804,22 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                         value: true,
                                         groupValue: _answer.any((e) => e.answer == index),
                                         onChanged: (value) {},
-                                        activeColor: AppColors.primary.main,
+                                        activeColor: AppColors.getColor('primary').main,
                                       ),
                                       SizedBox(width: 32),
-                                      Expanded(child: Text(item,
-                                        style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                            color: _answer.any((e) => e.index == index) == true ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onBackground,
-                                          ),
-                                      )),
+                                      Expanded(
+                                        child: Text(
+                                          item,
+                                          style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                              color: _answer.any((e) => e.index == index)
+                                                  ? Theme.of(context).colorScheme.primary
+                                                  : Theme.of(context).colorScheme.onBackground,
+                                            ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -801,13 +828,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                           ),
                         );
 
+
                         } else if (matchmaking.isNotEmpty && matches.isNotEmpty && index - (answersImage.length) + ((answers.length)) < matchmaking.length) {
                           String? item = matchmaking[(index - (answersImage.length) - (answers.length))];
                           return Container(
                             margin: EdgeInsets.all(8),
                             padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.mono.lightGrey),
+                              border: Border.all(color: AppColors.getColor('mono').lightGrey),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
@@ -835,7 +863,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                       padding: EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: openDropdownIndex == index ? AppColors.primary.main : Colors.grey),
+                                        border: Border.all(color: openDropdownIndex == index ? AppColors.getColor('primary').main : Colors.grey),
                                       ),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -844,7 +872,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                             style: Theme.of(context).textTheme
                                               .bodyMedium!
                                               .copyWith(
-                                              color: _answer.any((e) => e.index == index) == true ? AppColors.primary.main : Theme.of(context).colorScheme.onBackground,
+                                              color: _answer.any((e) => e.index == index) == true ? AppColors.getColor('primary').main : Theme.of(context).colorScheme.onBackground,
                                               ),
                                           ),
                                           openDropdownIndex == index ? SvgPicture.asset(
@@ -892,31 +920,26 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                               if (index < answersImage.length &&  answersImage.isNotEmpty) {
                                 String item = answersImage[index];
                                 itemText = explanation!.length > 1 && explanation![index].isNotEmpty  ? explanation![index] : null;
-                                bgColor = isCorrect ? AppColors.green.lighter : AppColors.red.lighter;
-                                borderColor = isCorrect ? AppColors.green.main : AppColors.red.main;
+                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('red').lighter;
+                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
                                 mainWidget = reTileImage(bgColor, borderColor, index, item, context, percentage: data!['answerPercentages'], correct: isCorrect);
                               }
-
-
                               // Handle answers
                               else if ((index - answersImage.length) < answers.length &&  answers.isNotEmpty && answers[index - answersImage.length].isNotEmpty) {
                                 String? item = answers[index - answersImage.length].isNotEmpty ? answers[index - answersImage.length] : null;
                                 itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index - answersImage.length] : null;
-                                bgColor = isCorrect ? AppColors.green.lighter : AppColors.red.lighter;
-                                borderColor = isCorrect ? AppColors.green.main : AppColors.red.main;
+                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('red').lighter;
+                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
                                 mainWidget = reTile(bgColor, borderColor, index, item, context, percentage: data!['answerPercentages'], correct: isCorrect);
-
-
                               }
-
                               // Handle matchmaking
                               else  {
                                 itemText = explanation!.length > 1 && explanation![index - answersImage.length - answers.length].isNotEmpty  ? explanation![index - answersImage.length - answers.length ] : null;
                                 String? item = matchmaking[index  - answersImage.length  - answers.length];
                                 List<String> item2 = matches;
                                 itemText = explanation!.length > 1 && explanation![index - answersImage.length  - answers.length].isNotEmpty  ? explanation![index - answersImage.length - answers.length ] : null;
-                                bgColor = isCorrect ? AppColors.green.lighter : AppColors.red.lighter;
-                                borderColor = isCorrect ? AppColors.green.main : AppColors.red.main;
+                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('red').lighter;
+                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
                                 mainWidget = reTileMatchmaking(bgColor, borderColor, correct!.firstWhere((cItem) => cItem.index == index).correct, index, item, context, item2, true);
                               }
 
@@ -928,7 +951,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                     margin: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: AppColors.primary.lighter,
+                                      color: AppColors.getColor('primary').lighter,
                                     ),
                                     padding: EdgeInsets.all(12),
                                     child: Row(
@@ -961,13 +984,11 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                             );
                           }
                          ),
-
-                      
-                      if(explanation!.length < 2 && pressed)Container(
+                      if(explanation!.length < 2 && (pressed || widget.userData!.teacher))Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: AppColors.primary.lighter,
+                          color: AppColors.getColor('primary').lighter,
                         ),
                         padding: EdgeInsets.all(12),
                         child: Row(
@@ -1006,14 +1027,19 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       ),
       
             
-        pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'ĎALEJ', leftIcon: false, rightIcon: false,onTap:
+        pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ', leftIcon: false, rightIcon: false,onTap:
           onNextButtonPressed,
-        ) : ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'HOTOVO', leftIcon: false, rightIcon: false, onTap:
+        ) : ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'HOTOVO', leftIcon: false, rightIcon: false, onTap:
           onAnswerPressed,
         ),
         ]
-      ) : firstScreen ? 
-      Center(
+      ) : firstScreen ?
+      Container(
+        decoration: BoxDecoration(
+          color: AppColors.getColor('primary').light
+        ),
+      child: Center(
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1037,8 +1063,8 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                     animation: true,
                     percent: 0.05,
                     circularStrokeCap: CircularStrokeCap.round,
-                    progressColor: AppColors.yellow.light,
-                    backgroundColor: AppColors.mono.lighterGrey,
+                    progressColor: AppColors.getColor('yellow').light,
+                    backgroundColor: AppColors.getColor('mono').lighterGrey,
                 ),
               SvgPicture.asset('assets/icons/starYellowIcon.svg', height: 30,),
             ],),
@@ -1052,7 +1078,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                 ),
             ),
             SizedBox(height: 20),
-            ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'POKRAČOVAŤ', leftIcon: false, rightIcon: false, onTap:
+            ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'POKRAČOVAŤ', leftIcon: false, rightIcon: false, onTap:
               () {
                 setState(() {
                   screen = false;
@@ -1061,7 +1087,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               }
             ),
           ],
-        )) :  Column(
+        ))) :  Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
@@ -1073,7 +1099,6 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
             ),
-           
             SizedBox(height: 30),
             SvgPicture.asset('assets/star.svg', height: 100,),
             SizedBox(height: 10),
@@ -1115,7 +1140,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               ],
             ),
             SizedBox(height: 20),
-            ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'ZAVRIEŤ', leftIcon: false, rightIcon: false, onTap:
+            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAVRIEŤ', leftIcon: false, rightIcon: false, onTap:
               () => widget.overlay(),
             ),
           ],
@@ -1164,7 +1189,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               .textTheme
               .bodyMedium!
               .copyWith(
-                color: _answer.any((e) => e.index == index) == true ? AppColors.primary.main : Theme.of(context).colorScheme.onBackground,
+                color: _answer.any((e) => e.index == index) == true ? AppColors.getColor('primary').main : Theme.of(context).colorScheme.onBackground,
               ),
             ),
             onTap: () {

@@ -93,13 +93,13 @@ class _LearningState extends State<Learning> {
                 child: Container(
                   width: 260,
                   child: widget.currentUserData!.teacher ? ReButton(
-                    activeColor: AppColors.mono.white, 
-                    defaultColor: AppColors.primary.main, 
-                    disabledColor: AppColors.mono.lightGrey, 
-                    focusedColor: AppColors.primary.light, 
-                    hoverColor: AppColors.mono.lighterGrey, 
+                    activeColor: AppColors.getColor('mono').white, 
+                    defaultColor: AppColors.getColor('primary').main, 
+                    disabledColor: AppColors.getColor('mono').lightGrey, 
+                    focusedColor: AppColors.getColor('primary').light, 
+                    hoverColor: AppColors.getColor('mono').lighterGrey, 
                     textColor: Theme.of(context).colorScheme.onPrimary, 
-                    iconColor: AppColors.mono.black, 
+                    iconColor: AppColors.getColor('mono').black, 
                     text: '+ PRIDAŤ OBSAH', 
                     leftIcon: false, 
                     rightIcon: false, 
@@ -211,7 +211,7 @@ class _LearningState extends State<Learning> {
             child: IconButton(
                 icon: Icon(
                   Icons.arrow_back,
-                  color: AppColors.mono.darkGrey,
+                  color: AppColors.getColor('mono').darkGrey,
                 ),
                 onPressed: () => 
                   _onNavigationItemSelected(0),

@@ -301,7 +301,7 @@ class _TutorialState extends State<Tutorial> {
                   width: _currentStep == index ? 10 : 5,
                   height: _currentStep == index ? 10 : 5,
                   decoration: BoxDecoration(
-                    color: _currentStep >= index ? AppColors.green.main : AppColors.primary.lighter,
+                    color: _currentStep >= index ? AppColors.getColor('green').main : AppColors.getColor('primary').lighter,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -309,7 +309,7 @@ class _TutorialState extends State<Tutorial> {
             ),
           SizedBox(height: 40),
           Center(
-            child: ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'VSTÚPIŤ', rightIcon: true, onTap:
+            child: ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'VSTÚPIŤ', rightIcon: true, onTap:
               () {
                 setState(() {
                   if (_isEnterScreen) {

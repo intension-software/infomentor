@@ -6,6 +6,7 @@ import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:infomentor/widgets/DropDown.dart';
+import 'package:infomentor/widgets/NotificationsDropDown.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -69,22 +70,16 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           if(!widget.currentUserData!.teacher) Text(
                             '${widget.currentUserData!.points}/${widget.capitolLength ?? 0}',
                             style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: AppColors.yellow.light,
+                                  color: AppColors.getColor('yellow').light,
                                 ),
                           ),
                           SizedBox(width: 8),
                           if(!widget.currentUserData!.teacher) SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                           if(widget.currentUserData!.teacher)DropDown(currentUserData: widget.currentUserData, onUserDataChanged: widget.onUserDataChanged,),
                           SizedBox(width: 16),
-                          MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: GestureDetector(
-                              onTap: () {
-                                widget.onNavigationItemSelected(4);
-                                widget.selectedIndex = -1;
-                              },
-                              child: SvgPicture.asset('assets/icons/bellIcon.svg'),
-                            )
+                          NotificationsDropDown(
+                            currentUserData: widget.currentUserData, // Pass your user data
+                            onNavigationItemSelected: widget.onNavigationItemSelected,
                           ),
                           SizedBox(width: 16),
                           SvgPicture.asset('assets/icons/infoIcon.svg'),
@@ -137,7 +132,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
           Text(
             text,
             style: Theme.of(context).textTheme.labelMedium!.copyWith(
-              color: isSelected ? Theme.of(context).colorScheme.onPrimary : AppColors.mono.black,
+              color: isSelected ? Theme.of(context).colorScheme.onPrimary : AppColors.getColor('mono').black,
             ),
           ),
         ],

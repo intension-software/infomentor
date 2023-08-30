@@ -41,10 +41,10 @@ class _ResultsState extends State<Results> {
     _isDisposed = false; // Resetting _isDisposed state
 
     // Fetch the current user data.
-    _fetchCurrentUserData().then((_) {
+    /* _fetchCurrentUserData().then((_) {
       // After fetching the current user data, fetch students.
       fetchStudents();
-    });
+    });*/
   }
 
   Future<void> _fetchCurrentUserData() async {
@@ -99,7 +99,8 @@ Widget build(BuildContext context) {
       child: Column(
         children: [
           if (students != null)
-            buildScoreTable(students!)
+            /* buildScoreTable(students!) */
+            Container()
         ],
       ),
     ),

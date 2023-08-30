@@ -6,8 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:ui_web' as ui;
 
 void main() async {
+  ui.bootstrapEngine();
   await dotenv.load();
 
   final apiKey = dotenv.env['API_KEY'] ?? '';
@@ -44,14 +46,14 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         // Define the default brightness and colors.
         brightness: Brightness.light,
-        primaryColor: AppColors.primary.light,
+        primaryColor: AppColors.getColor('primary').light,
         colorScheme: ColorScheme.light().copyWith(
-          primaryContainer: AppColors.primary.light,
-          onPrimaryContainer: AppColors.mono.white,
-          onPrimary: AppColors.mono.white,
-          background: AppColors.mono.white,
-          onBackground: AppColors.mono.black,
-          error: AppColors.red.main,
+          primaryContainer: AppColors.getColor('primary').light,
+          onPrimaryContainer: AppColors.getColor('mono').white,
+          onPrimary: AppColors.getColor('mono').white,
+          background: AppColors.getColor('mono').white,
+          onBackground: AppColors.getColor('mono').black,
+          error: AppColors.getColor('red').main,
         ),
 
         // Define the default font family.

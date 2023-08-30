@@ -68,7 +68,7 @@ class _StudentFeedState extends State<StudentFeed> {
                               children: [
                                 Icon(
                                   Icons.star_border_outlined,
-                                  color: AppColors.primary.lighter,
+                                  color: AppColors.getColor('primary').lighter,
                                 ),
                                 Text(
                                   "Týždenná výzva",
@@ -76,7 +76,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                       .textTheme
                                       .labelSmall!
                                       .copyWith(
-                                    color: AppColors.primary.lighter,
+                                    color: AppColors.getColor('primary').lighter,
                                   ),
                                 ),
                               ],
@@ -92,7 +92,7 @@ class _StudentFeedState extends State<StudentFeed> {
                               ),
                             ),
                             SizedBox(height: 16), // Add some spacing between the items
-                            ReButton(activeColor: AppColors.mono.white, defaultColor:  AppColors.mono.white, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.light, hoverColor: AppColors.mono.lighterGrey, textColor: AppColors.mono.black, iconColor: AppColors.mono.black, text: 'ZAČAŤ', leftIcon: false, rightIcon: false, onTap:
+                            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', leftIcon: false, rightIcon: false, onTap:
                               () {
                                   widget.onNavigationItemSelected(1);
                               },
@@ -107,7 +107,7 @@ class _StudentFeedState extends State<StudentFeed> {
                               children: [
                                 Icon(
                                   Icons.task_alt_rounded,
-                                  color: AppColors.green.main,
+                                  color: AppColors.getColor('green').main,
                                 ),
                                 Text(
                                   "Týždenná výzva dokončená",
@@ -115,7 +115,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                       .textTheme
                                       .labelSmall!
                                       .copyWith(
-                                    color: AppColors.primary.lighter,
+                                    color: AppColors.getColor('primary').lighter,
                                   ),
                                 ),
                               ],
@@ -127,7 +127,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                   .textTheme
                                   .labelSmall!
                                   .copyWith(
-                                color: AppColors.primary.lighter,
+                                color: AppColors.getColor('primary').lighter,
                               ),
                             ),
                             SizedBox(height: 16), // Add some spacing between the items
@@ -154,7 +154,7 @@ class _StudentFeedState extends State<StudentFeed> {
                       color: Theme.of(context).colorScheme.background,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: AppColors.mono.lightGrey,
+                        color: AppColors.getColor('mono').lightGrey,
                         width: 2,
                       ),
                     ),
@@ -172,7 +172,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                   .textTheme
                                   .headlineSmall!
                                   .copyWith(
-                                color: AppColors.mono.grey
+                                color: AppColors.getColor('mono').grey
                               ),
                             ),
                             Text(
@@ -181,7 +181,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                   .textTheme
                                   .headlineSmall!
                                   .copyWith(
-                                color: AppColors.mono.black,
+                                color: AppColors.getColor('mono').black,
                               ),
                             ),
                             Text(
@@ -190,7 +190,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                   .textTheme
                                   .headlineSmall!
                                   .copyWith(
-                                color: AppColors.mono.black,
+                                color: AppColors.getColor('mono').black,
                               ),
                             ),
                           ],
@@ -201,7 +201,7 @@ class _StudentFeedState extends State<StudentFeed> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: AppColors.mono.lightGrey,
+                            color: AppColors.getColor('mono').lightGrey,
                             width: 2,
                           ),
                         ),
@@ -225,7 +225,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                 style: Theme.of(context)
                                       .textTheme
                                       .headlineSmall!.copyWith(
-                                        color: AppColors.mono.darkGrey,
+                                        color: AppColors.getColor('mono').darkGrey,
                                       ),
                               ),
                               SizedBox(height: 10),
@@ -238,8 +238,8 @@ class _StudentFeedState extends State<StudentFeed> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: LinearProgressIndicator(
                                       value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / widget.weeklyCapitolLength : 0.0,
-                                      backgroundColor: AppColors.blue.lighter,
-                                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
+                                      backgroundColor: AppColors.getColor('blue').lighter,
+                                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
                                     ),
                                   )
                                 ),
@@ -250,7 +250,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                         .textTheme
                                         .labelSmall!
                                         .copyWith(
-                                                color: AppColors.mono.grey,
+                                                color: AppColors.getColor('mono').grey,
                                             ),
                                 ),
                                 ]

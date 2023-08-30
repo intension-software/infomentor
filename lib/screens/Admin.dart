@@ -37,7 +37,7 @@ class _AdminState extends State<Admin> {
             child: IconButton(
                 icon: Icon(
                   Icons.arrow_forward,
-                  color: AppColors.mono.darkGrey,
+                  color: AppColors.getColor('mono').darkGrey,
                 ),
                 onPressed: () => 
                   _onNavigationItemSelected(1),
@@ -54,7 +54,7 @@ class _AdminState extends State<Admin> {
             child: IconButton(
                 icon: Icon(
                   Icons.arrow_back,
-                  color: AppColors.mono.darkGrey,
+                  color: AppColors.getColor('mono').darkGrey,
                 ),
                 onPressed: () => 
                   _onNavigationItemSelected(0),

@@ -39,7 +39,7 @@ class _CommentsState extends State<Comments> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: AppColors.mono.lightGrey),
+                  border: Border.all(color: AppColors.getColor('mono').lightGrey),
                 ),
                 padding: EdgeInsets.all(16.0),
                 child: Column(
@@ -68,7 +68,7 @@ class _CommentsState extends State<Comments> {
                             Text(
                               comment.date.toDate().toString(),
                               style: TextStyle(
-                                color: AppColors.mono.grey,
+                                color: AppColors.getColor('mono').grey,
                               ),
                             ),
                           ],

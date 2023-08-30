@@ -108,7 +108,7 @@ class _DiscussionsState extends State<Discussions> {
                 leading: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
-                    color: AppColors.mono.grey,
+                    color: AppColors.getColor('mono').grey,
                   ),
                   onPressed: _toggleCommentsOverlay,
                 ),
@@ -117,7 +117,7 @@ class _DiscussionsState extends State<Discussions> {
               body: Comments(fetchCommentsStream: fetchCommentsStream(_selectedPost!.id)),
               bottomNavigationBar: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: AppColors.mono.lightGrey,
+                color: AppColors.getColor('mono').lightGrey,
                 child: Row(
                   children: [
                     Expanded(
@@ -221,13 +221,13 @@ Widget build(BuildContext context) {
                 child: Container(
                   width: 260,
                   child: widget.currentUserData!.teacher ? ReButton(
-                    activeColor: AppColors.mono.white, 
-                    defaultColor: AppColors.primary.main, 
-                    disabledColor: AppColors.mono.lightGrey, 
-                    focusedColor: AppColors.primary.light, 
-                    hoverColor: AppColors.mono.lighterGrey, 
+                    activeColor: AppColors.getColor('mono').white, 
+                    defaultColor: AppColors.getColor('primary').main, 
+                    disabledColor: AppColors.getColor('mono').lightGrey, 
+                    focusedColor: AppColors.getColor('primary').light, 
+                    hoverColor: AppColors.getColor('mono').lighterGrey, 
                     textColor: Theme.of(context).colorScheme.onPrimary, 
-                    iconColor: AppColors.mono.black, 
+                    iconColor: AppColors.getColor('mono').black, 
                     text: '+ VYTVORIŤ PRÍSPEVOK', 
                     leftIcon: false, 
                     rightIcon: false, 
@@ -259,7 +259,7 @@ Widget build(BuildContext context) {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(color: AppColors.mono.lightGrey),
+                              border: Border.all(color: AppColors.getColor('mono').lightGrey),
                             ),
                             padding: EdgeInsets.all(16.0),
                             child: Column(
@@ -287,7 +287,7 @@ Widget build(BuildContext context) {
                                         Text(
                                           post.date.toDate().toString(),
                                           style: TextStyle(
-                                            color: AppColors.mono.grey,
+                                            color: AppColors.getColor('mono').grey,
                                           ),
                                         ),
                                       ],
@@ -328,7 +328,7 @@ Widget build(BuildContext context) {
             child: IconButton(
                 icon: Icon(
                   Icons.arrow_back,
-                  color: AppColors.mono.darkGrey,
+                  color: AppColors.getColor('mono').darkGrey,
                 ),
                 onPressed: () => 
                   _onNavigationItemSelected(0),
@@ -341,7 +341,7 @@ Widget build(BuildContext context) {
            ),
           Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: AppColors.mono.lightGrey,
+                color: AppColors.getColor('mono').lightGrey,
                 child: Row(
                   children: [
                     Expanded(
@@ -395,7 +395,7 @@ Widget build(BuildContext context) {
             child: IconButton(
                 icon: Icon(
                   Icons.arrow_back,
-                  color: AppColors.mono.darkGrey,
+                  color: AppColors.getColor('mono').darkGrey,
                 ),
                 onPressed: () => 
                   _onNavigationItemSelected(0),
@@ -403,7 +403,7 @@ Widget build(BuildContext context) {
           ),
           Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: AppColors.mono.lightGrey,
+                color: AppColors.getColor('mono').lightGrey,
                 child: Row(
                   children: [
                     Expanded(

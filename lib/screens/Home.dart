@@ -38,6 +38,8 @@ class _HomeState extends State<Home> {
   int weeklyCapitolLength = 0;
   int completedCount = 0;
   String? capitolTitle;
+  bool _loadingCapitols = true;
+  bool _loadingUser = true;
 
 
 
@@ -89,6 +91,7 @@ class _HomeState extends State<Home> {
           completedCount =
               countTrueTests(currentUserData!.capitols![weeklyChallenge].tests);
           capitolTitle = capitol!.capitolsData!.name;
+          _loadingCapitols = false;
         }
       });
     } catch (e) {
@@ -106,7 +109,7 @@ class _HomeState extends State<Home> {
         UserData userData = await fetchUser(user.uid);
         setState(() {
           currentUserData = userData;
-          
+          _loadingUser = false;
         });
       } else {
         print('User is not logged in.');
@@ -123,7 +126,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    
+    if (_loadingUser || _loadingCapitols) {
+        return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
+    }
     return Stack(
       children: [
         MediaQuery.of(context).size.width < 1000 ? Positioned.fill(
@@ -156,10 +161,10 @@ class _HomeState extends State<Home> {
             weeklyChallenge: weeklyChallenge,
             weeklyTitle: weeklyTitle,
           ),
-          Challenges(capitolsId: capitolsId.toString(), fetch: fetchUserData(), currentUserData: currentUserData),
+          Challenges(fetch: fetchUserData(), currentUserData: currentUserData),
           Discussions(currentUserData: currentUserData),
           Learning(currentUserData: currentUserData),
-          Notifications(currentUserData: currentUserData,),
+          Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected),
           SingleChildScrollView(
                 child:Column(
             children: [
@@ -176,8 +181,8 @@ class _HomeState extends State<Home> {
               ],
             )
           ),
-          Results(),
-          Admin(currentUserData: currentUserData,),
+          if (currentUserData!.teacher) Results(),
+          if(currentUserData!.admin) Admin(currentUserData: currentUserData,),
         ],
       ),
     )

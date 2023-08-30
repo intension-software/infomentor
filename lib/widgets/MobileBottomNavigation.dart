@@ -40,7 +40,7 @@ class _MobileBottomNavigationState extends State<MobileBottomNavigation> {
         ),
       ],
       currentIndex: widget.selectedIndex != 4 ? widget.selectedIndex : 0,
-      unselectedItemColor: AppColors.mono.grey,
+      unselectedItemColor: AppColors.getColor('mono').grey,
       selectedItemColor: Theme.of(context).primaryColor,
       onTap: widget.onItemTapped,
     );

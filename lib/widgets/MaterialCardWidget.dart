@@ -101,7 +101,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         Text(
                           widget.title,
                           style: TextStyle(
-                            color: AppColors.mono.white,
+                            color: AppColors.getColor('mono').white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -110,7 +110,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         Text(
                           widget.subject,
                           style: TextStyle(
-                            color: AppColors.mono.white,
+                            color: AppColors.getColor('mono').white,
                             fontSize: 14,
                           ),
                         ),
@@ -118,7 +118,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         Text(
                           widget.type,
                           style: TextStyle(
-                            color: AppColors.mono.white,
+                            color: AppColors.getColor('mono').white,
                             fontSize: 14,
                           ),
                         ),
@@ -133,7 +133,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.mono.white,
+                    color: AppColors.getColor('mono').white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
                       bottomRight: Radius.circular(10),
@@ -157,7 +157,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                     IconButton(
                       icon: Icon(
                         isHeartFilled ? Icons.favorite : Icons.favorite_outline,
-                        color: AppColors.mono.white,
+                        color: AppColors.getColor('mono').white,
                       ),
                       onPressed: () {
                         toggleFavorite();
@@ -166,7 +166,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                     IconButton(
                       icon: Icon(
                         Icons.link,
-                        color: AppColors.mono.white,
+                        color: AppColors.getColor('mono').white,
                       ),
                       onPressed: () {
                         _launchURL(widget.link);
@@ -186,16 +186,16 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scaffold(
-          backgroundColor: AppColors.mono.white, // Set the overlay background color
+          backgroundColor: AppColors.getColor('mono').white, // Set the overlay background color
           appBar: AppBar(
-            backgroundColor: AppColors.mono.white, // Set the appbar background color
+            backgroundColor: AppColors.getColor('mono').white, // Set the appbar background color
             elevation: 0, // Remove the appbar elevation
             leading: SizedBox(
               height: 30, // Set the height of the button
               width: 60, // Set the width of the button
               child: IconButton(
                 icon: Icon(Icons.arrow_back),
-                color: AppColors.mono.lightGrey, // Set the color of the back button to black
+                color: AppColors.getColor('mono').lightGrey, // Set the color of the back button to black
                 onPressed: () {
                   Navigator.of(context).pop(); // Navigate back when the back button is pressed
                 },
@@ -266,7 +266,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                               'Go to Link',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppColors.blue.main,
+                                color: AppColors.getColor('blue').main,
                                 decoration: TextDecoration.underline,
                               ),
                             ),

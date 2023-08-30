@@ -45,6 +45,7 @@ flutter:
     - assets/star.svg
     - assets/badges/
     - assets/graphs/
+    - assets/avatars/
     - assets/icons/
     - assets/tutorial/
     - assets/roadmap/

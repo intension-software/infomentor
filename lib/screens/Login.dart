@@ -99,13 +99,13 @@ class _LoginState extends State<Login> {
                           height: 60,
 
                         decoration: BoxDecoration(
-                          color: AppColors.red.lighter,
+                          color: AppColors.getColor('red').lighter,
                           borderRadius: BorderRadius.circular(5),
                           
                         ),
                         child: Center(child: Text(
                           _errorMessage!,
-                          style: TextStyle(color: AppColors.red.main),
+                          style: TextStyle(color: AppColors.getColor('red').main),
                         ),
                         )
                       ) : Container(),
@@ -134,7 +134,7 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
-        ReButton(activeColor: AppColors.green.main, defaultColor:  AppColors.green.light, disabledColor: AppColors.mono.lightGrey, focusedColor: AppColors.primary.lighter, hoverColor: AppColors.green.main, text: 'PRIHLÁSIŤ', leftIcon: false, rightIcon: false, onTap:
+        ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'PRIHLÁSIŤ', leftIcon: false, rightIcon: false, onTap:
           handleLogin,
         ),
         SizedBox(height: 30),

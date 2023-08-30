@@ -247,7 +247,7 @@ class _ProfileState extends State<Profile> {
                                                       child: LinearProgressIndicator(
                                                         value: capitolOne != 0 ? currentUserData!.points / capitolOne : 0,
                                                         backgroundColor: Colors.grey[300],
-                                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.green.main),
+                                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
                                                       ),
                                                     ),
                                                   ),
@@ -440,7 +440,7 @@ class _ProfileState extends State<Profile> {
                                               Container(
                                                 height: 48,
                                                 decoration: BoxDecoration(
-                                                  color: studentIndex == index ? AppColors.primary.lighter : null,
+                                                  color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 width: double.infinity, // Set the width to expand to the available space
@@ -525,7 +525,7 @@ class _ProfileState extends State<Profile> {
                               child: IconButton(
                                   icon: Icon(
                                     Icons.arrow_back,
-                                    color: AppColors.mono.darkGrey,
+                                    color: AppColors.getColor('mono').darkGrey,
                                   ),
                                   onPressed: () => 
                                     _onNavigationItemSelected(0),
@@ -554,7 +554,7 @@ class _ProfileState extends State<Profile> {
                                   Container(
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: studentIndex == index ? AppColors.primary.lighter : null,
+                                      color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     width: double.infinity, // Set the width to expand to the available space

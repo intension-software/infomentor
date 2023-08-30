@@ -6,6 +6,8 @@ import 'package:infomentor/backend/fetchMaterials.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/Colors.dart';
+import 'dart:math';
+
 
 class CompleteNotification {
   final NotificationsData notification;
@@ -23,20 +25,21 @@ class CompleteNotification {
   });
 }
 
-class Notifications extends StatefulWidget {
+class NotificationsDropDown extends StatefulWidget {
   final UserData? currentUserData;
   final Function(int) onNavigationItemSelected;
 
-  Notifications({required this.currentUserData,
+  NotificationsDropDown({required this.currentUserData,
     required this.onNavigationItemSelected
   });
 
   @override
-  _NotificationsState createState() => _NotificationsState();
+  _NotificationsDropDownState createState() => _NotificationsDropDownState();
 }
 
-class _NotificationsState extends State<Notifications> {
+class _NotificationsDropDownState extends State<NotificationsDropDown> {
   late Future<List<CompleteNotification>> _notificationsData;
+  
 
   @override
   void initState() {
@@ -85,41 +88,56 @@ String formatTimestamp(Timestamp timestamp) {
   return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
 }
 
+
 @override
 Widget build(BuildContext context) {
   return SingleChildScrollView(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 20,),
-        Text(
-          "Upozornenia",
-          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-        ),
-        FutureBuilder<List<CompleteNotification>>(
-          future: _notificationsData,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text("No notifications available."));
-              }
+        IconButton(
+          icon: SvgPicture.asset('assets/icons/bellIcon.svg'),
+          onPressed: () {
+            final RenderBox button = context.findRenderObject() as RenderBox;
+            final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+            final RelativeRect position = RelativeRect.fromRect(
+              Rect.fromPoints(
+                button.localToGlobal(Offset(0.0, button.size.height), ancestor: overlay),
+                button.localToGlobal(button.size.bottomRight(Offset(0.0, 0.0)), ancestor: overlay),
+              ),
+              Offset.zero & overlay.size,
+            );
 
-              List<CompleteNotification> unseenNotifications = snapshot.data!.where((completeNotif) {
-                return widget.currentUserData!.notifications.any((userNotif) => !userNotif.seen);
-              }).toList();
+            showMenu(
+              context: context,
+              position: position, // Adjusted the position
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)), // Rounded corners
+              items: [
+                MyCustomPopupMenuItem(
+                  child: FutureBuilder<List<CompleteNotification>>(
+                    future: _notificationsData,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Text('No notifications available');
+                      } else {
+                        return Column(
+                          children: snapshot.data!
+                            .sublist(max(0, snapshot.data!.length - 3)) // Take the last three items
+                            .map((notification) {
+                              return _buildNotificationItem(notification);
+                            }).toList(),
+                          );
 
-              return Column(
-                children: unseenNotifications.map((completeNotif) {
-                  return _buildNotificationItem(completeNotif);
-                }).toList(),
-              );
-            }
-            return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
+              ],
+            );
           },
         ),
       ],
@@ -127,9 +145,9 @@ Widget build(BuildContext context) {
   );
 }
 
+
 Widget _buildNotificationItem(CompleteNotification completeNotification) {
   return Container(
-    width: 900,
     padding: EdgeInsets.all(16),
     margin: EdgeInsets.symmetric(vertical: 10),
     decoration: BoxDecoration(
@@ -173,45 +191,23 @@ Widget _buildNotificationItem(CompleteNotification completeNotification) {
 
 Widget _getTypeContainer(CompleteNotification completeNotification) {
   if (completeNotification.notification.type.type == 'post' && completeNotification.postData != null) {
-    return GestureDetector(
-      onTap: () {
-        widget.onNavigationItemSelected(2);
-      },
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: _getPostOrCommentContainer(
-          completeNotification.postData!.user,
-          completeNotification.postData!.date,
-          completeNotification.postData!.value,
-        ),
-      ),
+    return  _getPostOrCommentContainer(
+      completeNotification.postData!.user,
+      completeNotification.postData!.date,
+      completeNotification.postData!.value,
     );
   }
 
   if (completeNotification.notification.type.type == 'comment' && completeNotification.commentData != null) {
-    return GestureDetector(
-      onTap: () {
-        widget.onNavigationItemSelected(2);
-      },
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: _getPostOrCommentContainer(
-          completeNotification.commentData!.user,
-          completeNotification.commentData!.date,
-          completeNotification.commentData!.value,
-        ),
-      ),
+    return  _getPostOrCommentContainer(
+      completeNotification.commentData!.user,
+      completeNotification.commentData!.date,
+      completeNotification.commentData!.value,
     );
   }
 
   if (completeNotification.notification.type.type == 'learning' && completeNotification.materialData != null) {
-    return GestureDetector(
-      onTap: () {
-        widget.onNavigationItemSelected(3);
-      },
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Stack(
+    return  Stack(
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -219,8 +215,6 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
               children: [
                 Container(
                   padding: EdgeInsets.all(12),
-                  width: 900,
-                  height: 150,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     color: AppColors.getColor('primary').main,
@@ -265,8 +259,6 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
               ),
             ),
           ],
-        ),
-      ),
     );
   }
 
@@ -298,7 +290,6 @@ Future<MaterialData?> _fetchMaterialById(String classId, String materialId) asyn
 
 Widget _getPostOrCommentContainer(String user, Timestamp date, String value) {
   return Container(
-    width: 900,
     padding: EdgeInsets.all(12),
     decoration: BoxDecoration(
       color: AppColors.getColor('primary').lighter,
@@ -382,3 +373,32 @@ Future<PostsData?> _fetchPostById(String classId, String postId) async {
     }
   }
 }
+
+class MyCustomPopupMenuItem extends PopupMenuEntry<void> {
+  final Widget child;
+
+  MyCustomPopupMenuItem({required this.child});
+
+  @override
+  _MyCustomPopupMenuItemState createState() => _MyCustomPopupMenuItemState();
+
+  @override
+  double get height => 500; // Set your height
+
+  @override
+  bool represents(void value) => false;
+}
+
+class _MyCustomPopupMenuItemState extends State<MyCustomPopupMenuItem> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10), // Rounded corners
+      ),
+      child: widget.child,
+    );
+  }
+}
+
+
