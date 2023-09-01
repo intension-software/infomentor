@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/Colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 class MaterialCardWidget extends StatefulWidget {
@@ -108,14 +109,6 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          widget.subject,
-                          style: TextStyle(
-                            color: AppColors.getColor('mono').white,
-                            fontSize: 14,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
                           widget.type,
                           style: TextStyle(
                             color: AppColors.getColor('mono').white,
@@ -131,20 +124,15 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                 top: 8,
                 left: 8,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.getColor('mono').white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                    ),
+                    color: AppColors.getColor('red').lighter,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     widget.type,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: AppColors.getColor('red').main,
                     ),
                   ),
                 ),
@@ -155,19 +143,14 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(
-                        isHeartFilled ? Icons.favorite : Icons.favorite_outline,
+                      icon: (isHeartFilled ? SvgPicture.asset('assets/icons/whiteFilledHeartIcon.svg') : SvgPicture.asset('assets/icons/whiteHeartIcon.svg')),
                         color: AppColors.getColor('mono').white,
-                      ),
                       onPressed: () {
                         toggleFavorite();
                       },
                     ),
                     IconButton(
-                      icon: Icon(
-                        Icons.link,
-                        color: AppColors.getColor('mono').white,
-                      ),
+                      icon: SvgPicture.asset('assets/icons/linkIcon.svg'),
                       onPressed: () {
                         _launchURL(widget.link);
                       },
@@ -187,102 +170,123 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
       MaterialPageRoute(
         builder: (context) => Scaffold(
           backgroundColor: AppColors.getColor('mono').white, // Set the overlay background color
-          appBar: AppBar(
-            backgroundColor: AppColors.getColor('mono').white, // Set the appbar background color
-            elevation: 0, // Remove the appbar elevation
-            leading: SizedBox(
-              height: 30, // Set the height of the button
-              width: 60, // Set the width of the button
-              child: IconButton(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(56), // Set the preferred height of the AppBar
+            child: AppBar(
+              backgroundColor: AppColors.getColor('mono').white,
+              elevation: 0,
+              leading: IconButton(
                 icon: Icon(Icons.arrow_back),
-                color: AppColors.getColor('mono').lightGrey, // Set the color of the back button to black
+                color: AppColors.getColor('mono').darkGrey,
                 onPressed: () {
-                  Navigator.of(context).pop(); // Navigate back when the back button is pressed
+                  Navigator.of(context).pop();
                 },
               ),
+               titleSpacing: 0,
+                centerTitle: true, // Center the title horizontally
+                title: Text(
+                  'Vzdelávacia aktivita',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                ),
             ),
           ),
           body: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        widget.subject,
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        widget.type,
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        widget.description,
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        widget.association,
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      InkWell(
-                        onTap: () {
-                          _launchURL(widget.link);
-                        },
-                        child: Row(
-                          children: [
-                            Icon(Icons.link),
-                            SizedBox(width: 8),
-                            Text(
-                              'Go to Link',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: AppColors.getColor('blue').main,
-                                decoration: TextDecoration.underline,
+                Center(
+                  child: Container(
+                    width: 900,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(
+                        color: AppColors.getColor('mono').lighterGrey
+                      ))
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                            width: 900,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Theme.of(context).primaryColor,
                               ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    widget.association,
+                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    widget.title,
+                                    style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                ],
+                              ),
+                        ),
+
+                        SizedBox(height: 8),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.getColor('red').lighter,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            widget.type,
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: AppColors.getColor('red').main,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          widget.description,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: (isHeartFilled ? SvgPicture.asset('assets/icons/smallHeartFilledIcon.svg') : SvgPicture.asset('assets/icons/smallHeartIcon.svg')),
+                                color: AppColors.getColor('mono').white,
+                              onPressed: () {
+                                toggleFavorite();
+                              },
+                            ),
+                            IconButton(
+                              icon: SvgPicture.asset('assets/icons/linkIcon.svg'),
+                              onPressed: () {
+                                _launchURL(widget.link);
+                              },
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        widget.video,
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
+                        
+                      ],
+                    ),
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -317,15 +321,21 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
 
  Future<void> saveUserDataToFirestore(UserData userData) async {
     try {
+      // Reference to the user document in Firestore
       DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
+
+      // Convert userData object to a Map
       Map<String, dynamic> userDataMap = {
+        'badges': userData.badges,
+        'admin': userData.admin,
+        'teacher': userData.teacher,
         'email': userData.email,
         'name': userData.name,
         'active': userData.active,
         'schoolClass': userData.schoolClass,
         'image': userData.image,
         'surname': userData.surname,
-        'teacher': userData.teacher,
+        'materials': userData.materials,
         'points': userData.points,
         'capitols': userData.capitols.map((userCapitolsData) {
           return {
@@ -340,16 +350,23 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                 'points': userCapitolsTestData.points,
                 'questions': userCapitolsTestData.questions.map((userQuestionsData) {
                   return {
-                    'answer': userQuestionsData.answer,
-                    'completed': userQuestionsData.completed
+                    'answer': userQuestionsData.answer.map((userAnswerData) {
+                      return {
+                        'answer': userAnswerData.answer,
+                        'index': userAnswerData.index
+                        };
+                    }).toList(),
+                    'completed': userQuestionsData.completed,
+                    'correct': userQuestionsData.correct,
                   };
                 }).toList(),
               };
             }).toList(),
           };
         }).toList(),
-        'materials': userData.materials,
       };
+
+      // Update the user document in Firestore with the new userDataMap
       await userRef.update(userDataMap);
     } catch (e) {
       print('Error saving user data to Firestore: $e');

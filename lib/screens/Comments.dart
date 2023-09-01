@@ -9,9 +9,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class Comments extends StatefulWidget {
   final Stream<List<CommentsData>> fetchCommentsStream;
-
+  final void Function(int, [CommentsData?, int?]) onNavigationItemSelected;
   Comments({
     Key? key,
+    required this.onNavigationItemSelected,
     required this.fetchCommentsStream,
   }) : super(key: key);
 
@@ -34,7 +35,17 @@ class _CommentsState extends State<Comments> {
               itemCount: comments.length,
               itemBuilder: (context, index) {
                 CommentsData comment = comments[index];
-              return Container(
+              return MouseRegion(
+                cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                onTap: () {
+                    if (MediaQuery.of(context).size.width < 1000) {
+                      widget.onNavigationItemSelected(4,comment,index);
+                    } else  {
+                      widget.onNavigationItemSelected(2,comment,index);
+                    }
+                  },
+                child:Container(
                 margin: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -86,6 +97,8 @@ class _CommentsState extends State<Comments> {
                     ),
                   ],
                 ),
+                )
+                )
               );
             },
             )

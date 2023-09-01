@@ -80,6 +80,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           NotificationsDropDown(
                             currentUserData: widget.currentUserData, // Pass your user data
                             onNavigationItemSelected: widget.onNavigationItemSelected,
+                            selectedIndex: widget.selectedIndex,
                           ),
                           SizedBox(width: 16),
                           SvgPicture.asset('assets/icons/infoIcon.svg'),

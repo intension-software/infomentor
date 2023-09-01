@@ -25,6 +25,7 @@ class _ResultsState extends State<Results> {
   CancelableOperation<UserData>? fetchUserDataOperation;
   CancelableOperation<List<UserData>>? fetchStudentsOperation;
   int? studentIndex;
+  bool _loading = true;
 
   int indexOfElement(List<UserData> list, String id) {
     for (var i = 0; i < list.length; i++) {
@@ -41,10 +42,10 @@ class _ResultsState extends State<Results> {
     _isDisposed = false; // Resetting _isDisposed state
 
     // Fetch the current user data.
-    /* _fetchCurrentUserData().then((_) {
+    _fetchCurrentUserData().then((_) {
       // After fetching the current user data, fetch students.
       fetchStudents();
-    });*/
+    });
   }
 
   Future<void> _fetchCurrentUserData() async {
@@ -82,8 +83,10 @@ class _ResultsState extends State<Results> {
           setState(() {
             studentIndex = indexOfElement(fetchedStudents, user.uid);
             students = fetchedStudents;
+            _loading = false;
           });
         }
+
       } else {
         print('currentUserData is null');
       }
@@ -94,13 +97,13 @@ class _ResultsState extends State<Results> {
 
   @override
 Widget build(BuildContext context) {
+  if(_loading) return  Center(child: CircularProgressIndicator());
   return SingleChildScrollView(
     child: Container(
       child: Column(
         children: [
           if (students != null)
-            /* buildScoreTable(students!) */
-            Container()
+            buildScoreTable(students!)
         ],
       ),
     ),
@@ -108,80 +111,198 @@ Widget build(BuildContext context) {
 }
 
 
-  List<int> getCapitolScores(UserData userData) {
-  List<int> scores = [];
+  List<Map<String, int>> getCapitolScores(UserData userData) {
+    List<Map<String, int>> scores = [];
 
-  for (var capitol in userData.capitols) {
-    int capitolScore = 0;
-    for (var test in capitol.tests) {
-      capitolScore += test.points;
+    for (var capitol in userData.capitols) {
+      int capitolScore = 0;
+      int capitolMaxScore = 0;
+
+      for (var test in capitol.tests) {
+        capitolScore += test.points;
+        capitolMaxScore += test.questions.length;
+      }
+
+      scores.add({
+        'score': capitolScore,
+        'maxScore': capitolMaxScore,
+      });
     }
-    scores.add(capitolScore);
+
+    return scores;
   }
-  return scores;
-}
+
 
 int getTotalScore(UserData userData) {
   int total = 0;
-  for (var score in getCapitolScores(userData)) {
-    total += score;
+
+  for (var scoreMap in getCapitolScores(userData)) {
+    total += scoreMap['score'] ?? 0;
   }
+
   return total;
 }
 
 int getMaxScore(UserData userData) {
   int total = 0;
-  for (var capitols in userData.capitols) {
-    for(var score in capitols.tests) {
-      total += score.questions.length;
+
+  for (var capitol in userData.capitols) {
+    for (var test in capitol.tests) {
+      total += test.questions.length;
     }
   }
+
   return total;
 }
 
-  Widget buildScoreTable(List<UserData> students) {
-  return DataTable(
-    columns: _buildColumns(students.first.capitols),
-    rows: _buildRows(students),
+Widget buildScoreTable(List<UserData> students) {
+  return Container( 
+    margin: EdgeInsets.all(20),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Table(
+          border: TableBorder.all(
+            color: Colors.grey,
+          ),
+          children: _buildRows(students),
+        ),
+      ),
+    )
   );
 }
 
-List<DataColumn> _buildColumns(List<UserCapitolsData> capitols) {
-  List<DataColumn> columns = [];
-  columns.add(DataColumn(label: Text('Name')));
 
-  for (var capitol in capitols) {
-    columns.add(DataColumn(label: Text(capitol.name)));
-  }
-  columns.add(DataColumn(label: Text('Total')));
-  columns.add(DataColumn(label: Text('%')));
+List<TableRow> _buildRows(List<UserData> students) {
+  List<TableRow> rows = [];
 
-  return columns;
-}
+  // Add header
+  rows.add(
+    TableRow(
+      children: [
+        Container(
+          height: 50,
+          width: 120,
+          padding: EdgeInsets.all(8),
+          color: AppColors.getColor('primary').light,
+          child: Text('Meno', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        ),
+        ...students.first.capitols.map((e) => Container(
+              height: 50,
+              padding: EdgeInsets.all(8),
+              color: AppColors.getColor('primary').light,
+              child: Text(e.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        )),
+        Container(
+          height: 50,
+          width: 80,
+          padding: EdgeInsets.all(8),
+          color: AppColors.getColor('primary').light,
+          child: Text('Diskusia', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        ),
+        Container(
+          height: 50,
+          width: 80,
+          padding: EdgeInsets.all(8),
+          color: Theme.of(context).primaryColor,
+          child: Text('Preimerná Úspešnosť', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        ),
+        Container(
+          height: 50,
+          width: 80,
+          padding: EdgeInsets.all(8),
+          color: AppColors.getColor('green').light,
+          child: Text('Známka', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        ),
+      ],
+    ),
+  );
 
-List<DataRow> _buildRows(List<UserData> students) {
-  List<DataRow> rows = [];
-
+  // Add data rows
   for (var student in students) {
-    List<DataCell> cells = [];
-    cells.add(DataCell(Text(student.name)));
-
-    List<int> scores = getCapitolScores(student);
-    for (var score in scores) {
-      cells.add(DataCell(Text(score.toString())));
-    }
-
+    List<Map<String, int>> scores = getCapitolScores(student);
     int totalScore = getTotalScore(student);
     int maxScore = getMaxScore(student);
     double percentage = (totalScore / maxScore) * 100;
+    String grade = getGrade(percentage);
 
-    cells.add(DataCell(Text(totalScore.toString())));
-    cells.add(DataCell(Text("${percentage.toStringAsFixed(2)}%")));
-
-    rows.add(DataRow(cells: cells));
+    rows.add(
+      TableRow(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: AppColors.getColor('mono').lighterGrey
+              ),
+            ),
+            padding: EdgeInsets.all(8),
+            child: Text('${student.name} ${student.surname}'),
+          ),
+          ...scores.map((score) => Container(
+                padding: EdgeInsets.all(8),
+                child: Text('${score['score']} / ${score['maxScore']}'),
+          )),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: AppColors.getColor('mono').lighterGrey
+              ),
+            ),
+            padding: EdgeInsets.all(8),
+            child: Text('0'),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: AppColors.getColor('primary').main
+              ),
+              color: AppColors.getColor('primary').lighter
+            ),
+            padding: EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("${totalScore} / ${maxScore} = ${percentage.toStringAsFixed(2)}%"),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: AppColors.getColor('mono').lighterGrey
+              ),
+            ),
+            padding: EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(grade),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   return rows;
 }
+
+String getGrade(double percentage) {
+  if (percentage >= 90 && percentage <= 100) return '1';
+  if (percentage >= 75 && percentage < 90) return '2';
+  if (percentage >= 50 && percentage < 75) return '3';
+  if (percentage >= 30 && percentage < 50) return '4';
+  return '5';
+}
+
 
 }

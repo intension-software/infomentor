@@ -8,6 +8,7 @@ import 'dart:typed_data';  // for Uint8List
 import 'package:flutter/foundation.dart';  // for kIsWeb
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchClass.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class OptionsData {
   String id;
@@ -99,112 +100,303 @@ class _MaterialFormState extends State<MaterialForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-          child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              SizedBox(height: 10),
-             DropdownButtonFormField<String>(
-              value: _class,
-              onChanged: (newValue) {
-                setState(() {
-                  _class = newValue!;
-                });
-              },
-              items: classes?.map<DropdownMenuItem<String>>((OptionsData value) {
-                return DropdownMenuItem<String>(
-                  value: value.id,
-                  child: Row(
-                    children: [
-                      Text(value.data.name),
-                      if (value.id == _class) Icon(Icons.check),
-                    ],
-                  ),
-                );
-              }).toList() ?? [],
-              decoration: InputDecoration(labelText: 'Choose Class'),
-            ),
-              SizedBox(height: 10),
-              // Checkbox tiles for type
-              CheckboxListTile(
-                title: Text('Type 1'),
-                value: _type == 'Type 1',
+    return  Flexible(
+        child:SingleChildScrollView(
+            child: Form(
+            key: _formKey,
+            child: Container(
+      width: 900,
+      padding: EdgeInsets.all(12),
+      child:Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: _class,
                 onChanged: (newValue) {
                   setState(() {
-                    if (newValue == true) _type = 'Type 1';
+                    _class = newValue!;
                   });
                 },
+                items: classes?.map<DropdownMenuItem<String>>((OptionsData value) {
+                  return DropdownMenuItem<String>(
+                    value: value.id,
+                    child: Row(
+                      children: [
+                        Text(value.data.name),
+                        if (value.id == _class) Icon(Icons.check),
+                      ],
+                    ),
+                  );
+                }).toList() ?? [],
+                decoration: InputDecoration(labelText: 'Choose Class'),
               ),
-              CheckboxListTile(
-                title: Text('Type 2'),
-                value: _type == 'Type 2',
-                onChanged: (newValue) {
-                  setState(() {
-                    if (newValue == true) _type = 'Type 2';
-                  });
-                },
-              ),
-              SizedBox(height: 10),
-              _buildTextField('Association', _associationController),
-              SizedBox(height: 10),
-              _buildTextField('Description', _descriptionController),
-              SizedBox(height: 10),
-              // File input for image
-              
-              _buildTextField('Link', _linkController),
-              SizedBox(height: 10),
-              _buildTextField('Subject', _subjectController),
-              SizedBox(height: 10),
-              _buildTextField('Title', _titleController),
-              SizedBox(height: 10),
-              _buildTextField('Video', _videoController),
-              SizedBox(height: 10),
-              // Drop-down for class
-              
-              ElevatedButton(
-                  onPressed: () async {
-                      FilePickerResult? result = await FilePicker.platform.pickFiles();
-                      if (result != null) {
-                          setState(() {
-                              if (kIsWeb) {
-                                  final Uint8List? fileBytes = result.files.first.bytes;
-                                  // TODO: Process the fileBytes as needed
-                              } else {
-                                  _imagePath = result.files.single.path;
-                              }
-                          });
-                      }
-                  },
-                  child: Text('Choose Image'),
-              ),
-              SizedBox(height: 10),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(right: 8),
+                      height: 30,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.getColor('red').lighter,
+                        border: Border.all(
+                          color: _type == 'Video' ? AppColors.getColor('red').main : AppColors.getColor('red').lighter,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Radio(
+                            value: 'Video',
+                            groupValue: _type,
+                            onChanged: (newValue) {
+                              setState(() {
+                                if (newValue != null) _type = newValue;
+                              });
+                            },
+                            activeColor: AppColors.getColor('red').main,
+                          ),
+                          Text(
+                            'Video',
+                            style: TextStyle(
+                              color: AppColors.getColor('red').main,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10), // Add some spacing between the radio buttons
+                    Container(
+                      height: 30,
+                      padding: EdgeInsets.only(right: 8),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.getColor('red').lighter,
+                        border: Border.all(
+                          color: _type == 'Podujatie' ? AppColors.getColor('red').main : AppColors.getColor('red').lighter,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Radio(
+                            value: 'Podujatie',
+                            groupValue: _type,
+                            onChanged: (newValue) {
+                              setState(() {
+                                if (newValue != null) _type = newValue;
+                              });
+                            },
+                            activeColor: AppColors.getColor('red').main,
+                          ),
+                          Text(
+                            'Podujatie',
+                            style: TextStyle(
+                              color: AppColors.getColor('red').main,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10), // Add some spacing between the radio buttons
+                    Container(
+                      height: 30,
+                      padding: EdgeInsets.only(right: 8),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.getColor('red').lighter,
+                        border: Border.all(
+                          color: _type == 'Projekt' ? AppColors.getColor('red').main : AppColors.getColor('red').lighter,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Radio(
+                            value: 'Projekt',
+                            groupValue: _type,
+                            onChanged: (newValue) {
+                              setState(() {
+                                if (newValue != null) _type = newValue;
+                              });
+                            },
+                            activeColor: AppColors.getColor('red').main,
 
-               ElevatedButton(
-                onPressed: _allFieldsCompleted()
-                  ? () {
-                      if (_formKey.currentState!.validate()) {
-                        // Handle submission of form
-                        MaterialData data = MaterialData(
-                          association: _associationController.text,
-                          description: _descriptionController.text,
-                          image: _imagePath ?? 'placeholder.png',
-                          link: _linkController.text,
-                          subject: _subjectController.text,
-                          title: _titleController.text,
-                          type: _type!,
-                          video: _videoController.text,
-                        );
-                        // TODO: Handle data as needed
-                        addMaterialToFirestore(data);
+                          ),
+                          Text(
+                            'Projekt',
+                            style: TextStyle(
+                              color: AppColors.getColor('red').main,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10), // Add some spacing between the radio buttons
+                    Container(
+                      height: 30,
+                      padding: EdgeInsets.only(right: 8),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.getColor('red').lighter,
+                        border: Border.all(
+                          color: _type == 'Textový materiál' ? AppColors.getColor('red').main : AppColors.getColor('red').lighter,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Radio(
+                            value: 'Textový materiál',
+                            groupValue: _type,
+                            onChanged: (newValue) {
+                              setState(() {
+                                if (newValue != null) _type = newValue;
+                              });
+                            },
+                            activeColor: AppColors.getColor('red').main,
+                          ),
+                          Text(
+                            'Textový materiál',
+                            style: TextStyle(
+                              color: AppColors.getColor('red').main,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15),
+                Text('Názov'),
+                SizedBox(height: 15),
+                _buildTextField('Title', _titleController),
+                SizedBox(height: 15),
+                Text('Organizátor'),
+                SizedBox(height: 15),
+                _buildTextField('Association', _associationController),
+                SizedBox(height: 15),
+                Text('Popis (nepovinné)'),
+                SizedBox(height: 15),
+                _buildTextField('Description', _descriptionController),
+                SizedBox(height: 15),
+                // File input for image
+                Text('Link'),
+                SizedBox(height: 15),
+                _buildTextField('Link', _linkController),
+                // Drop-down for class
+                SizedBox(height: 15),
+                Text(
+                    'Ukážka',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium!
+                        .copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                  ),
+                Container(
+                      width: 900,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.getColor('mono').lighterGrey
+                        ),
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                              width: 900,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      _associationController.text,
+                                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onPrimary,
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      _titleController.text,
+                                      style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onPrimary,
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                  ],
+                                ),
+                          ),
+
+                          SizedBox(height: 8),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.getColor('red').lighter,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _type ?? '',
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                color: AppColors.getColor('red').main,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            _descriptionController.text,
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SvgPicture.asset('assets/icons/linkIcon.svg'),
+                        ],
+                      ),
+                    ),
+                SizedBox(height: 10),
+
+                ElevatedButton(
+                  onPressed: _allFieldsCompleted()
+                    ? () {
+                        if (_formKey.currentState!.validate()) {
+                          // Handle submission of form
+                          MaterialData data = MaterialData(
+                            association: _associationController.text,
+                            description: _descriptionController.text,
+                            image: _imagePath ?? 'placeholder.png',
+                            link: _linkController.text,
+                            subject: _subjectController.text,
+                            title: _titleController.text,
+                            type: _type!,
+                            video: _videoController.text,
+                          );
+                          // TODO: Handle data as needed
+                          addMaterialToFirestore(data);
+                        }
                       }
-                    }
-                  : null,  // <-- If fields are not completed, button is disabled
-                child: Text('Submit'),
-              ),
-            ],
-          ),
+                    : null,  // <-- If fields are not completed, button is disabled
+                  child: Text('Submit'),
+                ),
+              ],
+            ),
+          )
         )
+      )
     );
   }
 
@@ -221,9 +413,7 @@ class _MaterialFormState extends State<MaterialForm> {
   bool _allFieldsCompleted() {
     return
         _associationController.text.isNotEmpty &&
-        _descriptionController.text.isNotEmpty &&
         _linkController.text.isNotEmpty &&
-        _subjectController.text.isNotEmpty &&
         _titleController.text.isNotEmpty &&
         _type != null;
 }

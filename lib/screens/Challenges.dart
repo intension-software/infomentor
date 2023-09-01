@@ -217,7 +217,7 @@ Widget build(BuildContext context) {
     future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<List<FetchResult>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();  // Show loading spinner until the Future is complete
+          return  Center(child: CircularProgressIndicator());  // Show loading spinner until the Future is complete
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {

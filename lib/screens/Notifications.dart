@@ -82,7 +82,8 @@ class _NotificationsState extends State<Notifications> {
 
 String formatTimestamp(Timestamp timestamp) {
   DateTime date = timestamp.toDate();
-  return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+
 }
 
 @override
@@ -217,6 +218,7 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                
                 Container(
                   padding: EdgeInsets.all(12),
                   width: 900,
@@ -229,6 +231,20 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.getColor('red').lighter,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          completeNotification.materialData!.type,
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: AppColors.getColor('red').main,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
                       Text(
                         completeNotification.materialData!.subject,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -246,23 +262,6 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
                   ),
                 ),
               ],
-            ),
-            Positioned(
-              top: 10,
-              left: 10,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.getColor('red').lighter,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  completeNotification.materialData!.type,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('red').main,
-                  ),
-                ),
-              ),
             ),
           ],
         ),

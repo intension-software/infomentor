@@ -1,14 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CommentsData {
+class CommentsAnswersData {
   Timestamp date;
-  bool like;
   String user;
   String value;
-  CommentsData({
+  String userId;
+  bool award;
+  CommentsAnswersData({
+    required this.award,
     required this.date,
-    required this.like,
     required this.user,
+    required this.userId,
+    required this.value,
+  });
+}
+
+class CommentsData {
+  List<CommentsAnswersData> answers;
+  Timestamp date;
+  String user;
+  String userId;
+  String value;
+  bool award;
+  CommentsData({
+    required this.award,
+    required this.answers,
+    required this.date,
+    required this.user,
+    required this.userId,
     required this.value,
   });
 }
@@ -18,9 +37,11 @@ class PostsData {
   Timestamp date;
   String id;
   String user;
+  String userId;
   String value;
   PostsData({
     required this.comments,
+    required this.userId,
     required this.date,
     required this.id,
     required this.user,
@@ -44,7 +65,7 @@ class ClassData {
     required this.students,
     required this.teachers,
     required this.materials,
-    required this.capitolOrder
+    required this.capitolOrder,
   });
 }
 
@@ -62,9 +83,9 @@ Future<ClassData> fetchClass(String classId) async {
       final data = classSnapshot.data() as Map<String, dynamic>?;
 
       if (data != null) {
-        final posts = data['posts'] as List<dynamic>; 
+        final posts = data['posts'] as List<dynamic>;
 
-        // Create ClassData instance from the data
+        // Create PostsData instances from the posts data
         List<PostsData> postsDataList = posts.map((postItem) {
           List<Map<String, dynamic>> comments =
               List<Map<String, dynamic>>.from(
@@ -72,10 +93,27 @@ Future<ClassData> fetchClass(String classId) async {
 
           // Create CommentsData instances from the comments data
           List<CommentsData> commentsDataList = comments.map((commentItem) {
+            List<Map<String, dynamic>> answers =
+                List<Map<String, dynamic>>.from(
+                    commentItem['answers'] as List<dynamic>? ?? []);
+
+            // Create CommentsAnswersData instances from the answers data
+            List<CommentsAnswersData> answersDataList = answers.map((answerItem) {
+              return CommentsAnswersData(
+                award: answerItem['award'] as bool? ?? false,
+                date: answerItem['date'] as Timestamp? ?? Timestamp.now(),
+                user: answerItem['user'] as String? ?? '',
+                userId: answerItem['userId'] as String? ?? '',
+                value: answerItem['value'] as String? ?? '',
+              );
+            }).toList();
+
             return CommentsData(
+              award: commentItem['award'] as bool? ?? false,
+              answers: answersDataList,
               date: commentItem['date'] as Timestamp? ?? Timestamp.now(),
-              like: commentItem['like'] as bool? ?? false,
               user: commentItem['user'] as String? ?? '',
+              userId: commentItem['userId'] as String? ?? '',
               value: commentItem['value'] as String? ?? '',
             );
           }).toList();
@@ -85,6 +123,7 @@ Future<ClassData> fetchClass(String classId) async {
             date: postItem['date'] as Timestamp? ?? Timestamp.now(),
             id: postItem['id'] as String? ?? '',
             user: postItem['user'] as String? ?? '',
+            userId: postItem['userId'] as String? ?? '',
             value: postItem['value'] as String? ?? '',
           );
         }).toList();
@@ -96,7 +135,7 @@ Future<ClassData> fetchClass(String classId) async {
           teachers: List<String>.from(data['teachers'] as List<dynamic>? ?? []),
           posts: postsDataList,
           materials: List<String>.from(data['materials'] as List<dynamic>? ?? []),
-          capitolOrder: List<int>.from(data['capitolOrder'] as List<dynamic>? ?? [])
+          capitolOrder: List<int>.from(data['capitolOrder'] as List<dynamic>? ?? []),
         );
       } else {
         throw Exception('Retrieved document data is null.');
@@ -109,8 +148,6 @@ Future<ClassData> fetchClass(String classId) async {
     throw Exception('Failed to fetch classes');
   }
 }
-
-
 
 
 Future<void> addComment(String classId, String postId, CommentsData comment) async {
@@ -132,8 +169,6 @@ Future<void> addComment(String classId, String postId, CommentsData comment) asy
             List<Map<String, dynamic>>.from(
                 classData['posts'] as List<dynamic>? ?? []);
 
-
-        // Find the post with the matching postId
         int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
 
         if (postIndex != -1) {
@@ -142,12 +177,19 @@ Future<void> addComment(String classId, String postId, CommentsData comment) asy
             posts[postIndex]['comments'] = [];
           }
 
-          posts[postIndex]['comments'].add({
+          List<Map<String, dynamic>> comments =
+              List<Map<String, dynamic>>.from(posts[postIndex]['comments'] as List<dynamic>? ?? []);
+
+          comments.add({
+            'award': false,
             'date': comment.date,
-            'like': comment.like,
             'user': comment.user,
             'value': comment.value,
+            'answers': <Map<String, dynamic>>[],
           });
+
+          // Update the comments field within the post data
+          posts[postIndex]['comments'] = comments;
 
           // Update the posts field within the class data
           classData['posts'] = posts;
@@ -170,6 +212,75 @@ Future<void> addComment(String classId, String postId, CommentsData comment) asy
     throw Exception('Failed to add comment');
   }
 }
+
+Future<void> addAnswer(String classId, String postId, int commentIndex, CommentsAnswersData answer) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef = FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the class data from the class document
+      final classData = classSnapshot.data() as Map<String, dynamic>?;
+
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts = List<Map<String, dynamic>>.from(
+          classData['posts'] as List<dynamic>? ?? [],
+        );
+
+        // Find the post with the matching postId
+        int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
+
+        if (postIndex != -1) {
+          // Find the comment with the matching commentIndex
+          List<dynamic> comments = posts[postIndex]['comments'];
+
+          if (commentIndex >= 0 && commentIndex < comments.length) {
+            // Check if answers list exists within the comment and create it if not
+            if (comments[commentIndex]['answers'] == null) {
+              comments[commentIndex]['answers'] = [];
+            }
+
+            // Append the new answer to the existing list of answers
+            comments[commentIndex]['answers'].add({
+              'date': answer.date,
+              'user': answer.user,
+              'value': answer.value,
+              'award': answer.award,
+            });
+
+            // Update the comments field within the post data
+            posts[postIndex]['comments'] = comments;
+
+            // Update the posts field within the class data
+            classData['posts'] = posts;
+
+            // Update the class document in Firestore
+            await classRef.update(classData);
+
+            return;
+          } else {
+            throw Exception('Invalid comment index.');
+          }
+        } else {
+          throw Exception('Invalid post ID.');
+        }
+      } else {
+        throw Exception('Retrieved class data is null.');
+      }
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error adding answer: $e');
+    throw Exception('Failed to add answer');
+  }
+}
+
+
 
 
 
@@ -195,7 +306,6 @@ Future<void> addPost(String classId, PostsData post) async {
         posts.add({
           'comments': post.comments.map((comment) => {
             'date': comment.date,
-            'like': comment.like,
             'user': comment.user,
             'value': comment.value
           }).toList(),
@@ -223,4 +333,337 @@ Future<void> addPost(String classId, PostsData post) async {
     throw Exception('Failed to add post');
   }
 }
+
+Future<void> updateCommentValue(String classId, String postId, int commentIndex, String updatedValue) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the class data from the class document
+      final classData = classSnapshot.data() as Map<String, dynamic>?;
+
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts =
+            List<Map<String, dynamic>>.from(
+                classData['posts'] as List<dynamic>? ?? []);
+
+        // Find the post with the matching postId
+        int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
+
+        if (postIndex != -1) {
+          // Find the comment with the matching commentIndex
+          List<Map<String, dynamic>> comments = posts[postIndex]['comments'];
+          if (commentIndex >= 0 && commentIndex < comments.length) {
+            // Update the 'value' field of the comment at the found index
+            comments[commentIndex]['value'] = updatedValue;
+
+            // Update the posts field within the class data
+            classData['posts'] = posts;
+
+            // Update the class document in Firestore
+            await classRef.update(classData);
+
+            return;
+          } else {
+            throw Exception('Invalid comment index.');
+          }
+        } else {
+          throw Exception('Invalid post ID.');
+        }
+      } else {
+        throw Exception('Retrieved class data is null.');
+      }
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error updating comment value: $e');
+    throw Exception('Failed to update comment value');
+  }
+}
+
+Future<void> updateAnswerValue(String classId, String postId, int commentIndex, int answerIndex, String updatedValue) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the class data from the class document
+      final classData = classSnapshot.data() as Map<String, dynamic>?;
+
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts =
+            List<Map<String, dynamic>>.from(
+                classData['posts'] as List<dynamic>? ?? []);
+
+        // Find the post with the matching postId
+        int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
+
+        if (postIndex != -1) {
+          // Find the comment with the matching commentIndex
+          List<Map<String, dynamic>> comments = posts[postIndex]['comments' ];
+          if (commentIndex >= 0 && commentIndex < comments.length) {
+            // Find the answer with the matching answerIndex
+            List<Map<String, dynamic>> answers = comments[commentIndex]['answers'];
+            if (answerIndex >= 0 && answerIndex < answers.length) {
+              // Update the 'value' field of the answer at the found index
+              answers[answerIndex]['value'] = updatedValue;
+
+              // Update the posts field within the class data
+              classData['posts'] = posts;
+
+              // Update the class document in Firestore
+              await classRef.update(classData);
+
+              return;
+            } else {
+              throw Exception('Invalid answer index.');
+            }
+          } else {
+            throw Exception('Invalid comment index.');
+          }
+        } else {
+          throw Exception('Invalid post ID.');
+        }
+      } else {
+        throw Exception('Retrieved class data is null.');
+      }
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error updating answer value: $e');
+    throw Exception('Failed to update answer value');
+  }
+}
+
+Future<void> updatePostValue(String classId, String postId, String updatedValue) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the data from the class document
+      Map<String, dynamic> classData = classSnapshot.data() as Map<String, dynamic>;
+
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts =
+            List<Map<String, dynamic>>.from(classData['posts'] as List<dynamic>? ?? []);
+
+        // Find the index of the post to be updated
+        int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
+
+        if (postIndex != -1) {
+          // Update the 'value' field of the post at the found index
+          posts[postIndex]['value'] = updatedValue;
+
+          // Update the posts field within the class data
+          classData['posts'] = posts;
+
+          // Update the class document in Firestore
+          await classRef.update(classData);
+
+          return;
+        } else {
+          throw Exception('Invalid post ID.');
+        }
+      } else {
+        throw Exception('Retrieved class data is null.');
+      }
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error updating post value: $e');
+    throw Exception('Failed to update post value');
+  }
+}
+
+
+Future<void> deletePost(String classId, String postId) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the data from the class document
+      Map<String, dynamic> classData = classSnapshot.data() as Map<String, dynamic>;
+
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts =
+            List<Map<String, dynamic>>.from(classData['posts'] as List<dynamic>? ?? []);
+
+        // Find the index of the post to be deleted
+        int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
+
+        if (postIndex != -1) {
+          // Remove the post from the list
+          posts.removeAt(postIndex);
+
+          // Update the posts field within the class data
+          classData['posts'] = posts;
+
+          // Update the class document in Firestore
+          await classRef.update(classData);
+
+          return;
+        } else {
+          throw Exception('Invalid post ID.');
+        }
+      } else {
+        throw Exception('Retrieved class data is null.');
+      }
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error deleting post: $e');
+    throw Exception('Failed to delete post');
+  }
+}
+
+Future<void> deleteComment(String classId, String postId, int commentIndex) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the data from the class document
+      Map<String, dynamic> classData = classSnapshot.data() as Map<String, dynamic>;
+
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts =
+            List<Map<String, dynamic>>.from(classData['posts'] as List<dynamic>? ?? []);
+
+        // Find the index of the post to be deleted
+        int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
+
+        if (postIndex != -1) {
+          // Find the comment with the matching commentIndex
+          List<Map<String, dynamic>> comments = posts[postIndex]['comments'];
+          if (commentIndex >= 0 && commentIndex < comments.length) {
+            // Remove the comment from the list
+            comments.removeAt(commentIndex);
+
+            // Update the comments field within the post data
+            posts[postIndex]['comments'] = comments;
+
+            // Update the posts field within the class data
+            classData['posts'] = posts;
+
+            // Update the class document in Firestore
+            await classRef.update(classData);
+
+            return;
+          } else {
+            throw Exception('Invalid comment index.');
+          }
+        } else {
+          throw Exception('Invalid post ID.');
+        }
+      } else {
+        throw Exception('Retrieved class data is null.');
+      }
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error deleting comment: $e');
+    throw Exception('Failed to delete comment');
+  }
+}
+
+Future<void> deleteAnswer(String classId, String postId, int commentIndex, int answerIndex) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Extract the data from the class document
+      Map<String, dynamic> classData = classSnapshot.data() as Map<String, dynamic>;
+
+      if (classData != null) {
+        // Extract the posts field from the class data
+        List<Map<String, dynamic>> posts =
+            List<Map<String, dynamic>>.from(classData['posts'] as List<dynamic>? ?? []);
+
+        // Find the index of the post to be deleted
+        int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
+
+        if (postIndex != -1) {
+          // Find the comment with the matching commentIndex
+          List<Map<String, dynamic>> comments = posts[postIndex]['comments'];
+          if (commentIndex >= 0 && commentIndex < comments.length) {
+            // Find the answer with the matching answerIndex
+            List<Map<String, dynamic>> answers = comments[commentIndex]['answers'];
+            if (answerIndex >= 0 && answerIndex < answers.length) {
+              // Remove the answer from the list
+              answers.removeAt(answerIndex);
+
+              // Update the answers field within the comment data
+              comments[commentIndex]['answers'] = answers;
+
+              // Update the comments field within the post data
+              posts[postIndex]['comments'] = comments;
+
+              // Update the posts field within the class data
+              classData['posts'] = posts;
+
+              // Update the class document in Firestore
+              await classRef.update(classData);
+
+              return;
+            } else {
+              throw Exception('Invalid answer index.');
+            }
+          } else {
+            throw Exception('Invalid comment index.');
+          }
+        } else {
+          throw Exception('Invalid post ID.');
+        }
+      } else {
+        throw Exception('Retrieved class data is null.');
+      }
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error deleting answer: $e');
+    throw Exception('Failed to delete answer');
+  }
+}
+
+
+
 

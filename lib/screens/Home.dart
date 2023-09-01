@@ -6,6 +6,7 @@ import 'package:infomentor/screens/Admin.dart';
 import 'package:infomentor/screens/Notifications.dart';
 import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/screens/StudentFeed.dart';
+import 'package:infomentor/screens/TeacherFeed.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/backend/fetchCapitols.dart';
@@ -148,7 +149,19 @@ class _HomeState extends State<Home> {
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: [
-          StudentFeed(
+          !currentUserData!.teacher ? StudentFeed(
+            onNavigationItemSelected: _onNavigationItemSelected,
+            capitol: capitol,
+            capitolLength: capitolLength,
+            capitolTitle: capitolTitle,
+            capitolsId: capitolsId,
+            completedCount: completedCount,
+            futureWeeklyTitle: futureWeeklyTitle,
+            weeklyBool: weeklyBool,
+            weeklyCapitolLength: weeklyCapitolLength,
+            weeklyChallenge: weeklyChallenge,
+            weeklyTitle: weeklyTitle,
+          ) : TeacherFeed(
             onNavigationItemSelected: _onNavigationItemSelected,
             capitol: capitol,
             capitolLength: capitolLength,

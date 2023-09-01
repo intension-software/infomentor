@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/Colors.dart';
 import 'dart:math';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 
 class CompleteNotification {
@@ -28,9 +29,12 @@ class CompleteNotification {
 class NotificationsDropDown extends StatefulWidget {
   final UserData? currentUserData;
   final Function(int) onNavigationItemSelected;
+  int selectedIndex;
 
-  NotificationsDropDown({required this.currentUserData,
-    required this.onNavigationItemSelected
+  NotificationsDropDown({
+    required this.currentUserData,
+    required this.onNavigationItemSelected,
+    required this.selectedIndex
   });
 
   @override
@@ -85,9 +89,9 @@ class _NotificationsDropDownState extends State<NotificationsDropDown> {
 
 String formatTimestamp(Timestamp timestamp) {
   DateTime date = timestamp.toDate();
-  return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-}
+  return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
+}
 
 @override
 Widget build(BuildContext context) {
@@ -109,6 +113,7 @@ Widget build(BuildContext context) {
             );
 
             showMenu(
+              constraints: BoxConstraints(maxWidth: 350, minWidth: 0),
               context: context,
               position: position, // Adjusted the position
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)), // Rounded corners
@@ -125,13 +130,60 @@ Widget build(BuildContext context) {
                         return Text('No notifications available');
                       } else {
                         return Column(
-                          children: snapshot.data!
-                            .sublist(max(0, snapshot.data!.length - 3)) // Take the last three items
-                            .map((notification) {
-                              return _buildNotificationItem(notification);
-                            }).toList(),
-                          );
-
+                          children: [ 
+                            Column(
+                            children: snapshot.data!
+                              .sublist(max(0, snapshot.data!.length - 3)) // Take the last three items
+                              .map((notification) {
+                                return _buildNotificationItem(notification);
+                              }).toList(),
+                            ),
+                            Container(
+                              width: 180,
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                widget.onNavigationItemSelected(4);
+                                widget.selectedIndex = -1;
+                              },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      'Zobraziť všetko',
+                                      style: TextStyle(
+                                        color: AppColors.getColor('primary').main,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Icon(Icons.arrow_forward, color: AppColors.getColor('primary').main), // Replace with your desired icon
+                                  ],
+                                ),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.resolveWith((states) {
+                                    if (states.contains(MaterialState.disabled)) {
+                                      return AppColors.getColor('mono').lightGrey;
+                                    } else if (states.contains(MaterialState.pressed)) {
+                                      return AppColors.getColor('mono').white;
+                                    } else if (states.contains(MaterialState.hovered)) {
+                                      return AppColors.getColor('primary').lighter;
+                                    } else {
+                                      return AppColors.getColor('mono').lighterGrey;
+                                    }
+                                  }),
+                                  side: MaterialStateProperty.resolveWith((states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return BorderSide(color: AppColors.getColor('primary').light, width: 2);
+                                    } else {
+                                      return BorderSide.none;
+                                    }
+                                  }),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                                ),
+                              ),
+                            ),
+                          ]
+                        );
                       }
                     },
                   ),
@@ -214,6 +266,7 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
+                  width: 400,
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -223,6 +276,20 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.getColor('red').lighter,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          completeNotification.materialData!.type,
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: AppColors.getColor('red').main,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
                       Text(
                         completeNotification.materialData!.subject,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -240,23 +307,6 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
                   ),
                 ),
               ],
-            ),
-            Positioned(
-              top: 10,
-              left: 10,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.getColor('red').lighter,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  completeNotification.materialData!.type,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('red').main,
-                  ),
-                ),
-              ),
             ),
           ],
     );
