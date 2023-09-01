@@ -64,7 +64,6 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    String imageAsset = widget.image.isEmpty ? 'assets/placeholder.png' : widget.image;
 
     return MouseRegion(
          cursor: SystemMouseCursors.click,
@@ -77,10 +76,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
           height: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(
-              image: AssetImage(imageAsset),
-              fit: BoxFit.cover,
-            ),
+            color: AppColors.getColor('primary').main
           ),
           child: Stack(
             children: [
