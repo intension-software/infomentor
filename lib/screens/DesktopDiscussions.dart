@@ -183,13 +183,12 @@ Widget build(BuildContext context) {
     onPageChanged: _onPageChanged,
       children: [
        Container(
-
         width: 900,
         height: 1080,
         color: Theme.of(context).colorScheme.background,
         child: Column(
           children: [
-            Container(
+            if(widget.currentUserData!.teacher) Container(
               width: 900,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(

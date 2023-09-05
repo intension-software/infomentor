@@ -235,7 +235,7 @@ Widget build(BuildContext context) {
                     children: [
                       SizedBox(height: 16),
                       Text(
-                        results?[0].capitolsData!.name ?? '',
+                        results?[capitolsIds[0]].capitolsData!.name ?? '',
                         style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
