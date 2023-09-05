@@ -67,6 +67,13 @@ class _HomeState extends State<Home> {
     return count;
   }
 
+  void logOut() {
+    FirebaseAuth.instance.signOut();
+      setState(() {
+        fetchUserData();
+      });
+  }
+
 
   Future<void> fetchCapitolsData() async {
     try {
@@ -140,7 +147,7 @@ class _HomeState extends State<Home> {
         ) : Container(),
       Scaffold(
         backgroundColor: Colors.transparent,
-      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected, onUserDataChanged: _onUserDataChanged, selectedIndex: _selectedIndex),
+      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, logOut: logOut,) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected, onUserDataChanged: _onUserDataChanged, selectedIndex: _selectedIndex),
       bottomNavigationBar:  MediaQuery.of(context).size.width < 1000 ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
@@ -191,6 +198,7 @@ class _HomeState extends State<Home> {
                   },
                   child: Text('SignOut'),
                 ),
+                SizedBox(height: 100,)
               ],
             )
           ),

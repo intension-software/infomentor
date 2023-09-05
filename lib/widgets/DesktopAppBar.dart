@@ -85,7 +85,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           SizedBox(width: 16),
                           SvgPicture.asset('assets/icons/infoIcon.svg'),
                           SizedBox(width: 20),
-                          if(!widget.currentUserData!.teacher) MouseRegion(
+                          MouseRegion(
                             cursor: SystemMouseCursors.click,
                             child: GestureDetector(
                               onTap: () {

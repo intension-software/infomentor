@@ -8,12 +8,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 
 class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final void Function() logOut;
   final FetchResult? capitol;
   final UserData? currentUserData;
   final int? capitolLength;
 
   const MobileAppBar({
     Key? key,
+    required this.logOut,
     required this.capitol,
     required this.currentUserData,
     required this.capitolLength,
@@ -52,7 +54,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                       child: GestureDetector(
                       onTap: () {
                         // Open profile overlay
-                        showProfileOverlay(context);
+                        showProfileOverlay(context, logOut);
                       },
                         child: SvgPicture.asset(currentUserData!.image), // Use user's image
                     ),
@@ -66,7 +68,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   
-void showProfileOverlay(BuildContext context) { // Add the context parameter
+void showProfileOverlay(BuildContext context, void Function() logOut) { // Add the context parameter
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scaffold(
@@ -88,7 +90,22 @@ void showProfileOverlay(BuildContext context) { // Add the context parameter
               ),
             ),
           ),
-          body: Profile(),
+          body: 
+          SingleChildScrollView(
+                child:Column(
+            children: [
+              Profile(),
+             ElevatedButton(
+                onPressed: () {
+                  logOut();
+                  Navigator.of(context).pop();
+                  },
+                  child: Text('SignOut'),
+                ),
+                SizedBox(height: 100,)
+              ],
+            )
+          ),
         ),
       ),
     );
