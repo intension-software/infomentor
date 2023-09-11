@@ -6,14 +6,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async'; // Add this import statement
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 class Comments extends StatefulWidget {
   final Stream<List<CommentsData>> fetchCommentsStream;
   final void Function(int, [CommentsData?, int?]) onNavigationItemSelected;
+  final UserData currentUserData;
+  final String postId;
+  void Function(bool, int, String) setEdit;
   Comments({
     Key? key,
+    required this.setEdit,
     required this.onNavigationItemSelected,
     required this.fetchCommentsStream,
+    required this.currentUserData,
+    required this.postId
   }) : super(key: key);
 
   @override
@@ -82,16 +89,59 @@ class _CommentsState extends State<Comments> {
                                 color: AppColors.getColor('mono').grey,
                               ),
                             ),
+                           
                           ],
                         ),
+                        Spacer(),
+                         if(comment.userId == FirebaseAuth.instance.currentUser!.uid)SvgDropdownPopupMenuButton(
+                              onUpdateSelected: () {
+                                // Call your updateCommentValue function here
+                                widget.setEdit(true, index, comment.value);
+                              },
+                              onDeleteSelected: () {
+                                // Call your deleteComment function here
+                                deleteComment(widget.currentUserData!.schoolClass, widget.postId ,index);
+                                comments.removeAt(index);
+                              },
+                            ),
                       ],
                     ),
                     SizedBox(height: 10.0),
                     Text(comment.value),
-                    Row(
+                    if(comment.award || widget.currentUserData!.teacher)Row(
                       children: [
                         Spacer(),
-                        Icon(Icons.thumb_up_outlined, size: 20.0),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              toggleCommentAward(widget.currentUserData.schoolClass, widget.postId, index);
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(color: comment.award ? AppColors.getColor('yellow').main : AppColors.getColor('mono').grey),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  height: 15,
+                                  comment.award ?  'assets/icons/starYellowIcon.svg' : 'assets/icons/smallStarIcon.svg',
+                                  color: comment.award ? AppColors.getColor('yellow').main : AppColors.getColor('mono').grey,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  comment.award ? 'Ocenené' : 'Oceniť',
+                                  style: TextStyle(
+                                    color: comment.award ? AppColors.getColor('yellow').main : AppColors.getColor('mono').grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         SizedBox(width: 4.0),
                       ],
                     ),

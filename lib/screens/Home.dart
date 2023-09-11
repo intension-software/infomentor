@@ -8,6 +8,7 @@ import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/screens/StudentFeed.dart';
 import 'package:infomentor/screens/TeacherFeed.dart';
 import 'package:infomentor/screens/Discussions.dart';
+import 'package:infomentor/screens/DesktopAdmin.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -147,7 +148,7 @@ class _HomeState extends State<Home> {
         ) : Container(),
       Scaffold(
         backgroundColor: Colors.transparent,
-      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, logOut: logOut,) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected, onUserDataChanged: _onUserDataChanged, selectedIndex: _selectedIndex),
+      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, logOut: logOut, onNavigationItemSelected: _onNavigationItemSelected,) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected, onUserDataChanged: _onUserDataChanged, selectedIndex: _selectedIndex),
       bottomNavigationBar:  MediaQuery.of(context).size.width < 1000 ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
@@ -204,6 +205,7 @@ class _HomeState extends State<Home> {
           ),
           if (currentUserData!.teacher) Results(),
           if(currentUserData!.admin) Admin(currentUserData: currentUserData,),
+          if (currentUserData!.teacher) DesktopAdmin(currentUserData: currentUserData),
         ],
       ),
     )

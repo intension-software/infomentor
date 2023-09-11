@@ -36,8 +36,16 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
   TextEditingController answerController = TextEditingController();
   TextEditingController commentController = TextEditingController();
   TextEditingController postController = TextEditingController();
+  TextEditingController editAnswerController = TextEditingController();
+  TextEditingController editCommentController = TextEditingController();
+  TextEditingController editPostController = TextEditingController();
   bool _loading = true;
-  String? _edit;
+  bool _edit = false;
+  bool _editComment = false;
+  bool _editAnswer = false;
+  bool _add = false;
+  bool _library = false;
+  int? _editIndex;
 
 
   @override
@@ -102,24 +110,27 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
                       return CommentsAnswersData(
                         award: answerItem['award'] ?? false,
                         date: answerItem['date'] ?? Timestamp.now(),
+                        userId: answerItem['userId'],
+                        pfp: answerItem['pfp'],
                         user: answerItem['user'] ?? '',
-                        userId: answerItem['userId'] ?? '',
                         value: answerItem['value'] ?? '',
                       );
                     } else {
                       // Handle invalid answer data here
                       return CommentsAnswersData(
                         award: false,
+                        userId: '',
+                        pfp: '',
                         date: Timestamp.now(),
                         user: '',
-                        userId: '',
                         value: '',
                       );
                     }
                   }).toList(),
+                  userId: commentItem['userId'],
+                  pfp: commentItem['pfp'],
                   date: commentItem['date'] ?? Timestamp.now(),
                   user: commentItem['user'] ?? '',
-                  userId: commentItem['userId'] ?? '',
                   value: commentItem['value'] ?? '',
                 );
               }).toList();
@@ -155,8 +166,9 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
                 return CommentsAnswersData(
                   award: answerItem['award'],
                   date: answerItem['date'],
-                  user: answerItem['user'],
                   userId: answerItem['userId'],
+                  pfp: answerItem['pfp'],
+                  user: answerItem['user'],
                   value: answerItem['value'],
                 );
               }).toList();
@@ -188,7 +200,7 @@ Widget build(BuildContext context) {
         color: Theme.of(context).colorScheme.background,
         child: Column(
           children: [
-            Row(
+            if(widget.currentUserData!.teacher)Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -203,7 +215,12 @@ Widget build(BuildContext context) {
                     text: 'Pridať príspevok', 
                     leftIcon: false, 
                     rightIcon: false, 
-                    onTap: () => _onNavigationItemSelected(1)
+                    onTap: () {
+                      _onNavigationItemSelected(1);
+                      setState(() {
+                        _add = true;
+                      });
+                    }
                   ),
                   ReButton(
                     activeColor: AppColors.getColor('mono').white, 
@@ -216,7 +233,12 @@ Widget build(BuildContext context) {
                     text: 'Vybrať z knižnice', 
                     leftIcon: false, 
                     rightIcon: false, 
-                    onTap: () => _onNavigationItemSelected(2)
+                    onTap: () {
+                      _onNavigationItemSelected(1);
+                      setState(() {
+                        _library = true;
+                      });
+                    }
                   ),
               ],
             ),
@@ -274,7 +296,19 @@ Widget build(BuildContext context) {
                                       ],
                                     ),
                                     Spacer(),
-                                    SvgPicture.asset('assets/icons/verticalDotsIcon.svg')
+                                     if(FirebaseAuth.instance.currentUser!.uid == post.userId)SvgDropdownPopupMenuButton(
+                                      onUpdateSelected: () {
+                                        // Call your updateCommentValue function here
+                                        _editIndex = index;
+                                        _edit = true;
+                                        _onNavigationCommentSelected(1);
+                                      },
+                                      onDeleteSelected: () {
+                                        // Call your deleteComment function here
+                                        deletePost(widget.currentUserData!.schoolClass, post.id);
+                                        _posts.removeWhere((item) => item.id == post.id);
+                                      },
+                                    ),
                                   ],
                                 ),
                                 SizedBox(height: 10.0),
@@ -282,7 +316,7 @@ Widget build(BuildContext context) {
                                   Row(
                                     children: [
                                       Spacer(),
-                                      SvgPicture.asset('assets/icons/textBubbleIcon.svg'),
+                                      SvgPicture.asset('assets/icons/smallTextBubbleIcon.svg'),
                                       SizedBox(width: 4.0),
                                       Text(
                                         'odpovede',
@@ -303,13 +337,27 @@ Widget build(BuildContext context) {
           ]
           )
         ),
-      Container(
+      if(_add) Container(
         color: Theme.of(context).colorScheme.background,
               width: 900,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                Container(
+                  width: 900,
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: AppColors.getColor('mono').darkGrey,
+                      ),
+                      onPressed: () {
+                        _add = false;
+                        _onNavigationItemSelected(0);
+                      }
+                    ),
+                ),
                TextField(
                   minLines: 5,
                   maxLines: 20,
@@ -349,8 +397,9 @@ Widget build(BuildContext context) {
                       PostsData newPost = PostsData(
                         comments: [],
                         date: Timestamp.now(),
-                        user: widget.currentUserData!.name,
                         userId: FirebaseAuth.instance.currentUser!.uid,
+                        user: widget.currentUserData!.name,
+                        pfp: widget.currentUserData!.image,
                         value: postController.text,
                         id: _posts.length.toString()
                       );
@@ -372,9 +421,131 @@ Widget build(BuildContext context) {
               ],
             ),
           ),
-          Container(
-            color: Theme.of(context).colorScheme.background,
-          ),
+      if(_library)Container(
+        color: Theme.of(context).colorScheme.background,
+        width: 900,
+        child: Column(
+          children: [
+            Container(
+              width: 900,
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: AppColors.getColor('mono').darkGrey,
+                  ),
+                  onPressed: () {
+                    _library = false;
+                    _onNavigationItemSelected(0);
+                  }
+                ),
+            ),
+          ],
+        ),
+      ),
+      if (_edit) Container(
+        color: Theme.of(context).colorScheme.background,
+        width: 900,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 900,
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: AppColors.getColor('mono').darkGrey,
+                  ),
+                  onPressed: () {
+                    _edit = false;
+                    _onNavigationItemSelected(0);
+                  }
+                ),
+            ),
+            Container(
+              width: 900,
+              child: TextField(
+              minLines: 5,
+              maxLines: 30,
+              controller: editPostController,
+              decoration: InputDecoration(
+                hintText: 'Obsah diskusného príspevku',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
+                  borderSide: BorderSide(color: AppColors.getColor('mono').lightGrey), // Light grey border color
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: AppColors.getColor('mono').lightGrey), // Light grey border color
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: AppColors.getColor('mono').lightGrey), // Light grey border color
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+            ),
+            SizedBox(height: 8),
+            Container(
+              width: 900,
+              child: Row(
+              children: [
+                Spacer(),
+                 ReButton(
+                activeColor: AppColors.getColor('mono').white, 
+                defaultColor: AppColors.getColor('green').main, 
+                disabledColor: AppColors.getColor('mono').lightGrey, 
+                focusedColor: AppColors.getColor('green').light, 
+                hoverColor: AppColors.getColor('green').light, 
+                textColor: Theme.of(context).colorScheme.onPrimary, 
+                iconColor: AppColors.getColor('mono').black, 
+                text: 'UVEREJNIŤ ZMENY', 
+                leftIcon: false, 
+                rightIcon: false, 
+                onTap: () async {
+                    int postIndex = _editIndex!;// You need to set this to the appropriate index.
+
+                    // Check if the postIndex is valid
+                    if (postIndex >= 0 && postIndex < _posts.length) {
+                      // Get the post to be edited
+                      PostsData postToEdit = _posts[postIndex];
+
+                      // Update the post value with the new text
+                      postToEdit.value = editPostController.text;
+
+                      try {
+                        // Call a function to update the post in Firestore
+                        await updatePostValue(
+                          widget.currentUserData!.schoolClass,
+                          postToEdit.id,
+                          postToEdit.value,
+                        );
+
+                        setState(() {
+                          // Update the local _posts list with the edited post
+                          _posts[postIndex] = postToEdit;
+                          _posts.sort((a, b) => b.date.compareTo(a.date));
+                        });
+
+                        editPostController.clear();
+                      } catch (e) {
+                        print('Error updating post: $e');
+                      }
+                    } else {
+                      print('Invalid post index');
+                    }
+                  },
+                 )
+              ],
+            ),
+            )
+          ],
+        ),
+      ),
       if (_selectedPost != null)
       Container(
         width: 900,
@@ -396,7 +567,41 @@ Widget build(BuildContext context) {
             ),
             Expanded(
               child: SingleChildScrollView( 
-                child: Comments(fetchCommentsStream: fetchCommentsStream(_selectedPost!.id), onNavigationItemSelected: _onNavigationCommentSelected,),
+                child: Comments(
+                  fetchCommentsStream: fetchCommentsStream(_selectedPost!.id),
+                  onNavigationItemSelected: _onNavigationCommentSelected,
+                  currentUserData: widget.currentUserData!,
+                  postId: _selectedPost!.id,
+                  setEdit: (bool edit, int index, String value) {
+                    setState(() {
+                      _editComment = edit;
+                      _editIndex = index;
+                      editCommentController.text = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+            if(_editComment) Container(
+              width: 900,
+              child: Row(
+                children: [
+                  Text('Upraviť príspevok'),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      Icons.cancel,
+                      color: AppColors.getColor('mono').darkGrey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _editComment = false;
+                        _editIndex = null;
+                        editCommentController.text = '';
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
             Container(
@@ -410,38 +615,84 @@ Widget build(BuildContext context) {
                   padding: EdgeInsets.only(right: 8),
                   child: Row(
                     children: [
-                      Expanded(
-                        child:  TextField(
-                          minLines: 3,
-                          maxLines: 20,
-                          controller: commentController,
-                          decoration: InputDecoration(
-                            hintText: 'Zapoj sa do diskusie',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
-                              borderSide: BorderSide(color: Colors.transparent), // Light grey border color
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.transparent), // Light grey border color
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.transparent), // Light grey border color
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
+                    Expanded(
+                      child:  TextField(
+                        minLines: 3,
+                        maxLines: 20,
+                        controller: _editComment ? editCommentController : commentController,
+                        decoration: InputDecoration(
+                          hintText: _editComment ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
+                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                           ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () async {
+                    ),
+                    SizedBox(width: 8),
+                    ReButton(
+                      activeColor: AppColors.getColor('mono').white, 
+                      defaultColor: AppColors.getColor('primary').main, 
+                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                      focusedColor: AppColors.getColor('primary').light, 
+                      hoverColor: AppColors.getColor('mono').lighterGrey, 
+                      textColor: Theme.of(context).colorScheme.onPrimary, 
+                      iconColor: AppColors.getColor('mono').black, 
+                      text: _editComment ? 'Uložiť úpravy' : 'Odpovedať', 
+                      leftIcon: false, 
+                      rightIcon: false, 
+                      onTap: () async {
+                        if (_editComment) {
+                          int commentIndex = _editIndex!; // You need to set this to the appropriate index.
+
+                          // Check if the commentIndex is valid
+                          if (commentIndex >= 0 && commentIndex < _selectedPost!.comments.length) {
+                            // Get the comment to be edited
+                            CommentsData commentToEdit = _selectedPost!.comments[commentIndex];
+
+                            // Update the comment value with the new text
+                            commentToEdit.value = editCommentController.text;
+
+                            try {
+                              // Call a function to update the comment in Firestore
+                              await updateCommentValue(
+                                widget.currentUserData!.schoolClass,
+                                _selectedPost!.id,
+                                commentIndex, // Pass the comment index to identify which comment to edit
+                                commentToEdit.value,
+                              );
+
+                              setState(() {
+                                // Update the local _selectedPost!.comments list with the edited comment
+                                _selectedPost!.comments[commentIndex] = commentToEdit;
+                                _editIndex = null;
+                                _editComment = false;
+                              });
+
+                              editCommentController.clear();
+                            } catch (e) {
+                              print('Error updating comment: $e');
+                            }
+                          } else {
+                            print('Invalid comment index');
+                          }
+                        } else {
                           CommentsData newComment = CommentsData(
                             answers: [],  // Initialize answers list with an empty list
                             award: false,
                             date: Timestamp.now(),
                             user: widget.currentUserData!.name,
+                            pfp: widget.currentUserData!.image,
                             userId: FirebaseAuth.instance.currentUser!.uid,
                             value: commentController.text,
                           );
@@ -462,13 +713,12 @@ Widget build(BuildContext context) {
                           } catch (e) {
                             print('Error adding comment: $e');
                           }
-                        },
-                        child: Text('Post'),
-                        ),
-
-                    ],
-                  ),
+                        }
+                      },
+                    ) 
+                  ],
                 ),
+              ),
           ],
         ),
       ),
@@ -492,7 +742,35 @@ Widget build(BuildContext context) {
             ),
             Expanded(
               child: SingleChildScrollView(
-                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!)),
+                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!), commentIndex: _selectedCommentIndex, currentUserData: widget.currentUserData!, postId: _selectedPost!.id, setEdit: (bool edit, int index, String value) {
+                    setState(() {
+                      _editAnswer = edit;
+                      _editIndex = index;
+                      editAnswerController.text = value;
+                    });
+                  },),
+              ),
+            ),
+            if(_editAnswer) Container(
+              width: 900,
+              child: Row(
+                children: [
+                  Text('Upraviť príspevok'),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      Icons.cancel,
+                      color: AppColors.getColor('mono').darkGrey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _editAnswer = false;
+                        _editIndex = null;
+                        editAnswerController.text = '';
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
             Container(
@@ -510,20 +788,20 @@ Widget build(BuildContext context) {
                     child: TextField(
                       minLines: 3,
                       maxLines: 20,
-                      controller: answerController,
+                      controller: _editAnswer ? editAnswerController : answerController,
                       decoration: InputDecoration(
-                        hintText: 'Zapoj sa do diskusie',
+                        hintText: _editAnswer ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
-                          borderSide: BorderSide(color: Colors.grey), // Light grey border color
+                          borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey), // Light grey border color
+                          borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey), // Light grey border color
+                          borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                         ),
                         filled: true,
                         fillColor: Colors.white,
@@ -531,13 +809,59 @@ Widget build(BuildContext context) {
                     ),
                   ),
                   SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_selectedComment != null) {
+                  ReButton(
+                    activeColor: AppColors.getColor('mono').white,
+                    defaultColor: AppColors.getColor('primary').main,
+                    disabledColor: AppColors.getColor('mono').lightGrey,
+                    focusedColor: AppColors.getColor('primary').light,
+                    hoverColor: AppColors.getColor('mono').lighterGrey,
+                    textColor: Theme.of(context).colorScheme.onPrimary,
+                    iconColor: AppColors.getColor('mono').black,
+                    text: _editAnswer ? 'Uložiť úpravy' : 'Odpovedať',
+                    leftIcon: false,
+                    rightIcon: false,
+                    onTap: () async {
+                      if (_editAnswer) {
+                        int answerIndex = _editIndex!; // You need to set this to the appropriate index.
+
+                        // Check if the answerIndex is valid
+                        if (answerIndex >= 0 && answerIndex < _selectedComment!.answers.length) {
+                          // Get the answer to be edited
+                          CommentsAnswersData answerToEdit = _selectedComment!.answers[answerIndex];
+
+                          // Update the answer value with the new text
+                          answerToEdit.value = editAnswerController.text;
+
+                          try {
+                            // Call a function to update the answer in Firestore
+                            await updateAnswerValue(
+                              widget.currentUserData!.schoolClass,
+                              _selectedPost!.id,
+                              _selectedCommentIndex!, // Pass the comment index to identify which comment to edit
+                              answerIndex, // Pass the answer index to identify which answer to edit
+                              answerToEdit.value,
+                            );
+
+                            setState(() {
+                              // Update the local _selectedComment!.answers list with the edited answer
+                              _selectedComment!.answers[answerIndex] = answerToEdit;
+                              _editIndex = null;
+                              _editAnswer = false;
+                            });
+
+                            editAnswerController.clear();
+                          } catch (e) {
+                            print('Error updating answer: $e');
+                          }
+                        } else {
+                          print('Invalid answer index');
+                        }
+                      } else {
                         CommentsAnswersData newAnswer = CommentsAnswersData(
                           award: false,
                           date: Timestamp.now(),
                           user: widget.currentUserData!.name,
+                          pfp: widget.currentUserData!.image,
                           userId: FirebaseAuth.instance.currentUser!.uid,
                           value: answerController.text,
                         );
@@ -561,9 +885,7 @@ Widget build(BuildContext context) {
                         }
                       }
                     },
-                    child: Text('Post'),
                   ),
-
                 ],
               ),
             ),

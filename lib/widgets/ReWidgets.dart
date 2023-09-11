@@ -363,3 +363,51 @@ Container reImageAnswer(String image) {
     ),
   );
 }
+
+class SvgDropdownPopupMenuButton extends StatelessWidget {
+  final Function() onUpdateSelected;
+  final Function() onDeleteSelected;
+
+  SvgDropdownPopupMenuButton({
+    required this.onUpdateSelected,
+    required this.onDeleteSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      itemBuilder: (BuildContext context) {
+        return [
+          PopupMenuItem(
+            value: 'update',
+            child: Text('upraviť'),
+          ),
+          PopupMenuItem(
+            value: 'delete',
+            child: Text('vymazať'),
+          ),
+        ];
+      },
+      onSelected: (String value) {
+        if (value == 'update') {
+          onUpdateSelected();
+        } else if (value == 'delete') {
+          onDeleteSelected();
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.all(8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              child: SvgPicture.asset('assets/icons/verticalDotsIcon.svg'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

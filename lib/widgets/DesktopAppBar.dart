@@ -84,6 +84,14 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           ),
                           SizedBox(width: 16),
                           SvgPicture.asset('assets/icons/infoIcon.svg'),
+                          SizedBox(width: 16),
+                          if(widget.currentUserData!.teacher)IconButton(
+                            icon: SvgPicture.asset('assets/icons/settingsIcon.svg'),
+                            onPressed: () {
+                              widget.onNavigationItemSelected(8);
+                              widget.selectedIndex = -1;
+                            }
+                          ),
                           SizedBox(width: 20),
                           MouseRegion(
                             cursor: SystemMouseCursors.click,

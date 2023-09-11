@@ -119,6 +119,7 @@ class _UserFormState extends State<UserForm> {
                     id: '',
                     email: _emailController.text,
                     name: _nameController.text,
+                    school: widget.currentUserData!.school,
                     active: false,
                     classes: [
                       widget.currentUserData!.schoolClass,
@@ -336,6 +337,7 @@ class _UserFormState extends State<UserForm> {
       'name': data.name,
       'active': data.active,
       'classes': data.classes,
+      'school': data.school,
       'schoolClass': data.schoolClass,
       'image': data.image,
       'surname': data.surname,

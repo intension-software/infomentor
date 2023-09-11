@@ -69,6 +69,7 @@ class UserData {
   String email;
   String name;
   bool active;
+  String school;
   List<String> classes;
   String schoolClass;
   String image;
@@ -86,6 +87,7 @@ class UserData {
     required this.email,
     required this.name,
     required this.active,
+    required this.school,
     required this.classes,
     required this.schoolClass,
     required this.image,
@@ -115,6 +117,7 @@ Future<UserData> fetchUser(String userId) async {
         String name = userSnapshot.get('name') as String? ?? '';
         bool active = userSnapshot.get('active') as bool? ?? false;
         List<String> classes = List<String>.from(userSnapshot.get('classes') as List<dynamic>? ?? []);
+        String school = userSnapshot.get('school') as String? ?? '';
         String schoolClass = userSnapshot.get('schoolClass') as String? ?? '';
         String image = userSnapshot.get('image') as String? ?? '';
         String surname = userSnapshot.get('surname') as String? ?? '';
@@ -146,6 +149,7 @@ Future<UserData> fetchUser(String userId) async {
           email: email,
           name: name,
           active: active,
+          school: school,
           classes: classes,
           schoolClass: schoolClass,
           image: image,

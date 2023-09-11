@@ -6,14 +6,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async'; // Add this import statement
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 
 class CommentsAnswers extends StatefulWidget {
   final Stream<List<CommentsAnswersData>> fetchAnswersStream;
+  final UserData currentUserData;
+  final String postId;
+  final int? commentIndex;
+  void Function(bool, int, String) setEdit;
 
   CommentsAnswers({
     Key? key,
     required this.fetchAnswersStream,
+    required this.setEdit,
+    required this.currentUserData,
+    required this.commentIndex,
+    required this.postId
   }) : super(key: key);
 
   @override
@@ -72,6 +81,18 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                               ),
                             ],
                           ),
+                          Spacer(),
+                         if(FirebaseAuth.instance.currentUser!.uid == answer.userId)SvgDropdownPopupMenuButton(
+                              onUpdateSelected: () {
+                                // Call your updateCommentValue function here
+                                widget.setEdit(true, index, answer.value);
+                              },
+                              onDeleteSelected: () {
+                                // Call your deleteComment function here
+                                deleteAnswer(widget.currentUserData!.schoolClass, widget.postId ,widget.commentIndex! ,index);
+                                answers.removeAt(index);
+                              },
+                            ),
                         ],
                       ),
                       SizedBox(height: 10.0),

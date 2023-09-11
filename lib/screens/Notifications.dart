@@ -88,43 +88,46 @@ String formatTimestamp(Timestamp timestamp) {
 
 @override
 Widget build(BuildContext context) {
-  return SingleChildScrollView(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(height: 20,),
-        Text(
-          "Upozornenia",
-          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-            color: Theme.of(context).colorScheme.onBackground,
+  return Container(
+      color: Theme.of(context).colorScheme.background,
+    child: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 20,),
+          Text(
+            "Upozornenia",
+            style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
           ),
-        ),
-        FutureBuilder<List<CompleteNotification>>(
-          future: _notificationsData,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text("No notifications available."));
-              }
+          FutureBuilder<List<CompleteNotification>>(
+            future: _notificationsData,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text("No notifications available."));
+                }
 
-              List<CompleteNotification> unseenNotifications = snapshot.data!.where((completeNotif) {
-                return widget.currentUserData!.notifications.any((userNotif) => !userNotif.seen);
-              }).toList();
+                List<CompleteNotification> unseenNotifications = snapshot.data!.where((completeNotif) {
+                  return widget.currentUserData!.notifications.any((userNotif) => !userNotif.seen);
+                }).toList();
 
-              return Column(
-                children: unseenNotifications.map((completeNotif) {
-                  return _buildNotificationItem(completeNotif);
-                }).toList(),
-              );
-            }
-            return Center(child: CircularProgressIndicator());
-          },
-        ),
-      ],
-    ),
+                return Column(
+                  children: unseenNotifications.map((completeNotif) {
+                    return _buildNotificationItem(completeNotif);
+                  }).toList(),
+                );
+              }
+              return Center(child: CircularProgressIndicator());
+            },
+          ),
+        ],
+      ),
+    )
   );
 }
 

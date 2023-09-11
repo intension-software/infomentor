@@ -12,9 +12,11 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final FetchResult? capitol;
   final UserData? currentUserData;
   final int? capitolLength;
+  final Function(int) onNavigationItemSelected;
 
   const MobileAppBar({
     Key? key,
+    required this.onNavigationItemSelected,
     required this.logOut,
     required this.capitol,
     required this.currentUserData,
@@ -46,7 +48,11 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                     SizedBox(width: 4),
                     SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                     SizedBox(width: 8),
-                     SvgPicture.asset('assets/icons/bellWhiteIcon.svg'),
+                     IconButton(
+                      icon: SvgPicture.asset('assets/icons/bellWhiteIcon.svg'),
+                      onPressed: () => 
+                        onNavigationItemSelected(4),
+                    ),
                     SizedBox(width: 8),
 
                     MouseRegion(
@@ -94,15 +100,15 @@ void showProfileOverlay(BuildContext context, void Function() logOut) { // Add t
           SingleChildScrollView(
                 child:Column(
             children: [
-              Profile(),
-             ElevatedButton(
+              ElevatedButton(
                 onPressed: () {
                   logOut();
                   Navigator.of(context).pop();
                   },
                   child: Text('SignOut'),
                 ),
-                SizedBox(height: 100,)
+              Profile(),
+             
               ],
             )
           ),
