@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:infomentor/backend/fetchSchool.dart';
 
 class CommentsAnswersData {
   Timestamp date;
@@ -848,6 +849,9 @@ Future<void> addClass(String className, String school) async {
 
     // Add the class data to Firestore
     await newClassRef.set(classData);
+
+    addClassToSchool(newClassRef.id, school);
+
 
     print('Class added successfully with ID: ${newClassRef.id}');
   } catch (e) {

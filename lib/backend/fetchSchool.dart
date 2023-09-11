@@ -44,3 +44,26 @@ Future<SchoolData> fetchSchool(String schoolId) async {
     throw Exception('Failed to fetch school');
   }
 }
+
+Future<void> addClassToSchool(String newClass, String schoolId) async {
+  try {
+    // Reference to the school document in Firestore
+    DocumentReference schoolRef =
+        FirebaseFirestore.instance.collection('schools').doc(schoolId);
+
+    // Retrieve the school document
+    DocumentSnapshot schoolSnapshot = await schoolRef.get();
+
+    if (schoolSnapshot.exists) {
+      // Update the classes field in Firestore
+      await schoolRef.update({
+        'classes': FieldValue.arrayUnion([newClass]),
+      });
+    } else {
+      throw Exception('School document does not exist.');
+    }
+  } catch (e) {
+    print('Error adding class: $e');
+    throw Exception('Failed to add class');
+  }
+}

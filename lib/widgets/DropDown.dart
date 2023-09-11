@@ -116,6 +116,7 @@ Future<void> fetchOptions() async {
         'email': userData.email,
         'name': userData.name,
         'active': userData.active,
+        'school': userData.school,
         'schoolClass': userData.schoolClass,
         'image': userData.image,
         'surname': userData.surname,
