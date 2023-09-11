@@ -326,6 +326,7 @@ Widget build(BuildContext context) {
                                         // Call your updateCommentValue function here
                                         _editIndex = index;
                                         _edit = true;
+                                        editPostController.text = post.value;
                                         _onNavigationCommentSelected(1);
                                       },
                                       onDeleteSelected: () {
