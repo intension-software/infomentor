@@ -162,6 +162,7 @@ class _HomeState extends State<Home> {
                 onItemTapped: _onNavigationItemSelected,
                 selectedIndex: _selectedIndex,
                 currentUserData: currentUserData,
+                onUserDataChanged: _onUserDataChanged,
                 logOut: logOut,
               ),
             )
@@ -186,7 +187,7 @@ class _HomeState extends State<Home> {
             selectedIndex: _selectedIndex,
           ),
         ),
-      drawer: Drawer(
+      drawer: (currentUserData!.teacher && MediaQuery.of(context).size.width < 1000) ? Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -219,7 +220,7 @@ class _HomeState extends State<Home> {
             // Add more ListTile widgets for additional menu items
           ],
         ),
-      ),
+      ) : null,
       bottomNavigationBar:  (MediaQuery.of(context).size.width < 1000 && !currentUserData!.teacher) ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,

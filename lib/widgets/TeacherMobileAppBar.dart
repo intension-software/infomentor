@@ -4,16 +4,14 @@ import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:infomentor/backend/fetchUser.dart';
-
-
-
-import 'package:flutter/material.dart';
+import 'package:infomentor/widgets/DropDown.dart';
 
 class TeacherMobileAppBar extends StatelessWidget {
   final int selectedIndex;
   final UserData? currentUserData;
   final ValueChanged<int> onItemTapped;
   final void Function() logOut;
+  final VoidCallback? onUserDataChanged;
 
   const TeacherMobileAppBar({
     Key? key,
@@ -21,6 +19,7 @@ class TeacherMobileAppBar extends StatelessWidget {
     required this.logOut,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.onUserDataChanged,
   }) : super(key: key);
 
   @override
@@ -28,7 +27,6 @@ class TeacherMobileAppBar extends StatelessWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: AppColors.getColor('primary').light,
-      title: Text('Your App Title'),
       leading: IconButton(
         icon: Icon(Icons.menu),
         onPressed: () {
@@ -36,16 +34,20 @@ class TeacherMobileAppBar extends StatelessWidget {
         },
       ),
       actions: [
-         MouseRegion(
+        Spacer(), // Pushes the following widgets to the middle
+        DropDown(currentUserData: currentUserData, onUserDataChanged: onUserDataChanged,),
+        Spacer(), // Pushes the following widgets to the right
+        MouseRegion(
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
-          onTap: () {
-            // Open profile overlay
-            showProfileOverlay(context, logOut);
-          },
+            onTap: () {
+              // Open profile overlay
+              showProfileOverlay(context, logOut);
+            },
             child: SvgPicture.asset(currentUserData!.image), // Use user's image
+          ),
         ),
-      ),
+        SizedBox(width: 12,)
       ],
     );
   }
