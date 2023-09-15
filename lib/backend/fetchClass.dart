@@ -159,6 +159,61 @@ Future<ClassData> fetchClass(String classId) async {
   }
 }
 
+Future<void> editClass(String classId, ClassData newClassData) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Convert the newClassData object to a Map
+    Map<String, dynamic> classDataMap = {
+      'name': newClassData.name,
+      'school': newClassData.school,
+      'students': newClassData.students,
+      'teachers': newClassData.teachers,
+      'materials': newClassData.materials,
+      'capitolOrder': newClassData.capitolOrder,
+      'posts': newClassData.posts.map((post) {
+        return {
+          'date': post.date,
+          'id': post.id,
+          'pfp': post.pfp,
+          'userId': post.userId,
+          'user': post.user,
+          'value': post.value,
+          'comments': post.comments.map((comment) {
+            return {
+              'award': comment.award,
+              'date': comment.date,
+              'pfp': comment.pfp,
+              'userId': comment.userId,
+              'user': comment.user,
+              'value': comment.value,
+              'answers': comment.answers.map((answer) {
+                return {
+                  'award': answer.award,
+                  'date': answer.date,
+                  'pfp': answer.pfp,
+                  'userId': answer.userId,
+                  'user': answer.user,
+                  'value': answer.value,
+                };
+              }).toList(),
+            };
+          }).toList(),
+        };
+      }).toList(),
+    };
+
+    // Update the class document with the new data
+    await classRef.update(classDataMap);
+  } catch (e) {
+    print('Error editing class: $e');
+    throw Exception('Failed to edit class');
+  }
+}
+
+
 
 Future<void> addComment(String classId, String postId, CommentsData comment) async {
   try {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infomentor/Colors.dart';
 import 'package:infomentor/screens/Learning.dart';
 import 'package:infomentor/screens/Challenges.dart';
 import 'package:infomentor/screens/Results.dart';
@@ -9,12 +10,14 @@ import 'package:infomentor/screens/StudentFeed.dart';
 import 'package:infomentor/screens/TeacherFeed.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/screens/DesktopAdmin.dart';
+import 'package:infomentor/screens/MobileAdmin.dart';
 import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/widgets/MobileAppBar.dart';
 import 'package:infomentor/widgets/DesktopAppBar.dart';
 import 'package:infomentor/widgets/MobileBottomNavigation.dart';
+import 'package:infomentor/widgets/TeacherMobileAppBar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 
@@ -28,6 +31,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final PageController _pageController = PageController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
   UserData? currentUserData;
   int? capitolLength;
@@ -50,6 +54,7 @@ class _HomeState extends State<Home> {
     super.initState();
     fetchUserData(); // Fetch the user data when the app starts
     fetchCapitolsData();
+    
   }
 
    void _onUserDataChanged() {
@@ -147,9 +152,75 @@ class _HomeState extends State<Home> {
           ),
         ) : Container(),
       Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.transparent,
-      appBar: MediaQuery.of(context).size.width < 1000 ? MobileAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, logOut: logOut, onNavigationItemSelected: _onNavigationItemSelected,) : DesktopAppBar(capitol: capitol, currentUserData: currentUserData, capitolLength: capitolLength, onNavigationItemSelected: _onNavigationItemSelected, onUserDataChanged: _onUserDataChanged, selectedIndex: _selectedIndex),
-      bottomNavigationBar:  MediaQuery.of(context).size.width < 1000 ? MobileBottomNavigation(
+        appBar: MediaQuery.of(context).size.width < 1000
+      ? currentUserData!.teacher
+          ? PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: TeacherMobileAppBar(
+                onItemTapped: _onNavigationItemSelected,
+                selectedIndex: _selectedIndex,
+                currentUserData: currentUserData,
+                logOut: logOut,
+              ),
+            )
+          : PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: MobileAppBar(
+                capitol: capitol,
+                currentUserData: currentUserData,
+                capitolLength: capitolLength,
+                logOut: logOut,
+                onNavigationItemSelected: _onNavigationItemSelected,
+              ),
+            )
+      : PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: DesktopAppBar(
+            capitol: capitol,
+            currentUserData: currentUserData,
+            capitolLength: capitolLength,
+            onNavigationItemSelected: _onNavigationItemSelected,
+            onUserDataChanged: _onUserDataChanged,
+            selectedIndex: _selectedIndex,
+          ),
+        ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
+                      onTap: () {
+                        _scaffoldKey.currentState?.openEndDrawer();
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 30,),
+                  SvgPicture.asset('assets/logoFilled.svg',)
+                ],
+              ),
+            ),
+            SizedBox(height: 30,),
+            buildNavItem(0, "assets/icons/homeIcon.svg", "Domov", context),
+            buildNavItem(1, "assets/icons/starIcon.svg", "Výzva", context),
+            buildNavItem(2, "assets/icons/textBubblesIcon.svg", "Diskusia", context),
+            buildNavItem(3, "assets/icons/bookIcon.svg", "Vzdelávanie", context),
+            buildNavItem(4, "assets/icons/resultsIcon.svg", "Výsledky", context),
+            buildNavItem(7, "assets/icons/settingsIcon.svg", "Nastavenia účtu", context),
+            // Add more ListTile widgets for additional menu items
+          ],
+        ),
+      ),
+      bottomNavigationBar:  (MediaQuery.of(context).size.width < 1000 && !currentUserData!.teacher) ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ) : null,
@@ -204,8 +275,7 @@ class _HomeState extends State<Home> {
             )
           ),
           if (currentUserData!.teacher) Results(),
-          if(currentUserData!.admin) Admin(currentUserData: currentUserData,),
-          if (currentUserData!.teacher) DesktopAdmin(currentUserData: currentUserData),
+          if (currentUserData!.teacher) MediaQuery.of(context).size.width < 1000 ? MobileAdmin(currentUserData: currentUserData) : DesktopAdmin(currentUserData: currentUserData),
         ],
       ),
     )
@@ -237,4 +307,37 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Widget buildNavItem(int index, String icon, String text, BuildContext context) {
+    final bool isSelected = index == _selectedIndex;
+
+    return Container(
+      width: 260,
+      height: 57,
+      margin: EdgeInsets.symmetric(horizontal: 12),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedIndex = index;
+          });
+          _onNavigationItemSelected(index);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SvgPicture.asset(icon, color: isSelected ? AppColors.getColor('primary').main : AppColors.getColor('mono').black),
+            SizedBox(width: 8),
+            Text(
+              text,
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                color: isSelected ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 }
+
+

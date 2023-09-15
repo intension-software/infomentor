@@ -268,8 +268,7 @@ Widget build(BuildContext context) {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                    SizedBox(height: 4.0),
-
+                                SizedBox(height: 4.0),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

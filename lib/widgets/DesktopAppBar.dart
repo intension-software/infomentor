@@ -61,8 +61,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                       buildNavItem(1, "assets/icons/starIcon.svg", "assets/icons/starWhiteIcon.svg", "Výzva", context),
                       buildNavItem(2, "assets/icons/textBubblesIcon.svg", "assets/icons/textBubblesFilledIcon.svg", "Diskusia", context),
                       buildNavItem(3, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Vzdelávanie", context),
-                      if(widget.currentUserData!.teacher)buildNavItem(6, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Výsledky", context),
-                      if(widget.currentUserData!.admin)buildNavItem(7, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Admin", context),
+                      if(widget.currentUserData!.teacher)buildNavItem(6, "assets/icons/bookIcon.svg", "assets/icons/resultsIcon.svg", "Výsledky", context),
                       Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +87,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           if(widget.currentUserData!.teacher)IconButton(
                             icon: SvgPicture.asset('assets/icons/settingsIcon.svg'),
                             onPressed: () {
-                              widget.onNavigationItemSelected(8);
+                              widget.onNavigationItemSelected(7);
                               widget.selectedIndex = -1;
                             }
                           ),

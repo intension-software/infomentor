@@ -108,12 +108,12 @@ Future<UserData> fetchUser(String userId) async {
 
     if (user != null) {
       String id = userId;
-      String email = user.email ?? '';
       DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
       DocumentSnapshot userSnapshot = await userRef.get();
 
       if (userSnapshot.exists) {
         // Extracting the fields
+        String email = userSnapshot.get('email') as String? ?? '';
         String name = userSnapshot.get('name') as String? ?? '';
         bool active = userSnapshot.get('active') as bool? ?? false;
         List<String> classes = List<String>.from(userSnapshot.get('classes') as List<dynamic>? ?? []);
