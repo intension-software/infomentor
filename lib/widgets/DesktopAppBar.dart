@@ -57,11 +57,11 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                         height: 30,
                       ),
                       SizedBox(width: 20),
-                      buildNavItem(0, "assets/icons/homeIcon.svg", "assets/icons/homeFilledIcon.svg", "Domov", context),
-                      buildNavItem(1, "assets/icons/starIcon.svg", "assets/icons/starWhiteIcon.svg", "Výzva", context),
-                      buildNavItem(2, "assets/icons/textBubblesIcon.svg", "assets/icons/textBubblesFilledIcon.svg", "Diskusia", context),
-                      buildNavItem(3, "assets/icons/bookIcon.svg", "assets/icons/bookFilledIcon.svg", "Vzdelávanie", context),
-                      if(widget.currentUserData!.teacher)buildNavItem(6, "assets/icons/bookIcon.svg", "assets/icons/resultsIcon.svg", "Výsledky", context),
+                      buildNavItem(0, "assets/icons/homeIcon.svg", "Domov", context),
+                      buildNavItem(1, "assets/icons/starIcon.svg", "Výzva", context),
+                      buildNavItem(2, "assets/icons/textBubblesIcon.svg", "Diskusia", context),
+                      buildNavItem(3, "assets/icons/bookIcon.svg", "Vzdelávanie", context),
+                      if(widget.currentUserData!.teacher)buildNavItem(6, "assets/icons/bookIcon.svg", "Výsledky", context),
                       Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +114,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
     );
   }
 
-  Widget buildNavItem(int index, String icon, String filledIcon, String text, BuildContext context) {
+  Widget buildNavItem(int index, String icon, String text, BuildContext context) {
   final bool isSelected = index == widget.selectedIndex;
 
   return Container(
@@ -135,7 +135,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          isSelected ? SvgPicture.asset(filledIcon) : SvgPicture.asset(icon),
+          SvgPicture.asset(icon, color: isSelected ? AppColors.getColor('primary').main : AppColors.getColor('mono').black),
           SizedBox(width: 8),
           Text(
             text,
