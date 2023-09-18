@@ -322,8 +322,6 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
                     textColor: Theme.of(context).colorScheme.onBackground, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ZRUŠIŤ ZMENY', 
-                    leftIcon: false, 
-                    rightIcon: false, 
                     onTap: () async {
                       Navigator.pop(context, reorderedNumbers);
                     },
@@ -338,8 +336,6 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ULOŽIŤ ZMENY', 
-                    leftIcon: false, 
-                    rightIcon: false, 
                     onTap: () async {
                       Navigator.pop(context, reorderedNumbers);
                       await updateClassToFirestore(reorderedNumbers);

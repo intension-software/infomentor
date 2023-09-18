@@ -14,9 +14,9 @@ Container reTextField(
       boxShadow: [
         BoxShadow(
           color: AppColors.getColor('mono').black.withOpacity(0.1),
-          spreadRadius: 2,
-          blurRadius: 4,
-          offset: Offset(0, 2),
+          spreadRadius: 0.5,
+          blurRadius: 5,
+
         ),
       ],
     ),
@@ -77,8 +77,8 @@ class ReButton extends StatefulWidget {
   final Color? backgroundColor;
   final Color? iconColor;
   final Function? onTap;
-  final bool leftIcon;
-  final bool rightIcon;
+  final String? leftIcon;
+  final String? rightIcon;
   final bool isDisabled;
 
   ReButton({
@@ -92,8 +92,8 @@ class ReButton extends StatefulWidget {
     this.backgroundColor = Colors.green,
     this.iconColor = Colors.white,
     this.onTap,
-    this.leftIcon = false,
-    this.rightIcon = false,
+    this.leftIcon,
+    this.rightIcon,
     this.isDisabled = false,
   });
 
@@ -112,18 +112,28 @@ class _ReButtonState extends State<ReButton> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (widget.leftIcon) Icon(Icons.close, color: widget.iconColor), // Replace with your desired icon
+            if (widget.leftIcon != null)
+              SvgPicture.asset(
+                widget.leftIcon ?? '',
+                color: widget.textColor,
+              ), // Replace with your desired icon
             Text(
               widget.text!,
               style: TextStyle(
-                color: widget.textColor!,
+                color: widget.textColor,
               ),
               textAlign: TextAlign.center,
             ),
-            if (widget.rightIcon) Icon(Icons.arrow_forward, color: widget.iconColor), // Replace with your desired icon
+            SizedBox(width: 10,),
+            if (widget.rightIcon != null)
+              SvgPicture.asset(
+                widget.rightIcon ?? '',
+                color: widget.textColor,
+              ), // Replace with your desired icon
           ],
         ),
         style: ButtonStyle(
+          elevation: MaterialStateProperty.all(0), // Set elevation to 0 for a flat appearance
           backgroundColor: MaterialStateProperty.resolveWith((states) {
             if (states.contains(MaterialState.disabled)) {
               return widget.disabledColor!;
@@ -142,7 +152,11 @@ class _ReButtonState extends State<ReButton> {
               return BorderSide.none;
             }
           }),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
         ),
       ),
     );
@@ -367,26 +381,38 @@ Container reImageAnswer(String image) {
 class SvgDropdownPopupMenuButton extends StatelessWidget {
   final Function() onUpdateSelected;
   final Function() onDeleteSelected;
+  final bool showEditOption; // Add a flag to control whether to show the edit option.
 
   SvgDropdownPopupMenuButton({
     required this.onUpdateSelected,
     required this.onDeleteSelected,
+    this.showEditOption = true, // Set a default value for the flag.
   });
 
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
+      
       itemBuilder: (BuildContext context) {
-        return [
-          PopupMenuItem(
-            value: 'update',
-            child: Text('upraviť'),
-          ),
+        final List<PopupMenuEntry<String>> menuItems = [];
+
+        if (showEditOption) { // Check if the edit option should be shown.
+          menuItems.add(
+            PopupMenuItem(
+              value: 'update',
+              child: Text('upraviť'),
+            ),
+          );
+        }
+
+        menuItems.add(
           PopupMenuItem(
             value: 'delete',
             child: Text('vymazať'),
           ),
-        ];
+        );
+
+        return menuItems;
       },
       onSelected: (String value) {
         if (value == 'update') {
@@ -408,6 +434,12 @@ class SvgDropdownPopupMenuButton extends StatelessWidget {
           ],
         ),
       ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0), // Adjust the border radius as needed
+      ),
+      offset: Offset(-10, 30), // Adjust the vertical offset to move the popup slightly lower
     );
   }
 }
+
+

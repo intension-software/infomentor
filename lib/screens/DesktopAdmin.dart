@@ -14,7 +14,8 @@ import 'package:cloud_functions/cloud_functions.dart';
 
 class DesktopAdmin extends StatefulWidget {
   final UserData? currentUserData;
-  const DesktopAdmin({Key? key, required this.currentUserData});
+  final void Function() logOut;
+  const DesktopAdmin({Key? key, required this.currentUserData, required this.logOut});
 
   @override
   State<DesktopAdmin> createState() => _DesktopAdminState();
@@ -132,8 +133,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: '+ Pridať žiakov', 
-                        leftIcon: false, 
-                        rightIcon: false, 
                         onTap: () {
                           showDialog(
                             context: context,
@@ -208,8 +207,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                 textColor: AppColors.getColor('primary').main, 
                                                 iconColor: AppColors.getColor('mono').black, 
                                                 text: 'PRIDAŤ MANUÁLNE', 
-                                                leftIcon: false, 
-                                                rightIcon: false, 
                                                 onTap: () async {
                                                    Navigator.of(context).pop();
                                                   _onNavigationItemSelected(2);
@@ -231,8 +228,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                 textColor: Theme.of(context).colorScheme.onPrimary, 
                                                 iconColor: AppColors.getColor('mono').black, 
                                                 text: 'NAHRAŤ .CSV SÚBOR',
-                                                leftIcon: false, 
-                                                rightIcon: false,
                                                 onTap: () {
                                                  
                                                 },
@@ -324,8 +319,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         textColor: AppColors.getColor('primary').main, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: '+ Pridať triedu', 
-                        leftIcon: false, 
-                        rightIcon: false, 
                         onTap: () {
                           _onNavigationItemSelected(1);
                           _addClass = true;
@@ -380,7 +373,29 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                       );
                     }).toList(),
                   ),
-                )
+                ),
+                Spacer(),
+                Center(
+                     child: Container(
+                        width: 160,
+                        height: 40,
+                        child: ReButton(
+                          activeColor: AppColors.getColor('primary').light, 
+                          defaultColor: AppColors.getColor('mono').lighterGrey, 
+                          disabledColor: AppColors.getColor('mono').lightGrey, 
+                          focusedColor: AppColors.getColor('primary').light, 
+                          hoverColor: AppColors.getColor('primary').lighter, 
+                          textColor: AppColors.getColor('primary').main, 
+                          iconColor: AppColors.getColor('mono').black, 
+                          text: 'Odhlásiť sa',
+                          rightIcon: 'assets/icons/logoutIcon.svg',
+                          onTap: () {
+                              widget.logOut();
+                          }
+                        ),
+                      )
+                ),
+                SizedBox(height: 30,)
               ],
             ),
           ),
@@ -466,8 +481,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                             textColor: AppColors.getColor('primary').main, 
                             iconColor: AppColors.getColor('mono').black, 
                             text: '+ Pridať', 
-                            leftIcon: false, 
-                            rightIcon: false, 
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -540,9 +553,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                     hoverColor: AppColors.getColor('primary').lighter, 
                                                     textColor: AppColors.getColor('primary').main, 
                                                     iconColor: AppColors.getColor('mono').black, 
-                                                    text: 'PRIDAŤ EXISTUJÚCI PROFIL', 
-                                                    leftIcon: false, 
-                                                    rightIcon: false, 
+                                                    text: 'PRIDAŤ EXISTUJÚCI PROFIL',  
                                                     onTap: () {}
                                                   ),
                                                 ),
@@ -559,8 +570,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                     textColor: Theme.of(context).colorScheme.onPrimary, 
                                                     iconColor: AppColors.getColor('mono').black, 
                                                     text: 'VYTVORIŤ NOVÝ PROFIL',
-                                                    leftIcon: false, 
-                                                    rightIcon: false,
                                                     onTap: () async {
                                                       Navigator.of(context).pop();
                                                       _onNavigationItemSelected(2);
@@ -664,8 +673,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                             textColor: AppColors.getColor('primary').main, 
                             iconColor: AppColors.getColor('mono').black, 
                             text: '+ Pridať', 
-                            leftIcon: false, 
-                            rightIcon: false, 
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -739,9 +746,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                     hoverColor: AppColors.getColor('primary').lighter, 
                                                     textColor: AppColors.getColor('primary').main, 
                                                     iconColor: AppColors.getColor('mono').black, 
-                                                    text: 'PRIDAŤ MANUÁLNE', 
-                                                    leftIcon: false, 
-                                                    rightIcon: false, 
+                                                    text: 'PRIDAŤ MANUÁLNE',  
                                                     onTap: () async {
                                                       Navigator.of(context).pop();
                                                       _onNavigationItemSelected(2);
@@ -763,8 +768,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                     textColor: Theme.of(context).colorScheme.onPrimary, 
                                                     iconColor: AppColors.getColor('mono').black, 
                                                     text: 'NAHRAŤ .CSV SÚBOR',
-                                                    leftIcon: false, 
-                                                    rightIcon: false,
                                                     onTap: () {
                                                     
                                                     },
@@ -925,8 +928,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ULOŽIŤ', 
-                    leftIcon: false, 
-                    rightIcon: false,
                     isDisabled: _classNameController.text == '',
                     onTap: () async {
                       addClass(_classNameController.text, widget.currentUserData!.school);
@@ -1073,8 +1074,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: 'ULOŽIŤ', 
-                        leftIcon: false, 
-                        rightIcon: false,
                         isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
                             registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher);
@@ -1152,8 +1151,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ULOŽIŤ', 
-                    leftIcon: false, 
-                    rightIcon: false,
                     isDisabled: _editClassNameController.text == '',
                     onTap: () async {
                       currentClass!.data.name = _editClassNameController.text;
@@ -1312,8 +1309,6 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: 'ULOŽIŤ', 
-                        leftIcon: false, 
-                        rightIcon: false,
                         isDisabled: (_editUserNameController.text == '' || _editUserEmailController.text == '' ||_editUserPasswordController.text == ''),
                         onTap: () {
                             currentUser!.data.name = _editUserNameController.text;

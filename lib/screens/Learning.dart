@@ -136,9 +136,7 @@ class _LearningState extends State<Learning> {
                       hoverColor: AppColors.getColor('mono').lighterGrey, 
                       textColor: Theme.of(context).colorScheme.onPrimary, 
                       iconColor: AppColors.getColor('mono').black, 
-                      text: '+ PRIDAŤ OBSAH', 
-                      leftIcon: false, 
-                      rightIcon: false, 
+                      text: '+ PRIDAŤ OBSAH',  
                       onTap: () {
                         _onNavigationItemSelected(1);
                         _selectedIndex = 1;
@@ -245,9 +243,7 @@ class _LearningState extends State<Learning> {
                       hoverColor: AppColors.getColor('mono').lighterGrey, 
                       textColor: Theme.of(context).colorScheme.onPrimary, 
                       iconColor: AppColors.getColor('mono').black, 
-                      text: '+ PRIDAŤ OBSAH', 
-                      leftIcon: false, 
-                      rightIcon: false, 
+                      text: '+ PRIDAŤ OBSAH',  
                       onTap: () {
                         _onNavigationItemSelected(1);
                         _selectedIndex = 1;

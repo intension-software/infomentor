@@ -7,6 +7,7 @@ import 'package:infomentor/screens/Login.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:async/async.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 
 class Profile extends StatefulWidget {
@@ -24,7 +25,11 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final PageController _pageController = PageController();
  UserData? currentUserData;
+ int weeklyCapitol = 0;
   int capitolOne = 0;
+  int capitolTwo = 0;
+  int criticalThinking = 0;
+  int argumentation = 0;
   bool _isDisposed = false;
   List<String> badges = [];
   List<UserData>? students;
@@ -35,6 +40,13 @@ class _ProfileState extends State<Profile> {
   int _selectedIndex = 0;
   bool _loading = true;
   int percentage = 0;
+  bool hide = true;
+
+  final List<String> placeIcons = [
+    'assets/icons/firstPlaceIcon.svg',
+    'assets/icons/secondPlaceIcon.svg',
+    'assets/icons/thirdPlaceIcon.svg',
+  ];
 
   @override
   void initState() {
@@ -52,6 +64,23 @@ class _ProfileState extends State<Profile> {
       }
     }
     return -1; // return -1 if the id is not found
+  }
+
+  int calculateTotalPointsForCapitol(int capitolIndex) {
+    if (currentUserData == null ||
+        capitolIndex < 0 ||
+        capitolIndex >= currentUserData!.capitols.length) {
+      throw ArgumentError('Invalid capitol index');
+    }
+
+    int totalPoints = 0;
+
+    // Iterate through each test in the selected capitol and sum the points
+    for (final test in currentUserData!.capitols[capitolIndex].tests) {
+      totalPoints += test.points;
+    }
+
+    return totalPoints;
   }
 
   Future<void> fetchUserData() async {
@@ -134,11 +163,16 @@ class _ProfileState extends State<Profile> {
   Future<void> fetchCapitolsData() async {
     try {
       FetchResult one = await fetchCapitols("0");
+      FetchResult two = await fetchCapitols("1");
 
       if (mounted && !_isDisposed) {
         setState(() {
+          weeklyCapitol = one.capitolsData!.tests[one.capitolsData!.weeklyChallenge].points;
+          criticalThinking = one.capitolsData!.points;
+          argumentation = two.capitolsData!.points;
           capitolOne = one.capitolsData!.points;
-          percentage = (currentUserData!.points / capitolOne).round();
+          capitolTwo = two.capitolsData!.points;
+          percentage = (currentUserData!.points / (capitolOne + capitolTwo)).round();
         });
       }
     } catch (e) {
@@ -173,6 +207,7 @@ class _ProfileState extends State<Profile> {
                           padding: EdgeInsets.all(24),
                         child: Column(
                           children: [
+                            SizedBox(height: 16),
                             SvgPicture.asset('assets/profilePicture.svg', width: 90),
                             SizedBox(height: 16),
                             Container(
@@ -203,23 +238,42 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 8),
+                                  SizedBox(height: 4),
                                   Text(
                                     className ?? '',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .headlineMedium!
+                                        .bodyLarge!
                                         .copyWith(
-                                      color: AppColors.getColor('mono').darkGrey,
+                                      color: AppColors.getColor('mono').black,
                                     ),
                                   ),
+                                  SizedBox(height: 4),
+                                  Container(
+                                    width: 160,
+                                    height: 40,
+                                    child: ReButton(
+                                      activeColor: AppColors.getColor('primary').light, 
+                                      defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                                      focusedColor: AppColors.getColor('primary').light, 
+                                      hoverColor: AppColors.getColor('primary').lighter, 
+                                      textColor: AppColors.getColor('primary').main, 
+                                      iconColor: AppColors.getColor('mono').black, 
+                                      text: 'Odhlásiť sa',
+                                      rightIcon: 'assets/icons/logoutIcon.svg',
+                                      onTap: () {
+                                          widget.logOut();
+                                      }
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
                             SizedBox(height: 24),
                             Wrap(
-                              spacing: 20,
-                              runSpacing: 20,
+                              spacing: 10,
+                              runSpacing: 10,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,8 +291,8 @@ class _ProfileState extends State<Profile> {
                                     Container(
                                       width: 376,
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: AppColors.getColor('mono').lightGrey, width: 2.5),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +327,7 @@ class _ProfileState extends State<Profile> {
                                                 Row(
                                                   children: [
                                                     Text(
-                                                      '${currentUserData!.points}/${capitolOne}',
+                                                      '${currentUserData!.points}/${capitolOne+capitolTwo}',
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .titleLarge!
@@ -281,7 +335,9 @@ class _ProfileState extends State<Profile> {
                                                         color: AppColors.getColor('yellow').light,
                                                       ),
                                                     ),
+                                                    SizedBox(width: 5,),
                                                     SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    SizedBox(width: 5,),
                                                     Text(
                                                         '= ${percentage}%',
                                                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -310,7 +366,7 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                                 Row(
                                                   children: [
-                                                    Text('0',
+                                                    Text(currentUserData!.discussionPoints.toString(),
                                                       style: Theme.of(context)
                                                       .textTheme
                                                       .titleLarge!
@@ -325,7 +381,7 @@ class _ProfileState extends State<Profile> {
                                               ],
                                             ),
                                           ),
-                                          Divider(color: AppColors.getColor('mono').lightGrey),
+                                          Divider(color: AppColors.getColor('mono').lightGrey, thickness: 2.5),
                                           Container(
                                             padding: EdgeInsets.all(12),
                                             child: Text(
@@ -356,7 +412,7 @@ class _ProfileState extends State<Profile> {
                                                 Row(
                                                   children: [
                                                     Text(
-                                                      '${currentUserData!.points}/${capitolOne}',
+                                                      '${currentUserData!.capitols[0].tests[0].points}/${weeklyCapitol}',
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .titleLarge!
@@ -364,6 +420,7 @@ class _ProfileState extends State<Profile> {
                                                         color: AppColors.getColor('yellow').light,
                                                       ),
                                                     ),
+                                                    SizedBox(width: 5,),
                                                     SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                                                   ],
                                                 )
@@ -387,7 +444,7 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                                 Row(
                                                   children: [
-                                                    Text('0',
+                                                    Text(currentUserData!.weeklyDiscussionPoints.toString(),
                                                       style: Theme.of(context)
                                                       .textTheme
                                                       .titleLarge!
@@ -402,83 +459,113 @@ class _ProfileState extends State<Profile> {
                                               ],
                                             ),
                                           ),
-                                          Divider(color: Colors.grey),
-                                          Container(
-                                            padding: EdgeInsets.all(12),
-                                            child: Text(
-                                              'Skóre za kapitoly',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineSmall!
-                                                  .copyWith(
-                                                color: AppColors.getColor('mono').black,
+                                          if(!hide || MediaQuery.of(context).size.width > 1000)Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Divider(color: AppColors.getColor('mono').lightGrey, thickness: 2.5),
+                                               Container(
+                                                padding: EdgeInsets.all(12),
+                                                child: Text(
+                                                  'Skóre za kapitoly',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall!
+                                                      .copyWith(
+                                                    color: AppColors.getColor('mono').black,
+                                                  ),
+                                                ),
+                                              ),
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Kritické myslenie',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      color: AppColors.getColor('mono').darkGrey,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${calculateTotalPointsForCapitol(0)}/${criticalThinking}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleLarge!
+                                                            .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    ],
+                                                  )
+                                                ],
                                               ),
                                             ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.all(12),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Kritické myslenie',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                    color: AppColors.getColor('mono').darkGrey,
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Argumentácia',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      color: AppColors.getColor('mono').darkGrey,
+                                                    ),
                                                   ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${currentUserData!.points}/${capitolOne}',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleLarge!
-                                                          .copyWith(
-                                                        color: AppColors.getColor('yellow').light,
+                                                  Row(
+                                                    children: [
+                                                      Text('${calculateTotalPointsForCapitol(1)}/${argumentation}',
+                                                        style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleLarge!
+                                                        .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        )
                                                       ),
-                                                    ),
-                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
-                                                  ],
-                                                )
-                                              ],
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg')
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            ],
+                                          ),
+                                          if(MediaQuery.of(context).size.width < 1000)Center(
+                                            child: Container(
+                                            margin: EdgeInsets.all(12),
+                                            width: 181,
+                                            height: 40,
+                                            child: ReButton(
+                                              activeColor: AppColors.getColor('primary').light, 
+                                              defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                              disabledColor: AppColors.getColor('mono').lightGrey, 
+                                              focusedColor: AppColors.getColor('primary').light, 
+                                              hoverColor: AppColors.getColor('primary').lighter, 
+                                              textColor: AppColors.getColor('primary').main, 
+                                              iconColor: AppColors.getColor('mono').black, 
+                                              text: hide ? 'Zobraziť viac' : 'Zobraziť menej',
+                                              rightIcon: hide ? 'assets/icons/downIcon.svg' : 'assets/icons/upIcon.svg',
+                                              onTap: () {
+                                                  setState(() {
+                                                    hide = !hide;
+                                                  });
+                                              }
                                             ),
                                           ),
-                                          Container(
-                                            padding: EdgeInsets.all(12),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Argumentácia',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                    color: AppColors.getColor('mono').darkGrey,
-                                                  ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text('0',
-                                                      style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleLarge!
-                                                      .copyWith(
-                                                        color: AppColors.getColor('yellow').light,
-                                                      )
-                                                    ),
-                                                    SizedBox(width: 5,),
-                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg')
-                                                  ],
-                                                )
-                                              ],
-                                            ),
                                           ),
+                                          
                                         ],
                                       ),
                                     ),
@@ -504,95 +591,120 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     ),
                                     SizedBox(height: 8),
-                                    GestureDetector(
-                                      onTap: () {
-                                        _onNavigationItemSelected(1);
-                                      },
-                                      child: MouseRegion(
-                                        cursor: MediaQuery.of(context).size.width < 1000 ? SystemMouseCursors.click : SystemMouseCursors.basic,
-                                        child: Center(
+                                     Center(
                                           child:
                                     Container(
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: AppColors.getColor('mono').lightGrey, width: 2.5),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                       width: double.infinity,
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: List.generate(students!.length, (index) {
-                                          if (index > 2 && MediaQuery.of(context).size.width < 1000) return SizedBox.shrink(); // we only want to display top 3
-                                          return Column(
-                                            children: [
-                                              Container(
-                                                height: 48,
-                                                decoration: BoxDecoration(
-                                                  color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                                width: double.infinity, // Set the width to expand to the available space
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      
-                                                      Row(
+                                        children: [ 
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: List.generate(students!.length, (index) {
+                                              if (index > 2 && MediaQuery.of(context).size.width < 1000) return SizedBox.shrink(); // we only want to display top 3
+                                              return Column(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
+                                                      border: index < students!.length - 1 ? Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey, width: 2.5)) : null,
+                                                    ),
+                                                    width: double.infinity, // Set the width to expand to the available space
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(16),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
-                                                          Text(
-                                                        '${index + 1}.',
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight: FontWeight.bold,
+                                                          Row(
+                                                            children: [
+                                                              if(index > 2)SizedBox(width: 5,),
+                                                              index > 2 ? Text(
+                                                              '${index + 1}',
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .headlineSmall!
+                                                                  .copyWith(
+                                                                color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
+                                                              ),
+                                                            ) : SvgPicture.asset(
+                                                                placeIcons[index], // Use the corresponding SVG asset
+                                                                width: 24,
+                                                                height: 24,
+                                                              ),
+                                                              SizedBox(width: 20,),
+                                                              Text(
+                                                                '${students![index].name}',
+                                                                style: Theme.of(context)
+                                                                    .textTheme
+                                                                    .headlineSmall!
+                                                                    .copyWith(
+                                                                  color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 5,),
+                                                              Text(
+                                                                '${students![index].surname}',
+                                                                style: Theme.of(context)
+                                                                    .textTheme
+                                                                    .headlineSmall!
+                                                                    .copyWith(
+                                                                  color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ),
-                                                        SizedBox(width: 5,),
-                                                          Text(
-                                                        '${students![index].name}',
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight: FontWeight.bold,
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                '${students![index].points}',
+                                                                style: Theme.of(context)
+                                                                    .textTheme
+                                                                    .headlineSmall!
+                                                                    .copyWith(
+                                                                  color: AppColors.getColor('yellow').light,
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 5,),
+                                                              SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                            ],
                                                           ),
-                                                        ),
-                                                        SizedBox(width: 5,),
-                                                            Text(
-                                                          '${students![index].surname}',
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight: FontWeight.bold,
-                                                          ),
-                                                        ),
                                                         ],
                                                       ),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            '${students![index].points}',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              color: Color(0xfff9BB00),
-                                                            ),
-                                                          ),
-                                                          Icon(
-                                                            Icons.star,
-                                                            color: Color(0xfff9BB00),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
-                                                ),
+                                                ],
+                                              );
+                                            }),
+                                          ),
+                                          if(MediaQuery.of(context).size.width < 1000)Center(
+                                            child: Container(
+                                              margin: EdgeInsets.all(12),
+                                              width: 191,
+                                              height: 40,
+                                              child: ReButton(
+                                                activeColor: AppColors.getColor('primary').light, 
+                                                defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                                disabledColor: AppColors.getColor('mono').lightGrey, 
+                                                focusedColor: AppColors.getColor('primary').light, 
+                                                hoverColor: AppColors.getColor('primary').lighter, 
+                                                textColor: AppColors.getColor('primary').main, 
+                                                iconColor: AppColors.getColor('mono').black, 
+                                                text: 'Zobraziť rebríček',
+                                                rightIcon: 'assets/icons/arrowRightIcon.svg',
+                                                onTap: () {
+                                                  _onNavigationItemSelected(1);
+                                                }
                                               ),
-                                              if (index < students!.length - 1) Divider(color: Colors.grey), // avoid divider for last element
-                                            ],
-                                          );
-                                        }),
-                                      ),
+                                            ),
+                                          ),
+                                        ]
+                                      )
                                     ),
                                         )
-                                      )
-                                    )
                                   ],
                                 ),
                               )
@@ -603,121 +715,127 @@ class _ProfileState extends State<Profile> {
                       ),
                     )
                       )
-                      ,if (students != null)Container(
-                        width: 392,
-                        alignment: Alignment.center,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(height: 50,),
-                            Container(
-                              width: 900,
-                              alignment: Alignment.topLeft,
-                              child: IconButton(
+                      ,if (students != null) SingleChildScrollView(
+                        child:Container(
+                          padding: EdgeInsets.all(20),
+                          width: 392,
+                          alignment: Alignment.center,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 900,
+                                alignment: Alignment.topLeft,
+                                child: IconButton(
                                   icon: Icon(
                                     Icons.arrow_back,
                                     color: AppColors.getColor('mono').darkGrey,
                                   ),
-                                  onPressed: () => 
-                                    _onNavigationItemSelected(0),
+                                  onPressed: () => _onNavigationItemSelected(0),
                                 ),
-                            ),
-                            Text(
-                              'Rebríček',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
                               ),
-                            ),
-                            SizedBox(height: 30,),
-                            SingleChildScrollView(
-                            child:Container(
-                            width: 900,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(students!.length, (index) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    width: double.infinity, // Set the width to expand to the available space
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                              Text(
+                                'Rebríček',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium!
+                                    .copyWith(
+                                  color: AppColors.getColor('mono').black,
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                              Container(
+                                  width: 900, // Adjust the width as needed
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: AppColors.getColor('mono').lightGrey, width: 2.5),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: List.generate(students!.length, (index) {
+                                      return Column(
                                         children: [
-                                          
-                                          Row(
-                                            children: [
-                                              Text(
-                                            '${index + 1}.',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
+                                              border: index < students!.length - 1 ? Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey, width: 2.5)) : null,
+                                            ),
+                                            width: 900, // Set the width to a fixed value
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      if(index > 2)SizedBox(width: 5,),
+                                                      index > 2 ? Text(
+                                                        '${index + 1}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headlineSmall!
+                                                            .copyWith(
+                                                          color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
+                                                        ),
+                                                      ) : SvgPicture.asset(
+                                                          placeIcons[index], // Use the corresponding SVG asset
+                                                          width: 24,
+                                                          height: 24,
+                                                        ),
+                                                      SizedBox(width: 20,),
+                                                      Text(
+                                                        '${students![index].name}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headlineSmall!
+                                                            .copyWith(
+                                                          color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Text(
+                                                        '${students![index].surname}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headlineSmall!
+                                                            .copyWith(
+                                                          color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${students![index].points}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headlineSmall!
+                                                            .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            SizedBox(width: 5,),
-                                              Text(
-                                            '${students![index].name}',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(width: 5,),
-                                                Text(
-                                              '${students![index].surname}',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '${students![index].points}',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Color(0xfff9BB00),
-                                                ),
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Color(0xfff9BB00),
-                                              ),
-                                            ],
                                           ),
                                         ],
-                                      ),
-                                    ),
+                                      );
+                                    }),
                                   ),
-                                if (index < students!.length - 1) Divider(color: Colors.grey), // avoid divider for last element
-                              ],
-                            );
-                          }),
-                        ),
-                      ),
-                  )
-                          ]
-                        )
-                  )
-              ]
-            )
-          )
-          : Center(
-              child: CircularProgressIndicator(),
-            );
+                              ),
+                            ],
+                          ),
+                        ) 
+                      )
+        ]
+      )
+    ) : Center(child: CircularProgressIndicator());
   }
 
   void _onPageChanged(int index) {

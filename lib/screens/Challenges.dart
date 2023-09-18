@@ -165,11 +165,10 @@ Future<List<FetchResult>> fetchQuestionData() async {
 
     computeCompletionPercentages(currentUserClass,userDataList);
 
-    if(widget.currentUserData!.teacher) {
       capitolsIds = currentUserClass.capitolOrder;
-    } else {
-      capitolsIds.add(currentUserClass.capitolOrder[0]);
-    }
+
+
+    
 
 
     for (int order in [0,1]) {
@@ -684,7 +683,7 @@ Widget build(BuildContext context) {
                     SizedBox(height: 12),
                   if (userData != null && !userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)Center(
                       child: 
-                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', leftIcon: false, rightIcon: false, onTap: () {
+                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', onTap: () {
                       onPressed(number);
                       Navigator.of(context).pop();
                     }),
@@ -738,7 +737,7 @@ Widget build(BuildContext context) {
 
                   if (userData != null && userData!.capitols[int.parse(capitolsId)].tests[number].completed &&  userData!.capitols[int.parse(capitolsId)].completed)
                     Center(
-                      child: ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text:  'ZOBRAZIŤ', leftIcon: false, rightIcon: false, onTap: () {
+                      child: ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text:  'ZOBRAZIŤ', onTap: () {
                         onPressed(number);
                         Navigator.of(context).pop();
                       }),

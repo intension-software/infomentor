@@ -14,7 +14,8 @@ import 'package:cloud_functions/cloud_functions.dart';
 
 class MobileAdmin extends StatefulWidget {
   final UserData? currentUserData;
-  const MobileAdmin({Key? key, required this.currentUserData});
+  final void Function() logOut;
+  const MobileAdmin({Key? key, required this.currentUserData, required this.logOut});
 
   @override
   State<MobileAdmin> createState() => _MobileAdminState();
@@ -185,9 +186,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                     hoverColor: AppColors.getColor('primary').lighter, 
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
-                    text: '+ Pridať žiakov', 
-                    leftIcon: false, 
-                    rightIcon: false, 
+                    text: '+ Pridať žiakov',  
                     onTap: () {
                       showDialog(
                         context: context,
@@ -261,9 +260,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                             hoverColor: AppColors.getColor('primary').lighter, 
                                             textColor: AppColors.getColor('primary').main, 
                                             iconColor: AppColors.getColor('mono').black, 
-                                            text: 'PRIDAŤ MANUÁLNE', 
-                                            leftIcon: false, 
-                                            rightIcon: false, 
+                                            text: 'PRIDAŤ MANUÁLNE',  
                                             onTap: () async {
                                                 Navigator.of(context).pop();
                                               _onNavigationItemSelected(2);
@@ -285,8 +282,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                                             textColor: Theme.of(context).colorScheme.onPrimary, 
                                             iconColor: AppColors.getColor('mono').black, 
                                             text: 'NAHRAŤ .CSV SÚBOR',
-                                            leftIcon: false, 
-                                            rightIcon: false,
                                             onTap: () {
                                               
                                             },
@@ -327,8 +322,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                           textColor: AppColors.getColor('primary').main, 
                           iconColor: AppColors.getColor('mono').black, 
                           text: '+', 
-                          leftIcon: false, 
-                          rightIcon: false, 
                           onTap: () {
                             _onNavigationItemSelected(1);
                             _addClass = true;
@@ -477,9 +470,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                             hoverColor: AppColors.getColor('primary').lighter, 
                             textColor: AppColors.getColor('primary').main, 
                             iconColor: AppColors.getColor('mono').black, 
-                            text: '+ Pridať', 
-                            leftIcon: false, 
-                            rightIcon: false, 
+                            text: '+ Pridať',  
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -552,9 +543,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                     hoverColor: AppColors.getColor('primary').lighter, 
                                                     textColor: AppColors.getColor('primary').main, 
                                                     iconColor: AppColors.getColor('mono').black, 
-                                                    text: 'PRIDAŤ EXISTUJÚCI PROFIL', 
-                                                    leftIcon: false, 
-                                                    rightIcon: false, 
+                                                    text: 'PRIDAŤ EXISTUJÚCI PROFIL',  
                                                     onTap: () {}
                                                   ),
                                                 ),
@@ -571,8 +560,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                     textColor: Theme.of(context).colorScheme.onPrimary, 
                                                     iconColor: AppColors.getColor('mono').black, 
                                                     text: 'VYTVORIŤ NOVÝ PROFIL',
-                                                    leftIcon: false, 
-                                                    rightIcon: false,
                                                     onTap: () async {
                                                       Navigator.of(context).pop();
                                                       _onNavigationItemSelected(2);
@@ -677,9 +664,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                             hoverColor: AppColors.getColor('primary').lighter, 
                             textColor: AppColors.getColor('primary').main, 
                             iconColor: AppColors.getColor('mono').black, 
-                            text: '+ Pridať', 
-                            leftIcon: false, 
-                            rightIcon: false, 
+                            text: '+ Pridať',  
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -753,9 +738,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                     hoverColor: AppColors.getColor('primary').lighter, 
                                                     textColor: AppColors.getColor('primary').main, 
                                                     iconColor: AppColors.getColor('mono').black, 
-                                                    text: 'PRIDAŤ MANUÁLNE', 
-                                                    leftIcon: false, 
-                                                    rightIcon: false, 
+                                                    text: 'PRIDAŤ MANUÁLNE',  
                                                     onTap: () async {
                                                       Navigator.of(context).pop();
                                                       _onNavigationItemSelected(2);
@@ -777,8 +760,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                     textColor: Theme.of(context).colorScheme.onPrimary, 
                                                     iconColor: AppColors.getColor('mono').black, 
                                                     text: 'NAHRAŤ .CSV SÚBOR',
-                                                    leftIcon: false, 
-                                                    rightIcon: false,
                                                     onTap: () {
                                                     
                                                     },
@@ -939,8 +920,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ULOŽIŤ', 
-                    leftIcon: false, 
-                    rightIcon: false,
                     isDisabled: _classNameController.text == '',
                     onTap: () async {
                       addClass(_classNameController.text, widget.currentUserData!.school);
@@ -1088,8 +1067,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: 'ULOŽIŤ', 
-                        leftIcon: false, 
-                        rightIcon: false,
                         isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
                             registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher);
@@ -1168,8 +1145,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ULOŽIŤ', 
-                    leftIcon: false, 
-                    rightIcon: false,
                     isDisabled: _editClassNameController.text == '',
                     onTap: () async {
                       currentClass!.data.name = _editClassNameController.text;
@@ -1328,8 +1303,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: 'ULOŽIŤ', 
-                        leftIcon: false, 
-                        rightIcon: false,
                         isDisabled: (_editUserNameController.text == '' || _editUserEmailController.text == '' ||_editUserPasswordController.text == ''),
                         onTap: () {
                             currentUser!.data.name = _editUserNameController.text;

@@ -100,6 +100,7 @@ Widget build(BuildContext context) {
   if(_loading) return  Center(child: CircularProgressIndicator());
   return SingleChildScrollView(
     child: Container(
+      color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [
           if (students != null)
@@ -166,8 +167,8 @@ Widget buildScoreTable(List<UserData> students) {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Table(
-          border: TableBorder.all(
-            color: Colors.grey,
+          border: TableBorder(
+            right:  BorderSide(color: Colors.grey),
           ),
           children: _buildRows(students),
         ),
@@ -187,35 +188,66 @@ List<TableRow> _buildRows(List<UserData> students) {
         Container(
           height: 50,
           width: 120,
-          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
           color: AppColors.getColor('primary').light,
+
+            border: Border(
+            right:  BorderSide(color: Colors.white),
+          )
+          ),
+          padding: EdgeInsets.all(8),
           child: Text('Meno', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
         ),
         ...students.first.capitols.map((e) => Container(
+           decoration: BoxDecoration(
+              color: AppColors.getColor('primary').light,
+
+                border: Border(
+                right:  BorderSide(color: Colors.white),
+              )
+              ),
               height: 50,
               padding: EdgeInsets.all(8),
-              color: AppColors.getColor('primary').light,
               child: Text(e.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
         )),
         Container(
           height: 50,
           width: 80,
-          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
           color: AppColors.getColor('primary').light,
+
+            border: Border(
+            right:  BorderSide(color: Colors.white),
+          )
+          ),
+          padding: EdgeInsets.all(8),
           child: Text('Diskusia', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
         ),
         Container(
           height: 50,
           width: 80,
-          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
+
+            border: Border(
+            right:  BorderSide(color: Colors.white),
+          )
+          ),
+          padding: EdgeInsets.all(8),
           child: Text('Preimerná Úspešnosť', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
         ),
         Container(
           height: 50,
           width: 80,
-          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border(
+            right:  BorderSide(color: Colors.white),
+
+          ),
           color: AppColors.getColor('green').light,
+
+          ),
+          padding: EdgeInsets.all(8),
           child: Text('Známka', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
         ),
       ],
@@ -236,7 +268,7 @@ List<TableRow> _buildRows(List<UserData> students) {
           Container(
             decoration: BoxDecoration(
               border: Border.all(
-                width: 1,
+                width: 0.5,
                 color: AppColors.getColor('mono').lighterGrey
               ),
             ),
@@ -244,23 +276,29 @@ List<TableRow> _buildRows(List<UserData> students) {
             child: Text('${student.name} ${student.surname}'),
           ),
           ...scores.map((score) => Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 0.5,
+                color: AppColors.getColor('mono').lighterGrey
+              ),
+            ),
                 padding: EdgeInsets.all(8),
                 child: Text('${score['score']} / ${score['maxScore']}'),
           )),
           Container(
             decoration: BoxDecoration(
               border: Border.all(
-                width: 1,
+                width: 0.5,
                 color: AppColors.getColor('mono').lighterGrey
               ),
             ),
             padding: EdgeInsets.all(8),
-            child: Text('0'),
+            child: Text(student.discussionPoints.toString()),
           ),
           Container(
             decoration: BoxDecoration(
               border: Border.all(
-                width: 1,
+                width: 0.5,
                 color: AppColors.getColor('primary').main
               ),
               color: AppColors.getColor('primary').lighter
@@ -276,7 +314,7 @@ List<TableRow> _buildRows(List<UserData> students) {
           Container(
             decoration: BoxDecoration(
               border: Border.all(
-                width: 1,
+                width: 0.5,
                 color: AppColors.getColor('mono').lighterGrey
               ),
             ),

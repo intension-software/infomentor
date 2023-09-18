@@ -364,34 +364,62 @@ class _MaterialFormState extends State<MaterialForm> {
                             ),
                           ),
                           SizedBox(height: 8),
-                          SvgPicture.asset('assets/icons/linkIcon.svg'),
+                          Container(
+                            width: 180,
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: AppColors.getColor('mono').lighterGrey
+                            ),
+                            child: Row(
+                              children: [
+                                SizedBox(width: 10,),
+                                SvgPicture.asset('assets/icons/linkIcon.svg'),
+                                Text('Navštíviť odkaz', style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                color: AppColors.getColor('primary').main,
+                              ),)
+                              ],
+                            )
+                          )
                         ],
                       ),
                     ),
                 SizedBox(height: 10),
-
-                ElevatedButton(
-                  onPressed: _allFieldsCompleted()
-                    ? () {
-                        if (_formKey.currentState!.validate()) {
-                          // Handle submission of form
-                          MaterialData data = MaterialData(
-                            association: _associationController.text,
-                            description: _descriptionController.text,
-                            image: _imagePath ?? 'placeholder.png',
-                            link: _linkController.text,
-                            subject: _subjectController.text,
-                            title: _titleController.text,
-                            type: _type!,
-                            video: _videoController.text,
-                          );
-                          // TODO: Handle data as needed
-                          addMaterialToFirestore(data);
-                        }
+                Center(
+                  child: Container(
+                    width: 225,
+                    height: 50,
+                    child: ReButton(
+                      activeColor: AppColors.getColor('green').light, 
+                      defaultColor: AppColors.getColor('green').main, 
+                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                      focusedColor: AppColors.getColor('green').light, 
+                      hoverColor: AppColors.getColor('green').lighter, 
+                      textColor: AppColors.getColor('mono').white, 
+                      iconColor: AppColors.getColor('mono').black,
+                      isDisabled: !_allFieldsCompleted(),
+                      text: 'PRIDAŤ DO APLIKÁCIE',
+                      onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            // Handle submission of form
+                            MaterialData data = MaterialData(
+                              association: _associationController.text,
+                              description: _descriptionController.text,
+                              image: _imagePath ?? 'placeholder.png',
+                              link: _linkController.text,
+                              subject: _subjectController.text,
+                              title: _titleController.text,
+                              type: _type!,
+                              video: _videoController.text,
+                            );
+                            // TODO: Handle data as needed
+                            addMaterialToFirestore(data);
+                          }
                       }
-                    : null,  // <-- If fields are not completed, button is disabled
-                  child: Text('Submit'),
-                ),
+                    ),
+                  )
+                )
+                
               ],
             ),
           )

@@ -90,7 +90,7 @@ class _TeacherFeedState extends State<TeacherFeed> {
                                 ),
                               ),
                               SizedBox(height: 16), // Add some spacing between the items
-                              ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZOBRAZIŤ TEST', leftIcon: false, rightIcon: false, onTap:
+                              ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZOBRAZIŤ TEST', onTap:
                                 () {
                                     widget.onNavigationItemSelected(1);
                                 },

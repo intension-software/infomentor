@@ -37,32 +37,15 @@ class TeacherMobileAppBar extends StatelessWidget {
       ),
       actions: [
         Spacer(), // Pushes the following widgets to the middle
-        DropDown(currentUserData: currentUserData, onUserDataChanged: onUserDataChanged,),
-        Spacer(), // Pushes the following widgets to the right
-        MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: GestureDetector(
-            onTap: () {
-              // Open profile overlay
-              showProfileOverlay(context, logOut);
-            },
-            child: SvgPicture.asset(currentUserData!.image), // Use user's image
-          ),
+        Container(
+          height: 20,
+          child: DropDown(currentUserData: currentUserData, onUserDataChanged: onUserDataChanged,),
         ),
-        SizedBox(width: 12,)
+        
+        Spacer(), // Pushes the following widgets to the right
+       
       ],
     );
   }
 
-  void showProfileOverlay(BuildContext context, void Function() logOut) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          body: SingleChildScrollView(
-            child: Profile(logOut: logOut,),
-          ),
-        ),
-      ),
-    );
-  }
 }

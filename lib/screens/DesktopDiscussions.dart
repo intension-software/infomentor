@@ -43,7 +43,9 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
   bool _edit = false;
   bool _editComment = false;
   bool _editAnswer = false;
+  bool _library = false;
   int? _editIndex;
+  String _selectedLibrary = '';
 
 
   @override
@@ -204,6 +206,40 @@ Widget build(BuildContext context) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                SizedBox(height: 30,),
+                Row(
+                  children: [
+                    Text(
+                      'Pridať príspevok',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                    ),
+                    Spacer(),
+                    Container(
+                      width: 180,
+                      height: 40,
+                      child: ReButton(
+                        activeColor: AppColors.getColor('primary').light, 
+                        defaultColor: AppColors.getColor('mono').lighterGrey, 
+                        disabledColor: AppColors.getColor('mono').lightGrey, 
+                        focusedColor: AppColors.getColor('primary').light, 
+                        hoverColor: AppColors.getColor('primary').lighter, 
+                        textColor: AppColors.getColor('primary').main, 
+                        iconColor: AppColors.getColor('mono').black, 
+                        text: 'Vybrať z knižnice',
+                        onTap: () {
+                            _library = true;
+                            _onNavigationItemSelected(1);
+                        }
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 20,),
                TextField(
                   minLines: 5,
                   maxLines: 20,
@@ -235,10 +271,9 @@ Widget build(BuildContext context) {
                     focusedColor: AppColors.getColor('green').light, 
                     hoverColor: AppColors.getColor('green').light, 
                     textColor: Theme.of(context).colorScheme.onPrimary, 
-                    iconColor: AppColors.getColor('mono').black, 
+                    iconColor: AppColors.getColor('mono').black,
+                    isDisabled: postController.text == '',
                     text: 'UVEREJNIŤ', 
-                    leftIcon: false, 
-                    rightIcon: false, 
                     onTap: () async {
                       PostsData newPost = PostsData(
                         comments: [],
@@ -272,7 +307,6 @@ Widget build(BuildContext context) {
                   itemCount: _posts.length,
                   itemBuilder: (context, index) {
                     PostsData post = _posts[index];
-
                     return Align(
                       alignment: Alignment.center,
                       child: Container(
@@ -286,15 +320,13 @@ Widget build(BuildContext context) {
                             margin: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(5.0),
                               border: Border.all(color: AppColors.getColor('mono').lightGrey),
                             ),
                             padding: EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                    SizedBox(height: 4.0),
-
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -307,10 +339,12 @@ Widget build(BuildContext context) {
                                       children: [
                                         Text(
                                           post.user,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.0,
-                                          ),
+                                          style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .copyWith(
+                                              color: Theme.of(context).colorScheme.onBackground,
+                                            ),
                                         ),
                                         Text(
                                           formatTimestamp(post.date),
@@ -331,8 +365,89 @@ Widget build(BuildContext context) {
                                       },
                                       onDeleteSelected: () {
                                         // Call your deleteComment function here
-                                        deletePost(widget.currentUserData!.schoolClass, post.id);
-                                        _posts.removeWhere((item) => item.id == post.id);
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20.0),
+                                              ),
+                                              content: Container(
+                                                height: 250,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    Align(
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                        'Vymazať príspevok',
+                                                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                                          color: AppColors.getColor('mono').black,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 15,),
+                                                    Align(
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                        'Chystáte sa vymazať váš príspevok z diskusného fóra. Zároveň tým vymažete všetky odpovede žiakov. Táto akcia je nevratná.',
+                                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 35,),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center, // Center-align the buttons horizontally
+                                                      children: [
+                                                        Container(
+                                                          width: 270,
+                                                          height: 48,
+                                                          child: ReButton(
+                                                            activeColor: AppColors.getColor('primary').light, 
+                                                            defaultColor: AppColors.getColor('mono').white, 
+                                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                                            focusedColor: AppColors.getColor('mono').lightGrey, 
+                                                            hoverColor: AppColors.getColor('mono').lighterGrey, 
+                                                            textColor: AppColors.getColor('mono').black,
+                                                            iconColor: AppColors.getColor('mono').black, 
+                                                            text: 'POKRAČOVAŤ V ÚPRAVÁCH',  
+                                                            onTap: () {
+                                                              Navigator.of(context).pop();
+                                                            }
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 20,), // Add spacing between buttons
+                                                        Container(
+                                                          width: 150,
+                                                          height: 48,
+                                                          child: ReButton(
+                                                            activeColor: AppColors.getColor('red').light, 
+                                                            defaultColor: AppColors.getColor('red').main, 
+                                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                                            focusedColor: AppColors.getColor('red').light, 
+                                                            hoverColor: AppColors.getColor('red').lighter, 
+                                                            textColor: AppColors.getColor('mono').white, 
+                                                            iconColor: AppColors.getColor('mono').black, 
+                                                            text: 'VYMAZAŤ',  
+                                                            onTap: () {
+                                                              deletePost(widget.currentUserData!.schoolClass, post.id);
+                                                              _posts.removeWhere((item) => item.id == post.id);
+                                                              Navigator.of(context).pop();
+                                                            }
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+
+
+                                          },
+                                        );
                                       },
                                     ),
                                   ],
@@ -342,11 +457,25 @@ Widget build(BuildContext context) {
                                   Row(
                                     children: [
                                       Spacer(),
-                                      SvgPicture.asset('assets/icons/smallTextBubbleIcon.svg'),
+                                      SvgPicture.asset('assets/icons/smallTextBubbleIcon.svg', color: AppColors.getColor('mono').grey,),
+                                      SizedBox(width: 4.0),
+                                      Text(post.comments.length.toString(),
+                                        style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(
+                                            color: AppColors.getColor('mono').grey,
+                                          ),
+                                      ),
                                       SizedBox(width: 4.0),
                                       Text(
                                         'odpovede',
-                                        style: TextStyle(fontSize: 14.0),
+                                        style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(
+                                            color: AppColors.getColor('mono').grey,
+                                          ),
                                       ),
                                     ],
                                   ),
@@ -369,20 +498,125 @@ Widget build(BuildContext context) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: 50,),
             Container(
               width: 900,
               alignment: Alignment.topLeft,
-              child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.getColor('mono').darkGrey,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: AppColors.getColor('mono').darkGrey,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              content: Container(
+                                height: 250,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Vymazať príspevok',
+                                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 15,),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Chystáte sa opustiť túto stránku. Vaše zmeny sa neuložia.',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                                    SizedBox(height: 35,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center, // Center-align the buttons horizontally
+                                      children: [
+                                        Container(
+                                          width: 270,
+                                          height: 48,
+                                          child: ReButton(
+                                            activeColor: AppColors.getColor('primary').light, 
+                                            defaultColor: AppColors.getColor('mono').white, 
+                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                            focusedColor: AppColors.getColor('mono').lightGrey, 
+                                            hoverColor: AppColors.getColor('mono').lighterGrey, 
+                                            textColor: AppColors.getColor('mono').black,
+                                            iconColor: AppColors.getColor('mono').black, 
+                                            text: 'POKRAČOVAŤ V ÚPRAVÁCH',  
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                            }
+                                          ),
+                                        ),
+                                        SizedBox(width: 20,), // Add spacing between buttons
+                                        Container(
+                                          width: 180,
+                                          height: 48,
+                                          child: ReButton(
+                                            activeColor: AppColors.getColor('red').light, 
+                                            defaultColor: AppColors.getColor('red').main, 
+                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                            focusedColor: AppColors.getColor('red').light, 
+                                            hoverColor: AppColors.getColor('red').lighter, 
+                                            textColor: AppColors.getColor('mono').white, 
+                                            iconColor: AppColors.getColor('mono').black, 
+                                            text: 'ZAHODIŤ ZMENY',  
+                                            onTap: () {
+                                              _onNavigationItemSelected(0);
+                                              Navigator.of(context).pop();
+                                            }
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+
+
+                          },
+                        );
+                      },
                   ),
-                  onPressed: () {
-                    _edit = false;
-                    _onNavigationItemSelected(0);
-                  }
-                ),
+                  Text(
+                    'Späť',
+                    style: TextStyle(color: AppColors.getColor('mono').darkGrey),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Upraviť príspevok',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 100,)
+                ],
+              ),
             ),
+            SizedBox(height: 20,),
             Container(
               width: 900,
               child: TextField(
@@ -421,10 +655,9 @@ Widget build(BuildContext context) {
                 focusedColor: AppColors.getColor('green').light, 
                 hoverColor: AppColors.getColor('green').light, 
                 textColor: Theme.of(context).colorScheme.onPrimary, 
-                iconColor: AppColors.getColor('mono').black, 
+                iconColor: AppColors.getColor('mono').black,
+                isDisabled: editPostController.text == '',
                 text: 'UVEREJNIŤ ZMENY', 
-                leftIcon: false, 
-                rightIcon: false, 
                 onTap: () async {
                     int postIndex = _editIndex!;// You need to set this to the appropriate index.
 
@@ -465,27 +698,240 @@ Widget build(BuildContext context) {
           ],
         ),
       ),
+      if (_library) Container(
+            color: Theme.of(context).colorScheme.background,
+            width: 900,
+            child: Column(
+              children: [
+                Container(
+                  width: 900,
+                  alignment: Alignment.center,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: AppColors.getColor('mono').darkGrey,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              content: Container(
+                                height: 300,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Vymazať príspevok',
+                                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 15,),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Chystáte sa opustiť túto stránku. Vaše zmeny sa neuložia.',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                                    SizedBox(height: 35,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center, // Center-align the buttons horizontally
+                                      children: [
+                                        Container(
+                                          width: 270,
+                                          height: 48,
+                                          child: ReButton(
+                                            activeColor: AppColors.getColor('primary').light, 
+                                            defaultColor: AppColors.getColor('mono').white, 
+                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                            focusedColor: AppColors.getColor('mono').lightGrey, 
+                                            hoverColor: AppColors.getColor('mono').lighterGrey, 
+                                            textColor: AppColors.getColor('mono').black,
+                                            iconColor: AppColors.getColor('mono').black, 
+                                            text: 'POKRAČOVAŤ V ÚPRAVÁCH',  
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                            }
+                                          ),
+                                        ),
+                                        SizedBox(width: 20,), // Add spacing between buttons
+                                        Container(
+                                          width: 180,
+                                          height: 48,
+                                          child: ReButton(
+                                            activeColor: AppColors.getColor('red').light, 
+                                            defaultColor: AppColors.getColor('red').main, 
+                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                            focusedColor: AppColors.getColor('red').light, 
+                                            hoverColor: AppColors.getColor('red').lighter, 
+                                            textColor: AppColors.getColor('mono').white, 
+                                            iconColor: AppColors.getColor('mono').black, 
+                                            text: 'ZAHODIŤ ZMENY',  
+                                            onTap: () {
+                                              _onNavigationItemSelected(0);
+                                              _library = false;
+                                              Navigator.of(context).pop();
+                                            }
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                        },
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Pridať príspevok z knižnice',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(
+                                  color: Theme.of(context).colorScheme.onBackground,
+                                ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 100,),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20), // Add spacing between the header and content
+                Container(
+                  width: 900,
+                 child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          width: 900,
+                          height: 200,
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: [
+                              _buildLibraryCheckbox('Library 1'),
+                              _buildLibraryCheckbox('Library 2'),
+                              _buildLibraryCheckbox('Library 3'),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20), // Add spacing between the ListView and ReButton
+                        
+                      ],
+                  ),
+                ),
+                ),
+                Container(
+                  width: 151,
+                  height: 40,
+                  child: ReButton(
+                    activeColor: AppColors.getColor('mono').white, 
+                    defaultColor: AppColors.getColor('green').main, 
+                    disabledColor: AppColors.getColor('mono').lightGrey, 
+                    focusedColor: AppColors.getColor('green').light, 
+                    hoverColor: AppColors.getColor('green').light, 
+                    textColor: Theme.of(context).colorScheme.onPrimary, 
+                    iconColor: AppColors.getColor('mono').black, 
+                    isDisabled: _selectedLibrary == '',
+                    text: 'UVEREJNIŤ', 
+                    onTap: () async {
+                      PostsData newPost = PostsData(
+                        comments: [],
+                        date: Timestamp.now(),
+                        userId: FirebaseAuth.instance.currentUser!.uid,
+                        user: widget.currentUserData!.name,
+                        pfp: widget.currentUserData!.image,
+                        value: _selectedLibrary,
+                        id: _posts.length.toString()
+                      );
+
+                      try {
+                        await addPost(widget.currentUserData!.schoolClass, newPost);
+
+                        setState(() {
+                          _posts.add(newPost);
+                          _posts.sort((a, b) => b.date.compareTo(a.date));
+                        });
+
+                        _selectedLibrary = '';
+                      } catch (e) {
+                        print('Error adding post: $e');
+                      }
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
       if (_selectedPost != null)
       Container(
         width: 900,
         height: 1080,
         child: Column(
           children: [
+            SizedBox(height: 50,),
             Container(
               width: 900,
               alignment: Alignment.topLeft,
-              child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.getColor('mono').darkGrey,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: AppColors.getColor('mono').darkGrey,
+                    ),
+                    onPressed: () {
+                      _onNavigationItemSelected(0);
+                      _selectedPost = null;
+                    }
                   ),
-                  onPressed: () => 
-                    _onNavigationItemSelected(0),
-                ),
+                  Text(
+                    'Späť',
+                    style: TextStyle(color: AppColors.getColor('mono').darkGrey),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Diskusné vlákno',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 100,)
+                ],
+              ),
             ),
+            SizedBox(height: 20,),
             Expanded(
               child: SingleChildScrollView( 
                 child: Comments(
+                  post: _selectedPost,
                   fetchCommentsStream: fetchCommentsStream(_selectedPost!.id),
                   onNavigationItemSelected: _onNavigationCommentSelected,
                   currentUserData: widget.currentUserData!,
@@ -528,7 +974,7 @@ Widget build(BuildContext context) {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(color: AppColors.getColor('primary').main),
+                    border: Border.all(color: AppColors.getColor('mono').grey),
                   ),
                   padding: EdgeInsets.only(right: 8),
                   child: Row(
@@ -558,82 +1004,86 @@ Widget build(BuildContext context) {
                       ),
                     ),
                     SizedBox(width: 8),
-                    ReButton(
-                      activeColor: AppColors.getColor('mono').white, 
-                      defaultColor: AppColors.getColor('primary').main, 
-                      disabledColor: AppColors.getColor('mono').lightGrey, 
-                      focusedColor: AppColors.getColor('primary').light, 
-                      hoverColor: AppColors.getColor('mono').lighterGrey, 
-                      textColor: Theme.of(context).colorScheme.onPrimary, 
-                      iconColor: AppColors.getColor('mono').black, 
-                      text: _editComment ? 'Uložiť úpravy' : 'Odpovedať', 
-                      leftIcon: false, 
-                      rightIcon: false, 
-                      onTap: () async {
-                        if (_editComment) {
-                          int commentIndex = _editIndex!; // You need to set this to the appropriate index.
+                    Container(
+                      width: _editComment ? 145 : 130,
+                      height: 40,
+                      child: ReButton(
+                        activeColor: AppColors.getColor('mono').white, 
+                        defaultColor: AppColors.getColor('primary').main, 
+                        disabledColor: AppColors.getColor('mono').lightGrey, 
+                        focusedColor: AppColors.getColor('primary').light, 
+                        hoverColor: AppColors.getColor('mono').lighterGrey, 
+                        textColor: Theme.of(context).colorScheme.onPrimary, 
+                        iconColor: AppColors.getColor('mono').black, 
+                        text: _editComment ? 'Uložiť úpravy' : 'Odpovedať',
+                        isDisabled: _editComment ? editCommentController.text == '' : commentController.text == '',
+                        onTap: () async {
+                          if (_editComment) {
+                            int commentIndex = _editIndex!; // You need to set this to the appropriate index.
 
-                          // Check if the commentIndex is valid
-                          if (commentIndex >= 0 && commentIndex < _selectedPost!.comments.length) {
-                            // Get the comment to be edited
-                            CommentsData commentToEdit = _selectedPost!.comments[commentIndex];
+                            // Check if the commentIndex is valid
+                            if (commentIndex >= 0 && commentIndex < _selectedPost!.comments.length) {
+                              // Get the comment to be edited
+                              CommentsData commentToEdit = _selectedPost!.comments[commentIndex];
 
-                            // Update the comment value with the new text
-                            commentToEdit.value = editCommentController.text;
+                              // Update the comment value with the new text
+                              commentToEdit.value = editCommentController.text;
+
+                              try {
+                                // Call a function to update the comment in Firestore
+                                await updateCommentValue(
+                                  widget.currentUserData!.schoolClass,
+                                  _selectedPost!.id,
+                                  commentIndex, // Pass the comment index to identify which comment to edit
+                                  commentToEdit.value,
+                                );
+
+                                setState(() {
+                                  // Update the local _selectedPost!.comments list with the edited comment
+                                  _selectedPost!.comments[commentIndex] = commentToEdit;
+                                  _editIndex = null;
+                                  _editComment = false;
+                                });
+
+                                editCommentController.clear();
+                              } catch (e) {
+                                print('Error updating comment: $e');
+                              }
+                            } else {
+                              print('Invalid comment index');
+                            }
+                          } else {
+                            CommentsData newComment = CommentsData(
+                              answers: [],  // Initialize answers list with an empty list
+                              award: false,
+                              date: Timestamp.now(),
+                              user: widget.currentUserData!.name,
+                              pfp: widget.currentUserData!.image,
+                              userId: FirebaseAuth.instance.currentUser!.uid,
+                              value: commentController.text,
+                            );
 
                             try {
-                              // Call a function to update the comment in Firestore
-                              await updateCommentValue(
+                              await addComment(
                                 widget.currentUserData!.schoolClass,
                                 _selectedPost!.id,
-                                commentIndex, // Pass the comment index to identify which comment to edit
-                                commentToEdit.value,
+                                newComment,
                               );
 
                               setState(() {
-                                // Update the local _selectedPost!.comments list with the edited comment
-                                _selectedPost!.comments[commentIndex] = commentToEdit;
-                                _editIndex = null;
-                                _editComment = false;
+                                // Assuming _selectedPost!.comments is of type List<CommentsData>
+                                _selectedPost!.comments.add(newComment);
                               });
 
-                              editCommentController.clear();
+                              commentController.clear();
                             } catch (e) {
-                              print('Error updating comment: $e');
+                              print('Error adding comment: $e');
                             }
-                          } else {
-                            print('Invalid comment index');
                           }
-                        } else {
-                          CommentsData newComment = CommentsData(
-                            answers: [],  // Initialize answers list with an empty list
-                            award: false,
-                            date: Timestamp.now(),
-                            user: widget.currentUserData!.name,
-                            pfp: widget.currentUserData!.image,
-                            userId: FirebaseAuth.instance.currentUser!.uid,
-                            value: commentController.text,
-                          );
-
-                          try {
-                            await addComment(
-                              widget.currentUserData!.schoolClass,
-                              _selectedPost!.id,
-                              newComment,
-                            );
-
-                            setState(() {
-                              // Assuming _selectedPost!.comments is of type List<CommentsData>
-                              _selectedPost!.comments.add(newComment);
-                            });
-
-                            commentController.clear();
-                          } catch (e) {
-                            print('Error adding comment: $e');
-                          }
-                        }
-                      },
-                    ) 
+                        },
+                      ),
+                    ),
+                    
                   ],
                 ),
                 ),
@@ -646,20 +1096,48 @@ Widget build(BuildContext context) {
         height: 1080,
         child: Column(
           children: [
+            SizedBox(height: 50,),
             Container(
               width: 900,
               alignment: Alignment.topLeft,
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: AppColors.getColor('mono').darkGrey,
-                ),
-                onPressed: () => _onNavigationItemSelected(1),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: AppColors.getColor('mono').darkGrey,
+                    ),
+                    onPressed: () {
+                      _onNavigationItemSelected(1);
+                      _selectedComment = null;
+                    }
+                  ),
+                  Text(
+                    'Späť',
+                    style: TextStyle(color: AppColors.getColor('mono').darkGrey),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Odpoveď na príspevok',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 100,)
+                ],
               ),
             ),
+            SizedBox(height: 30,),
             Expanded(
               child: SingleChildScrollView(
-                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!), commentIndex: _selectedCommentIndex, currentUserData: widget.currentUserData!, postId: _selectedPost!.id, setEdit: (bool edit, int index, String value) {
+                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!), commentIndex: _selectedCommentIndex, currentUserData: widget.currentUserData!, postId: _selectedPost!.id,comment: _selectedComment, post: _selectedPost,setEdit: (bool edit, int index, String value) {
                     setState(() {
                       _editAnswer = edit;
                       _editIndex = index;
@@ -697,7 +1175,7 @@ Widget build(BuildContext context) {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: AppColors.getColor('primary').main),
+                border: Border.all(color: AppColors.getColor('mono').grey),
               ),
               padding: EdgeInsets.only(right: 8),
               child: Row(
@@ -727,83 +1205,87 @@ Widget build(BuildContext context) {
                     ),
                   ),
                   SizedBox(width: 8),
-                  ReButton(
-                    activeColor: AppColors.getColor('mono').white,
-                    defaultColor: AppColors.getColor('primary').main,
-                    disabledColor: AppColors.getColor('mono').lightGrey,
-                    focusedColor: AppColors.getColor('primary').light,
-                    hoverColor: AppColors.getColor('mono').lighterGrey,
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    iconColor: AppColors.getColor('mono').black,
-                    text: _editAnswer ? 'Uložiť úpravy' : 'Odpovedať',
-                    leftIcon: false,
-                    rightIcon: false,
-                    onTap: () async {
-                      if (_editAnswer) {
-                        int answerIndex = _editIndex!; // You need to set this to the appropriate index.
+                  Container(
+                    alignment: Alignment.bottomRight,
+                    width: _editAnswer ? 145 : 130,
+                    height: 40,
+                    child: ReButton(
+                      activeColor: AppColors.getColor('mono').white,
+                      defaultColor: AppColors.getColor('primary').main,
+                      disabledColor: AppColors.getColor('mono').lightGrey,
+                      focusedColor: AppColors.getColor('primary').light,
+                      hoverColor: AppColors.getColor('mono').lighterGrey,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      iconColor: AppColors.getColor('mono').black,
+                      text: _editAnswer ? 'Uložiť úpravy' : 'Odpovedať',
+                      isDisabled: _editAnswer ? editAnswerController == '' : answerController.text == '',
+                      onTap: () async {
+                        if (_editAnswer) {
+                          int answerIndex = _editIndex!; // You need to set this to the appropriate index.
 
-                        // Check if the answerIndex is valid
-                        if (answerIndex >= 0 && answerIndex < _selectedComment!.answers.length) {
-                          // Get the answer to be edited
-                          CommentsAnswersData answerToEdit = _selectedComment!.answers[answerIndex];
+                          // Check if the answerIndex is valid
+                          if (answerIndex >= 0 && answerIndex < _selectedComment!.answers.length) {
+                            // Get the answer to be edited
+                            CommentsAnswersData answerToEdit = _selectedComment!.answers[answerIndex];
 
-                          // Update the answer value with the new text
-                          answerToEdit.value = editAnswerController.text;
+                            // Update the answer value with the new text
+                            answerToEdit.value = editAnswerController.text;
+
+                            try {
+                              // Call a function to update the answer in Firestore
+                              await updateAnswerValue(
+                                widget.currentUserData!.schoolClass,
+                                _selectedPost!.id,
+                                _selectedCommentIndex!, // Pass the comment index to identify which comment to edit
+                                answerIndex, // Pass the answer index to identify which answer to edit
+                                answerToEdit.value,
+                              );
+
+                              setState(() {
+                                // Update the local _selectedComment!.answers list with the edited answer
+                                _selectedComment!.answers[answerIndex] = answerToEdit;
+                                _editIndex = null;
+                                _editAnswer = false;
+                              });
+
+                              editAnswerController.clear();
+                            } catch (e) {
+                              print('Error updating answer: $e');
+                            }
+                          } else {
+                            print('Invalid answer index');
+                          }
+                        } else {
+                          CommentsAnswersData newAnswer = CommentsAnswersData(
+                            award: false,
+                            date: Timestamp.now(),
+                            user: widget.currentUserData!.name,
+                            pfp: widget.currentUserData!.image,
+                            userId: FirebaseAuth.instance.currentUser!.uid,
+                            value: answerController.text,
+                          );
 
                           try {
-                            // Call a function to update the answer in Firestore
-                            await updateAnswerValue(
+                            await addAnswer(
                               widget.currentUserData!.schoolClass,
                               _selectedPost!.id,
-                              _selectedCommentIndex!, // Pass the comment index to identify which comment to edit
-                              answerIndex, // Pass the answer index to identify which answer to edit
-                              answerToEdit.value,
+                              _selectedCommentIndex!,
+                              newAnswer,
                             );
 
                             setState(() {
-                              // Update the local _selectedComment!.answers list with the edited answer
-                              _selectedComment!.answers[answerIndex] = answerToEdit;
-                              _editIndex = null;
-                              _editAnswer = false;
+                              // Assuming _selectedComment!.answers is of type List<CommentsAnswersData>
+                              _selectedComment!.answers.add(newAnswer);
                             });
 
-                            editAnswerController.clear();
+                            answerController.clear();
                           } catch (e) {
-                            print('Error updating answer: $e');
+                            print('Error adding answer: $e');
                           }
-                        } else {
-                          print('Invalid answer index');
                         }
-                      } else {
-                        CommentsAnswersData newAnswer = CommentsAnswersData(
-                          award: false,
-                          date: Timestamp.now(),
-                          user: widget.currentUserData!.name,
-                          pfp: widget.currentUserData!.image,
-                          userId: FirebaseAuth.instance.currentUser!.uid,
-                          value: answerController.text,
-                        );
-
-                        try {
-                          await addAnswer(
-                            widget.currentUserData!.schoolClass,
-                            _selectedPost!.id,
-                            _selectedCommentIndex!,
-                            newAnswer,
-                          );
-
-                          setState(() {
-                            // Assuming _selectedComment!.answers is of type List<CommentsAnswersData>
-                            _selectedComment!.answers.add(newAnswer);
-                          });
-
-                          answerController.clear();
-                        } catch (e) {
-                          print('Error adding answer: $e');
-                        }
-                      }
-                    },
-                  ),
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
@@ -812,8 +1294,39 @@ Widget build(BuildContext context) {
       ),
     ]
   );
-
   
+  
+}
+
+Widget _buildLibraryCheckbox(String title) {
+  return Container(
+    decoration: BoxDecoration(
+      border: Border.all(color: AppColors.getColor('mono').lightGrey), // Grey border
+      borderRadius: BorderRadius.circular(10.0), // Rounded corners
+    ),
+    margin: EdgeInsets.symmetric(vertical: 5.0), // Add margin for spacing
+    child: CheckboxListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Colors.black, // Purple when checked
+        ),
+      ),
+      value: _selectedLibrary == title,
+      onChanged: (value) {
+        setState(() {
+          if (value!) {
+            _selectedLibrary = title;
+          } else {
+            _selectedLibrary = '';
+          }
+        });
+      },
+      controlAffinity: ListTileControlAffinity.leading, // Place the checkbox to the left
+      activeColor: AppColors.getColor('primary').main, // Custom active color
+    ),
+  );
 }
 
   void _onPageChanged(int index) {
@@ -849,5 +1362,8 @@ Widget build(BuildContext context) {
     });
   }
 }
+
+
+
 
 

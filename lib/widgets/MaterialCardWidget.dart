@@ -146,7 +146,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                       },
                     ),
                     IconButton(
-                      icon: SvgPicture.asset('assets/icons/linkIcon.svg'),
+                      icon: SvgPicture.asset('assets/icons/linkIcon.svg', color: Colors.black,),
                       onPressed: () {
                         _launchURL(widget.link);
                       },
@@ -323,8 +323,8 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
       // Convert userData object to a Map
       Map<String, dynamic> userDataMap = {
         'badges': userData.badges,
-        'disuccsionPoints': userData.discussionPoints,
-        'weeklyDisuccsionPoints': userData.weeklyDiscussionPoints,
+        'discussionPoints': userData.discussionPoints,
+        'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
         'admin': userData.admin,
         'teacher': userData.teacher,
         'email': userData.email,

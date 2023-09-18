@@ -215,8 +215,8 @@ class _HomeState extends State<Home> {
             buildNavItem(1, "assets/icons/starIcon.svg", "Výzva", context),
             buildNavItem(2, "assets/icons/textBubblesIcon.svg", "Diskusia", context),
             buildNavItem(3, "assets/icons/bookIcon.svg", "Vzdelávanie", context),
-            buildNavItem(4, "assets/icons/resultsIcon.svg", "Výsledky", context),
-            buildNavItem(7, "assets/icons/settingsIcon.svg", "Nastavenia účtu", context),
+            buildNavItem(6, "assets/icons/resultsIcon.svg", "Výsledky", context),
+            buildNavItem(7, "assets/icons/adminIcon.svg", "Moja škola", context),
             // Add more ListTile widgets for additional menu items
           ],
         ),
@@ -265,7 +265,17 @@ class _HomeState extends State<Home> {
               });
           },),
           if (currentUserData!.teacher) Results(),
-          if (currentUserData!.teacher) MediaQuery.of(context).size.width < 1000 ? MobileAdmin(currentUserData: currentUserData) : DesktopAdmin(currentUserData: currentUserData),
+          if (currentUserData!.teacher) MediaQuery.of(context).size.width < 1000 ? MobileAdmin(currentUserData: currentUserData, logOut: () {
+            FirebaseAuth.instance.signOut();
+              setState(() {
+                fetchUserData();
+              });
+          },) : DesktopAdmin(currentUserData: currentUserData,logOut: () {
+            FirebaseAuth.instance.signOut();
+              setState(() {
+                fetchUserData();
+              });
+          }),
         ],
       ),
     )

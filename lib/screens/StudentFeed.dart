@@ -74,7 +74,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                   "Týždenná výzva",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .labelSmall!
+                                      .titleMedium!
                                       .copyWith(
                                     color: AppColors.getColor('primary').lighter,
                                   ),
@@ -82,17 +82,27 @@ class _StudentFeedState extends State<StudentFeed> {
                               ],
                             ),
                             SizedBox(height: 16), // Add some spacing between the items
-                            Text(
-                              widget.weeklyTitle ?? '',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium!
-                                  .copyWith(
-                                color: Theme.of(context).colorScheme.onPrimary,
+                            Padding(
+                              padding: EdgeInsets.all(50),
+                              child: Center(
+                                child: OverflowBox(
+                                  maxWidth: double.infinity, // Allow the text to overflow
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    widget.weeklyTitle ?? '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium!
+                                        .copyWith(
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                        ),
+                                    textAlign: TextAlign.center, // Center align the text horizontally
+                                  ),
+                                ),
                               ),
                             ),
                             SizedBox(height: 16), // Add some spacing between the items
-                            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', leftIcon: false, rightIcon: false, onTap:
+                            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', onTap:
                               () {
                                   widget.onNavigationItemSelected(1);
                               },
@@ -105,15 +115,12 @@ class _StudentFeedState extends State<StudentFeed> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
                               children: [
-                                Icon(
-                                  Icons.task_alt_rounded,
-                                  color: AppColors.getColor('green').main,
-                                ),
+                                SvgPicture.asset('assets/icons/greenCheckIcon.svg'),
                                 Text(
                                   "Týždenná výzva dokončená",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .labelSmall!
+                                      .titleMedium!
                                       .copyWith(
                                     color: AppColors.getColor('primary').lighter,
                                   ),
@@ -125,13 +132,15 @@ class _StudentFeedState extends State<StudentFeed> {
                               "budúci týždeň ťa čaká",
                               style: Theme.of(context)
                                   .textTheme
-                                  .labelSmall!
+                                  .titleMedium!
                                   .copyWith(
                                 color: AppColors.getColor('primary').lighter,
                               ),
                             ),
                             SizedBox(height: 16), // Add some spacing between the items
-                            Text(
+                            
+                              Text(
+                                textAlign: TextAlign.center,
                               widget.futureWeeklyTitle ?? '',
                               style: Theme.of(context)
                                   .textTheme
@@ -140,6 +149,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
+                            
                           ],
                         ),
                       ),
@@ -166,13 +176,23 @@ class _StudentFeedState extends State<StudentFeed> {
                             SvgPicture.asset(
                               'assets/badges/badgeArg.svg',
                             ),
-                            Text(
-                              widget.capitolTitle ?? '',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                color: AppColors.getColor('mono').grey
+                            Padding(
+                              padding: EdgeInsets.all(50),
+                              child: Center(
+                                child: OverflowBox(
+                                  maxWidth: double.infinity, // Allow the text to overflow
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    widget.weeklyTitle ?? '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium!
+                                        .copyWith(
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                        ),
+                                    textAlign: TextAlign.center, // Center align the text horizontally
+                                  ),
+                                ),
                               ),
                             ),
                             Text(

@@ -77,35 +77,84 @@ Future<void> fetchOptions() async {
       }
     });
   }
+@override
+Widget build(BuildContext context) {
+  bool isDropdownOpen = false; // Track the open state of the dropdown
 
-  @override
-  Widget build(BuildContext context) {
-    return options == null ? CircularProgressIndicator() : DropdownButton<String>(
-      value: dropdownValue,
-      icon: Icon(Icons.arrow_downward),
-      iconSize: 24,
-      elevation: 16,
-      style: TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: (String? newValue) {
-        handleSelection(newValue!);
-      },
-      items: options!.map<DropdownMenuItem<String>>((OptionsData value) {
-        return DropdownMenuItem<String>(
-          value: value.id,  // If you want the selection value to be the ID
-          child: Row(
-            children: [
-              Text(value.data.name),
-              if (value.id == dropdownValue) Icon(Icons.check),
-            ],
+  return options == null
+      ? CircularProgressIndicator()
+      : ClipRRect(
+          borderRadius: BorderRadius.circular(30.0), // Rounded corners for the entire popup
+          child: Container(
+            width: 138,
+            height: MediaQuery.of(context).size.width < 1000 ? 20 : 40,
+            decoration: BoxDecoration(
+              color: AppColors.getColor('mono').lighterGrey, // Set the background color to grey or transparent
+              borderRadius: BorderRadius.circular(0.0), // Rounded corners for the button
+            ),
+            child: PopupMenuButton<String>(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Adjust the border radius as needed
+              ),
+              offset: Offset(0, 40), 
+              tooltip: '', // Remove the tooltip
+              icon: Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      dropdownValue != null ? 'Trieda: ${options!.firstWhere((option) => option.id == dropdownValue)!.data.name}' : '',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color:  AppColors.getColor('primary').main ,
+                    ),
+                    ),
+                    Spacer(),
+                    SvgPicture.asset('assets/icons/downIcon.svg', color: AppColors.getColor('primary').main),
+                  ],
+                ),
+              ),
+              onSelected: (String? newValue) {
+                handleSelection(newValue!);
+                setState(() {
+                  isDropdownOpen = !isDropdownOpen; // Toggle the dropdown open state
+                });
+              },
+              onCanceled: () {
+                setState(() {
+                  isDropdownOpen = !isDropdownOpen; // Toggle the dropdown open state when canceled
+                });
+              },
+              itemBuilder: (BuildContext context) {
+                return options!.map((OptionsData value) {
+                  return PopupMenuItem<String>(
+                    value: value.id,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8), // Add padding to make it rounded
+                          child: Text(value.data.name),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList();
+              },
+            ),
           ),
         );
-      }).toList(),
-    );
-  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -114,8 +163,8 @@ Future<void> fetchOptions() async {
       DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
       Map<String, dynamic> userDataMap = {
         'email': userData.email,
-        'disuccsionPoints': userData.discussionPoints,
-        'weeklyDisuccsionPoints': userData.weeklyDiscussionPoints,
+        'discussionPoints': userData.discussionPoints,
+        'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
         'name': userData.name,
         'active': userData.active,
         'school': userData.school,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:infomentor/screens/Home.dart';
+import 'package:infomentor/screens/Login.dart';
 import 'package:infomentor/screens/Tutorial.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/Colors.dart';
@@ -69,7 +70,6 @@ class MainApp extends StatelessWidget {
           titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
           titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
 
-
           headlineLarge: TextStyle(fontSize: 24, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
           headlineMedium: TextStyle(fontSize: 20, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
           headlineSmall: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
@@ -92,10 +92,10 @@ class MainApp extends StatelessWidget {
           } else {
             if (snapshot.hasData) {
               // User is logged in, navigate to the specified screen
-              return Home();
+              return Tutorial();
             } else {
               // User is not logged in, navigate to Login
-              return Tutorial();
+              return Login();
             }
           }
         },

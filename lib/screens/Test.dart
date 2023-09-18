@@ -480,7 +480,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                     return Text('Error: ${snapshot.error}');
                                   } else {
                                     double? correctPercentage = snapshot.data?['correctPercentage'];
-                                    return Text('Úspešnosť: ${correctPercentage?.toStringAsFixed(2) ?? "N/A"}%',
+                                    return Text('Priemerná Úspešnosť: ${correctPercentage?.toStringAsFixed(2) ?? "N/A"}%',
                                                 style: Theme.of(context)
                                                         .textTheme
                                                         .headlineMedium!
@@ -1027,9 +1027,9 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       ),
       
             
-        pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ', leftIcon: false, rightIcon: false,onTap:
+        pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
           onNextButtonPressed,
-        ) : ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'HOTOVO', leftIcon: false, rightIcon: false, onTap:
+        ) : ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'HOTOVO', onTap:
           onAnswerPressed,
         ),
         ]
@@ -1078,7 +1078,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                 ),
             ),
             SizedBox(height: 20),
-            ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'POKRAČOVAŤ', leftIcon: false, rightIcon: false, onTap:
+            ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'POKRAČOVAŤ', onTap:
               () {
                 setState(() {
                   screen = false;
@@ -1140,7 +1140,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               ],
             ),
             SizedBox(height: 20),
-            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAVRIEŤ', leftIcon: false, rightIcon: false, onTap:
+            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAVRIEŤ', onTap:
               () => widget.overlay(),
             ),
           ],
