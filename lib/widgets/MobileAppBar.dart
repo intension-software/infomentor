@@ -60,7 +60,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                       child: GestureDetector(
                       onTap: () {
                         // Open profile overlay
-                        showProfileOverlay(context, logOut);
+                        onNavigationItemSelected(5);
                       },
                         child: SvgPicture.asset(currentUserData!.image), // Use user's image
                     ),
@@ -72,48 +72,5 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
         ) : Container(),
       );
   }
-
-  
-void showProfileOverlay(BuildContext context, void Function() logOut) { // Add the context parameter
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(30),
-            child: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: SizedBox(
-                height: 30,
-                width: 60,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.grey,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ),
-          body: 
-          SingleChildScrollView(
-                child:Column(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  logOut();
-                  Navigator.of(context).pop();
-                  },
-                  child: Text('SignOut'),
-                ),
-              Profile(),
-             
-              ],
-            )
-          ),
-        ),
-      ),
-    );
-  }
 }
+  

@@ -1379,6 +1379,8 @@ Future<void> saveUserDataToFirestore(
     Map<String, dynamic> userDataMap = {
       'badges': userData.badges,
       'admin': userData.admin,
+      'discussionPoints': userData.discussionPoints,
+      'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
       'teacher': userData.teacher,
       'email': newEmail, // Update the email in Firestore to the new email
       'name': userData.name,
@@ -1438,6 +1440,8 @@ Future<void> saveUserDataToFirestore(
     // updateClassToFirestore(data.schoolClass, result.data['uid']);
     UserData data = UserData(
       admin: false,
+      discussionPoints: 0,
+      weeklyDiscussionPoints: 0,
       id: '',
       email: email,
       name: name,

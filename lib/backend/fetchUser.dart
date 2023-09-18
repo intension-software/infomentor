@@ -64,6 +64,8 @@ class UserCapitolsTestData {
 }
 
 class UserData {
+  int discussionPoints;
+  int weeklyDiscussionPoints;
   bool admin;
   String id;
   String email;
@@ -83,6 +85,8 @@ class UserData {
 
   UserData({
     required this.admin,
+    required this.discussionPoints,
+    required this.weeklyDiscussionPoints,
     required this.id,
     required this.email,
     required this.name,
@@ -122,6 +126,8 @@ Future<UserData> fetchUser(String userId) async {
         String image = userSnapshot.get('image') as String? ?? '';
         String surname = userSnapshot.get('surname') as String? ?? '';
         int points = userSnapshot.get('points') as int? ?? 0;
+        int discussionPoints = userSnapshot.get('discussionPoints') as int? ?? 0;
+        int weeklyDiscussionPoints = userSnapshot.get('weeklyDiscussionPoints') as int? ?? 0;
         List<Map<String, dynamic>> capitols = List<Map<String, dynamic>>.from(userSnapshot.get('capitols') as List<dynamic>? ?? []);
         List<String> materials = List<String>.from(userSnapshot.get('materials') as List<dynamic>? ?? []);
         List<String> badges = List<String>.from(userSnapshot.get('badges') as List<dynamic>? ?? []);
@@ -145,6 +151,8 @@ Future<UserData> fetchUser(String userId) async {
 
         UserData userData = UserData(
           admin: admin,
+          discussionPoints: discussionPoints,
+          weeklyDiscussionPoints: weeklyDiscussionPoints,
           id: id,
           email: email,
           name: name,

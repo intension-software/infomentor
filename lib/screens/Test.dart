@@ -1379,6 +1379,8 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
       // Convert userData object to a Map
       Map<String, dynamic> userDataMap = {
         'badges': userData.badges,
+        'discussionPoints': userData.discussionPoints,
+        'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
         'admin': userData.admin,
         'teacher': userData.teacher,
         'email': userData.email,

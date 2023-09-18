@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Profile.dart';
@@ -56,37 +58,8 @@ class TeacherMobileAppBar extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(30),
-            child: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: SizedBox(
-                height: 30,
-                width: 60,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.grey,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ),
           body: SingleChildScrollView(
-            child: Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    logOut();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Sign Out'),
-                ),
-                Profile(),
-              ],
-            ),
+            child: Profile(logOut: logOut,),
           ),
         ),
       ),

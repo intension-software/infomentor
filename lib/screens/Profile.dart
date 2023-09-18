@@ -10,7 +10,12 @@ import 'package:async/async.dart';
 
 
 class Profile extends StatefulWidget {
-  const Profile({Key? key}) : super(key: key);
+  final void Function() logOut;
+
+  const Profile({
+    Key? key,
+    required this.logOut,
+  }) : super(key: key);
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -28,6 +33,8 @@ class _ProfileState extends State<Profile> {
   int? studentIndex;
   String? className;
   int _selectedIndex = 0;
+  bool _loading = true;
+  int percentage = 0;
 
   @override
   void initState() {
@@ -35,7 +42,7 @@ class _ProfileState extends State<Profile> {
     _isDisposed = false; // Resetting _isDisposed state
     fetchUserData();
     fetchCapitolsData();
-    
+    _loading = false;
   }
 
   int indexOfElement(List<UserData> list, String id) {
@@ -131,6 +138,7 @@ class _ProfileState extends State<Profile> {
       if (mounted && !_isDisposed) {
         setState(() {
           capitolOne = one.capitolsData!.points;
+          percentage = (currentUserData!.points / capitolOne).round();
         });
       }
     } catch (e) {
@@ -147,8 +155,12 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+        return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
+    }
     return currentUserData != null
           ? Container(
+            color: Theme.of(context).colorScheme.background,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
               child: PageView(
@@ -159,13 +171,12 @@ class _ProfileState extends State<Profile> {
                         child:Center(
                         child: Container(
                           padding: EdgeInsets.all(24),
-                          width: 900, 
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            SvgPicture.asset('assets/profilePicture.svg', width: 150),
+                            SvgPicture.asset('assets/profilePicture.svg', width: 90),
                             SizedBox(height: 16),
-                            Center(
+                            Container(
+                              width: double.infinity,
                               child: Column(
                                 children: [
                                   Row(
@@ -173,17 +184,21 @@ class _ProfileState extends State<Profile> {
                                     children: [
                                       Text(
                                         currentUserData!.name,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium!
+                                            .copyWith(
+                                          color: AppColors.getColor('mono').black,
                                         ),
                                       ),
                                       SizedBox(width: 5,),
                                       Text(
                                         currentUserData!.surname,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium!
+                                            .copyWith(
+                                          color: AppColors.getColor('mono').black,
                                         ),
                                       ),
                                     ],
@@ -191,229 +206,301 @@ class _ProfileState extends State<Profile> {
                                   SizedBox(height: 8),
                                   Text(
                                     className ?? '',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium!
+                                        .copyWith(
+                                      color: AppColors.getColor('mono').darkGrey,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
                             SizedBox(height: 24),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Wrap(
+                              spacing: 20,
+                              runSpacing: 20,
                               children: [
-                                Text(
-                                  'Moje skóre',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 48,
-                                        width: double.infinity, // Set the width to expand to the available space
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Celkovo',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Moja aktivita',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .copyWith(
+                                        color: AppColors.getColor('mono').black,
+                                      ),
+                                    ),
+                                    SizedBox(height:8,),
+                                    Container(
+                                      width: 376,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Text(
+                                              'Celkovo',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall!
+                                                  .copyWith(
+                                                color: AppColors.getColor('mono').black,
                                               ),
-                                              Row(
-                                                children: [
-                                                  Text('${currentUserData!.points} / ${capitolOne}'),
-                                                  SizedBox(width: 8),
-                                                  Container(
-                                                    width: 150,
-                                                    height: 15,
-                                                    child: ClipRRect(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      child: LinearProgressIndicator(
-                                                        value: capitolOne != 0 ? currentUserData!.points / capitolOne : 0,
-                                                        backgroundColor: Colors.grey[300],
-                                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Skóre:',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                    color: AppColors.getColor('mono').darkGrey,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${currentUserData!.points}/${capitolOne}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(
+                                                        color: AppColors.getColor('yellow').light,
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    Text(
+                                                        '= ${percentage}%',
+                                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                                          color: AppColors.getColor('mono').darkGrey,
+                                                        ),
+                                                      ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      Divider(color: Colors.grey),
-                                      Container(
-                                        height: 48,
-                                        width: double.infinity, // Set the width to expand to the available space
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Tento týždeň:',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Diskusné fórum:',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                    color: AppColors.getColor('mono').darkGrey,
+                                                  ),
                                                 ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    '${currentUserData!.points}',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color(0xfff9BB00),
+                                                Row(
+                                                  children: [
+                                                    Text('0',
+                                                      style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .copyWith(
+                                                        color: AppColors.getColor('yellow').light,
+                                                      )
                                                     ),
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Color(0xfff9BB00),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                    SizedBox(width: 5,),
+                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      Divider(color: Colors.grey),
-                                      Container(
-                                        height: 48,
-                                        width: double.infinity, // Set the width to expand to the available space
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Celý čas:',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                          Divider(color: AppColors.getColor('mono').lightGrey),
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Text(
+                                              'Tento týždeň',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall!
+                                                  .copyWith(
+                                                color: AppColors.getColor('mono').black,
                                               ),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    '${currentUserData!.points}',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color(0xfff9BB00),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Týždenná výzva',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                    color: AppColors.getColor('mono').darkGrey,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${currentUserData!.points}/${capitolOne}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(
+                                                        color: AppColors.getColor('yellow').light,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Color(0xfff9BB00),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      Divider(color: Colors.grey),
-                                      Container(
-                                        height: 48,
-                                        width: double.infinity, // Set the width to expand to the available space
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Diskusné fórum:',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Diskusné fórum:',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                    color: AppColors.getColor('mono').darkGrey,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                '${currentUserData!.active ? 'Aktívny prispievateľ' : 'Neaktívny prispievateľ'}',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: currentUserData!.active ? Colors.green : Colors.red,
-                                                ),
-                                              ),
-                                            ],
+                                                Row(
+                                                  children: [
+                                                    Text('0',
+                                                      style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .copyWith(
+                                                        color: AppColors.getColor('yellow').light,
+                                                      )
+                                                    ),
+                                                    SizedBox(width: 5,),
+                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
+                                          Divider(color: Colors.grey),
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Text(
+                                              'Skóre za kapitoly',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall!
+                                                  .copyWith(
+                                                color: AppColors.getColor('mono').black,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Kritické myslenie',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                    color: AppColors.getColor('mono').darkGrey,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${currentUserData!.points}/${capitolOne}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(
+                                                        color: AppColors.getColor('yellow').light,
+                                                      ),
+                                                    ),
+                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Argumentácia',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                    color: AppColors.getColor('mono').darkGrey,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text('0',
+                                                      style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .copyWith(
+                                                        color: AppColors.getColor('yellow').light,
+                                                      )
+                                                    ),
+                                                    SizedBox(width: 5,),
+                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg')
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 24),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                              Text(
-                                'Ukončené kapitoly',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Wrap(
-                                  alignment: WrapAlignment.center,
-                                  children: List.generate(badges.length, (index) {
-                                    return SvgPicture.asset(
-                                      badges[index],
-                                      width: 100,
-                                      height: 100,
-                                    );
-                                  }),
-                                ),
-                              ),
-                                Wrap(
-                                  alignment: WrapAlignment.start,
-                                  spacing: 10.0,
-                                  runSpacing: 10.0,
-                                  children: [
-                                  
+                                    ),
                                   ],
                                 ),
-                            ]
-                            ),
                             SizedBox(height: 24),
                             students == null 
-                          ? CircularProgressIndicator() // show loading indicator when data is loading
+                          ?  Container( child: CircularProgressIndicator(), width: 376, height: 200, alignment: Alignment.center,) // show loading indicator when data is loading
                           : students!.isEmpty
                               ? Text('No Students') // show message when there are no students
-                              : Column(
+                              : Container(
+                                width: 376,
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'Rebríček',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .copyWith(
+                                        color: AppColors.getColor('mono').black,
                                       ),
                                     ),
                                     SizedBox(height: 8),
@@ -422,7 +509,7 @@ class _ProfileState extends State<Profile> {
                                         _onNavigationItemSelected(1);
                                       },
                                       child: MouseRegion(
-                                        cursor: SystemMouseCursors.click,
+                                        cursor: MediaQuery.of(context).size.width < 1000 ? SystemMouseCursors.click : SystemMouseCursors.basic,
                                         child: Center(
                                           child:
                                     Container(
@@ -434,7 +521,7 @@ class _ProfileState extends State<Profile> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: List.generate(students!.length, (index) {
-                                          if (index > 2) return SizedBox.shrink(); // we only want to display top 3
+                                          if (index > 2 && MediaQuery.of(context).size.width < 1000) return SizedBox.shrink(); // we only want to display top 3
                                           return Column(
                                             children: [
                                               Container(
@@ -508,13 +595,17 @@ class _ProfileState extends State<Profile> {
                                     )
                                   ],
                                 ),
-                            
+                              )
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     )
                       )
-                      ,if (students != null)Center(
+                      ,if (students != null)Container(
+                        width: 392,
+                        alignment: Alignment.center,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [

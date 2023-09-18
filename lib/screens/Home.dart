@@ -258,23 +258,12 @@ class _HomeState extends State<Home> {
           Discussions(currentUserData: currentUserData),
           Learning(currentUserData: currentUserData),
           Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected),
-          SingleChildScrollView(
-                child:Column(
-            children: [
-              Profile(),
-              ElevatedButton(
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
-                  setState(() {
-                    fetchUserData();
-                  });
-                  },
-                  child: Text('SignOut'),
-                ),
-                SizedBox(height: 100,)
-              ],
-            )
-          ),
+          Profile(logOut: () {
+            FirebaseAuth.instance.signOut();
+              setState(() {
+                fetchUserData();
+              });
+          },),
           if (currentUserData!.teacher) Results(),
           if (currentUserData!.teacher) MediaQuery.of(context).size.width < 1000 ? MobileAdmin(currentUserData: currentUserData) : DesktopAdmin(currentUserData: currentUserData),
         ],

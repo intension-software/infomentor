@@ -114,6 +114,8 @@ Future<void> fetchOptions() async {
       DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
       Map<String, dynamic> userDataMap = {
         'email': userData.email,
+        'disuccsionPoints': userData.discussionPoints,
+        'weeklyDisuccsionPoints': userData.weeklyDiscussionPoints,
         'name': userData.name,
         'active': userData.active,
         'school': userData.school,

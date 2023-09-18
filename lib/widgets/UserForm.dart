@@ -116,6 +116,8 @@ class _UserFormState extends State<UserForm> {
                   registerUser(
                    UserData(
                     admin: _isAdmin,
+                    discussionPoints: 0,
+                    weeklyDiscussionPoints: 0,
                     id: '',
                     email: _emailController.text,
                     name: _nameController.text,

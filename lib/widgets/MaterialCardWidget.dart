@@ -323,6 +323,8 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
       // Convert userData object to a Map
       Map<String, dynamic> userDataMap = {
         'badges': userData.badges,
+        'disuccsionPoints': userData.discussionPoints,
+        'weeklyDisuccsionPoints': userData.weeklyDiscussionPoints,
         'admin': userData.admin,
         'teacher': userData.teacher,
         'email': userData.email,

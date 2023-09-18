@@ -120,7 +120,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                         color: AppColors.getColor('mono').black,
                       ),
                 ),
-                ),      
+                ),
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
@@ -1395,6 +1395,8 @@ Future<void> saveUserDataToFirestore(
     // Convert userData object to a Map
     Map<String, dynamic> userDataMap = {
       'badges': userData.badges,
+      'discussionPoints': userData.discussionPoints,
+      'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
       'admin': userData.admin,
       'teacher': userData.teacher,
       'email': newEmail, // Update the email in Firestore to the new email
@@ -1455,6 +1457,8 @@ Future<void> saveUserDataToFirestore(
     // updateClassToFirestore(data.schoolClass, result.data['uid']);
     UserData data = UserData(
       admin: false,
+      discussionPoints: 0,
+      weeklyDiscussionPoints: 0,
       id: '',
       email: email,
       name: name,
