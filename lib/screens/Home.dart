@@ -215,8 +215,8 @@ class _HomeState extends State<Home> {
             buildNavItem(1, "assets/icons/starIcon.svg", "Výzva", context),
             buildNavItem(2, "assets/icons/textBubblesIcon.svg", "Diskusia", context),
             buildNavItem(3, "assets/icons/bookIcon.svg", "Vzdelávanie", context),
-            buildNavItem(6, "assets/icons/resultsIcon.svg", "Výsledky", context),
-            buildNavItem(7, "assets/icons/adminIcon.svg", "Moja škola", context),
+            buildNavItem(4, "assets/icons/resultsIcon.svg", "Výsledky", context),
+            buildNavItem(6, "assets/icons/adminIcon.svg", "Moja škola", context),
             // Add more ListTile widgets for additional menu items
           ],
         ),

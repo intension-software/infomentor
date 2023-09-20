@@ -106,9 +106,10 @@ class _MobileAdminState extends State<MobileAdmin> {
       controller: _pageController,
       onPageChanged: _onPageChanged,
       children: [
-        Container(
+        SingleChildScrollView(
+          child: Container(
             width: 900,
-            height: 1080,
+            height: MediaQuery.of(context).size.height - 35,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -335,7 +336,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                 SizedBox(height: 20,),
                 Container(
                   width: 900,
-                  height: 380,
+                  height: 350,
                   child: ListView.builder(
                     itemCount: classDataList.length,
                     itemBuilder: (context, index) {
@@ -386,9 +387,32 @@ class _MobileAdminState extends State<MobileAdmin> {
                     },
                   ),
                 ),
+                Spacer(),
+                Center(
+                     child: Container(
+                        width: 160,
+                        height: 40,
+                        child: ReButton(
+                          activeColor: AppColors.getColor('primary').light, 
+                          defaultColor: AppColors.getColor('mono').lighterGrey, 
+                          disabledColor: AppColors.getColor('mono').lightGrey, 
+                          focusedColor: AppColors.getColor('primary').light, 
+                          hoverColor: AppColors.getColor('primary').lighter, 
+                          textColor: AppColors.getColor('primary').main, 
+                          iconColor: AppColors.getColor('mono').black, 
+                          text: 'Odhlásiť sa',
+                          rightIcon: 'assets/icons/logoutIcon.svg',
+                          onTap: () {
+                              widget.logOut();
+                          }
+                        ),
+                      )
+                ),
+                SizedBox(height: 30,)
               ],
             ),
           ),
+        ),
         if(_class) Align(
             alignment: Alignment.center,
             child: Container(
