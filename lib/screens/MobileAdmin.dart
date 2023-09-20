@@ -109,7 +109,6 @@ class _MobileAdminState extends State<MobileAdmin> {
         SingleChildScrollView(
           child: Container(
             width: 900,
-            height: MediaQuery.of(context).size.height - 35,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -312,7 +311,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                       ),
                       Spacer(),
                       Container(
-                        width: 52,
+                        width: 53,
                         height: 36,
                         child:  ReButton(
                           activeColor: AppColors.getColor('primary').light, 
@@ -387,7 +386,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                     },
                   ),
                 ),
-                Spacer(),
                 Center(
                      child: Container(
                         width: 160,
