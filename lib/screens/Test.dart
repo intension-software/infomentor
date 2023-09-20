@@ -440,7 +440,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               child: SingleChildScrollView(
                 child:
                 Container(
-                  height: MediaQuery.of(context).size.width < 1000 ? (title != '' || definition != '' || images.length > 0) ? 450 : 650 : 576,
+                  height: MediaQuery.of(context).size.width < 1000 ? (title != '' || definition != '' || images.length > 0) ? 450 : 700 : 576,
                     child: SingleChildScrollView(
                       child: Column(
                       children: [
@@ -1011,9 +1011,15 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                       ),
                               ),
                             ),
+                            
                           ],
                         ),
                       ),
+                      if(MediaQuery.of(context).size.width < 1000)pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
+                                onNextButtonPressed,
+                              ) : ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'HOTOVO', onTap:
+                                onAnswerPressed,
+                              ),
                       ]
                       )
                     )
@@ -1027,7 +1033,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       ),
       
             
-        pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
+        if(MediaQuery.of(context).size.width > 1000)pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
           onNextButtonPressed,
         ) : ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'HOTOVO', onTap:
           onAnswerPressed,

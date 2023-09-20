@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -54,7 +53,7 @@ class _StudentFeedState extends State<StudentFeed> {
                       width: 700,
                       height: 250,
                       decoration: BoxDecoration(
-                        color: (MediaQuery.of(context).size.width < 1000 || (Platform.isAndroid || Platform.isIOS)) ?  null : Theme.of(context).primaryColor,
+                        color: MediaQuery.of(context).size.width < 1000 ?  null : Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       padding: EdgeInsets.all(16),

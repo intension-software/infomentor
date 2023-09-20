@@ -146,7 +146,7 @@ class _HomeState extends State<Home> {
     }
     return Stack(
       children: [
-        (MediaQuery.of(context).size.width < 1000 || (Platform.isAndroid || Platform.isIOS)) ? Positioned.fill(
+        MediaQuery.of(context).size.width < 1000 ? Positioned.fill(
           child: SvgPicture.asset(
             'assets/background.svg',
             fit: BoxFit.cover,
@@ -155,7 +155,7 @@ class _HomeState extends State<Home> {
       Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.transparent,
-        appBar: (MediaQuery.of(context).size.width < 1000 || (Platform.isAndroid || Platform.isIOS))
+        appBar: MediaQuery.of(context).size.width < 1000
       ? currentUserData!.teacher
           ? PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
@@ -188,7 +188,7 @@ class _HomeState extends State<Home> {
             selectedIndex: _selectedIndex,
           ),
         ),
-      drawer: (currentUserData!.teacher && (MediaQuery.of(context).size.width < 1000 || (Platform.isAndroid || Platform.isIOS))) ? Drawer(
+      drawer: (currentUserData!.teacher && MediaQuery.of(context).size.width < 1000) ? Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -222,7 +222,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ) : null,
-      bottomNavigationBar:  ((MediaQuery.of(context).size.width < 1000 || (Platform.isAndroid || Platform.isIOS)) && !currentUserData!.teacher) ? MobileBottomNavigation(
+      bottomNavigationBar:  (MediaQuery.of(context).size.width < 1000 && !currentUserData!.teacher) ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ) : null,
@@ -266,7 +266,7 @@ class _HomeState extends State<Home> {
                 fetchUserData();
               });
           },),
-          if (currentUserData!.teacher) (MediaQuery.of(context).size.width < 1000 || (Platform.isAndroid || Platform.isIOS)) ? MobileAdmin(currentUserData: currentUserData, logOut: () {
+          if (currentUserData!.teacher) MediaQuery.of(context).size.width < 1000 ? MobileAdmin(currentUserData: currentUserData, logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
