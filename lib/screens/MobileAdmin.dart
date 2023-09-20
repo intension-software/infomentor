@@ -107,300 +107,312 @@ class _MobileAdminState extends State<MobileAdmin> {
       onPageChanged: _onPageChanged,
       children: [
         SingleChildScrollView(
-          child: Container(
-            width: 900,
-            child: ListView(
-                shrinkWrap: true,
+          child: ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height, // Set a minimum height to enable scrolling
+      ),
+      child:Container(
+              width: 900,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                SizedBox(height: 30,),
-                Container(
-                  margin: EdgeInsets.all(12),
-                  child: Text(
-                  schoolName!,
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        color: AppColors.getColor('mono').black,
-                      ),
-                ),
-                ),
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    child: Container(
-                          margin: EdgeInsets.all(12),
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(color: AppColors.getColor('mono').lightGrey),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    admin!.name,
-                                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                          color: AppColors.getColor('mono').black,
-                                        ),
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Text(
-                                    'Správa účtu',
-                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                          color: AppColors.getColor('mono').grey,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              SvgPicture.asset('assets/icons/rightIcon.svg', color: AppColors.getColor('mono').grey, height: 12)
-                            ],
-                          ),
+                  SizedBox(height: 30,),
+                  Container(
+                    margin: EdgeInsets.all(12),
+                    child: Text(
+                    schoolName!,
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          color: AppColors.getColor('mono').black,
                         ),
-                    onTap:  () async {
-                      setState(() {
-                        currentUser = UserDataWithId(adminId!, admin!);
-                        _editUser = true;
-                        _teacher = true;
-                        _admin = true;
-                        _editClass = false;
-                        _editUserEmailController.text = admin!.email;
-                        _editUserNameController.text = admin!.name;
-                        _onNavigationItemSelected(1);
-                      });
-                    }
                   ),
-                ),
-                SizedBox(height: 30,),
-                Container(
-                  margin: EdgeInsets.all(12),
-                  width: double.infinity,
-                  child:  ReButton(
-                    activeColor: AppColors.getColor('primary').light, 
-                    defaultColor: AppColors.getColor('primary').main, 
-                    disabledColor: AppColors.getColor('mono').lightGrey, 
-                    focusedColor: AppColors.getColor('primary').light, 
-                    hoverColor: AppColors.getColor('primary').lighter, 
-                    textColor: Theme.of(context).colorScheme.onPrimary, 
-                    iconColor: AppColors.getColor('mono').black, 
-                    text: '+ Pridať žiakov',  
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      child: Container(
+                            margin: EdgeInsets.all(12),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: Border.all(color: AppColors.getColor('mono').lightGrey),
                             ),
-                            content: Container(
-                              height: 300,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                              ),
-                              // Add content for the AlertDialog here
-                              // For example, you can add form fields to input teacher data
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Spacer(),
-                                      MouseRegion(
-                                        cursor: SystemMouseCursors.click,
-                                        child: GestureDetector(
-                                          child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
-                                          onTap: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                    'Pridať žiaka',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      admin!.name,
                                       style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                        color: AppColors.getColor('mono').black,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 15,),
-                                  Container(
-                                    width: 250,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Potrebné údaje:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                        Text(' 1. Trieda', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                        Text(' 2. Meno a Priezvisko', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                        Text(' 3. Emailová adresa', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                        Text(' 4. Heslo', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 35,),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child:
-                                      Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: 270,
-                                          height: 48,
-                                          child:  ReButton(
-                                            activeColor: AppColors.getColor('primary').light, 
-                                            defaultColor: AppColors.getColor('mono').lighterGrey, 
-                                            disabledColor: AppColors.getColor('mono').lightGrey, 
-                                            focusedColor: AppColors.getColor('primary').light, 
-                                            hoverColor: AppColors.getColor('primary').lighter, 
-                                            textColor: AppColors.getColor('primary').main, 
-                                            iconColor: AppColors.getColor('mono').black, 
-                                            text: 'PRIDAŤ MANUÁLNE',  
-                                            onTap: () async {
-                                                Navigator.of(context).pop();
-                                              _onNavigationItemSelected(2);
-                                              _addUser = true;
-                                              _teacher = false;
-                                            }
+                                            color: AppColors.getColor('mono').black,
                                           ),
-                                        ),
-                                        SizedBox(height: 20,),
-                                        Container(
-                                          width: 270,
-                                          height: 48,
-                                          child: ReButton(
-                                            activeColor: AppColors.getColor('mono').white, 
-                                            defaultColor: AppColors.getColor('green').main, 
-                                            disabledColor: AppColors.getColor('mono').lightGrey, 
-                                            focusedColor: AppColors.getColor('green').light, 
-                                            hoverColor: AppColors.getColor('green').light, 
-                                            textColor: Theme.of(context).colorScheme.onPrimary, 
-                                            iconColor: AppColors.getColor('mono').black, 
-                                            text: 'NAHRAŤ .CSV SÚBOR',
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Text(
+                                      'Správa účtu',
+                                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                            color: AppColors.getColor('mono').grey,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                SvgPicture.asset('assets/icons/rightIcon.svg', color: AppColors.getColor('mono').grey, height: 12)
+                              ],
+                            ),
+                          ),
+                      onTap:  () async {
+                        setState(() {
+                          currentUser = UserDataWithId(adminId!, admin!);
+                          _editUser = true;
+                          _teacher = true;
+                          _admin = true;
+                          _editClass = false;
+                          _editUserEmailController.text = admin!.email;
+                          _editUserNameController.text = admin!.name;
+                          _onNavigationItemSelected(1);
+                        });
+                      }
+                    ),
+                  ),
+                  SizedBox(height: 30,),
+                  Container(
+                    margin: EdgeInsets.all(12),
+                    width: double.infinity,
+                    child:  ReButton(
+                      activeColor: AppColors.getColor('primary').light, 
+                      defaultColor: AppColors.getColor('primary').main, 
+                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                      focusedColor: AppColors.getColor('primary').light, 
+                      hoverColor: AppColors.getColor('primary').lighter, 
+                      textColor: Theme.of(context).colorScheme.onPrimary, 
+                      iconColor: AppColors.getColor('mono').black, 
+                      text: '+ Pridať žiakov',  
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              content: Container(
+                                height: 300,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                // Add content for the AlertDialog here
+                                // For example, you can add form fields to input teacher data
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Spacer(),
+                                        MouseRegion(
+                                          cursor: SystemMouseCursors.click,
+                                          child: GestureDetector(
+                                            child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
                                             onTap: () {
-                                              
+                                              Navigator.of(context).pop();
                                             },
                                           ),
                                         )
                                       ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: 30,),
-                Container(
-                  child: Row(
-                    children: [
-                      Text(
-                        'Triedy',
-                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: AppColors.getColor('mono').darkGrey,
-                            ),
-                      ),
-                      Spacer(),
-                      Container(
-                        width: 53,
-                        height: 36,
-                        child:  ReButton(
-                          activeColor: AppColors.getColor('primary').light, 
-                          defaultColor: AppColors.getColor('mono').lighterGrey, 
-                          disabledColor: AppColors.getColor('mono').lightGrey, 
-                          focusedColor: AppColors.getColor('primary').light, 
-                          hoverColor: AppColors.getColor('primary').lighter, 
-                          textColor: AppColors.getColor('primary').main, 
-                          iconColor: AppColors.getColor('mono').black, 
-                          text: '+', 
-                          onTap: () {
-                            _onNavigationItemSelected(1);
-                            _addClass = true;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  margin: EdgeInsets.all(12),
-                ),
-                SizedBox(height: 20,),
-                Container(
-                  width: 900,
-                  height: 350,
-                  child: ListView.builder(
-                    itemCount: classDataList.length,
-                    itemBuilder: (context, index) {
-                      final classData = classDataList[index];
-                      if (classData == null) {
-                        // Show loading indicator for classes that are still being fetched
-                        return CircularProgressIndicator();
-                      }
-
-                      return MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              // Update the currentClass when a class is tapped
-                              currentClass = classData;
-                              _selectedClass = classData.id;
-                              _class = true;
-                              _onNavigationItemSelected(1);
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            height: 56,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: AppColors.getColor('mono').lightGrey,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  classData.data.name,
-                                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                        color: AppColors.getColor('mono').black,
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                      'Pridať žiaka',
+                                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
                                       ),
+                                    ),
+                                    SizedBox(height: 15,),
+                                    Container(
+                                      width: 250,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Potrebné údaje:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                          Text(' 1. Trieda', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                          Text(' 2. Meno a Priezvisko', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                          Text(' 3. Emailová adresa', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                          Text(' 4. Heslo', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 35,),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child:
+                                        Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 270,
+                                            height: 48,
+                                            child:  ReButton(
+                                              activeColor: AppColors.getColor('primary').light, 
+                                              defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                              disabledColor: AppColors.getColor('mono').lightGrey, 
+                                              focusedColor: AppColors.getColor('primary').light, 
+                                              hoverColor: AppColors.getColor('primary').lighter, 
+                                              textColor: AppColors.getColor('primary').main, 
+                                              iconColor: AppColors.getColor('mono').black, 
+                                              text: 'PRIDAŤ MANUÁLNE',  
+                                              onTap: () async {
+                                                  Navigator.of(context).pop();
+                                                _onNavigationItemSelected(2);
+                                                _addUser = true;
+                                                _teacher = false;
+                                              }
+                                            ),
+                                          ),
+                                          SizedBox(height: 20,),
+                                          Container(
+                                            width: 270,
+                                            height: 48,
+                                            child: ReButton(
+                                              activeColor: AppColors.getColor('mono').white, 
+                                              defaultColor: AppColors.getColor('green').main, 
+                                              disabledColor: AppColors.getColor('mono').lightGrey, 
+                                              focusedColor: AppColors.getColor('green').light, 
+                                              hoverColor: AppColors.getColor('green').light, 
+                                              textColor: Theme.of(context).colorScheme.onPrimary, 
+                                              iconColor: AppColors.getColor('mono').black, 
+                                              text: 'NAHRAŤ .CSV SÚBOR',
+                                              onTap: () {
+                                                
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                SvgPicture.asset('assets/icons/rightIcon.svg', color: AppColors.getColor('mono').grey, height: 12),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: 160,
-                    height: 40,
-                    child: ReButton(
-                      // Logout button properties
-                      onTap: () {
-                        widget.logOut();
+                              ),
+                            );
+                          },
+                        );
                       },
                     ),
                   ),
-                ),
-                SizedBox(height: 30,)
-              ],
+                  SizedBox(height: 30,),
+                  Container(
+                    child: Row(
+                      children: [
+                        Text(
+                          'Triedy',
+                          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: AppColors.getColor('mono').darkGrey,
+                              ),
+                        ),
+                        Spacer(),
+                        Container(
+                          width: 53,
+                          height: 36,
+                          child:  ReButton(
+                            activeColor: AppColors.getColor('primary').light, 
+                            defaultColor: AppColors.getColor('mono').lighterGrey, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('primary').light, 
+                            hoverColor: AppColors.getColor('primary').lighter, 
+                            textColor: AppColors.getColor('primary').main, 
+                            iconColor: AppColors.getColor('mono').black, 
+                            text: '+', 
+                            onTap: () {
+                              _onNavigationItemSelected(1);
+                              _addClass = true;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    margin: EdgeInsets.all(12),
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    width: 900,
+                    height: 350,
+                    child: ListView.builder(
+                      itemCount: classDataList.length,
+                      itemBuilder: (context, index) {
+                        final classData = classDataList[index];
+                        if (classData == null) {
+                          // Show loading indicator for classes that are still being fetched
+                          return CircularProgressIndicator();
+                        }
+
+                        return MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                // Update the currentClass when a class is tapped
+                                currentClass = classData;
+                                _selectedClass = classData.id;
+                                _class = true;
+                                _onNavigationItemSelected(1);
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                              height: 56,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: AppColors.getColor('mono').lightGrey,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    classData.data.name,
+                                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
+                                  ),
+                                  SvgPicture.asset('assets/icons/rightIcon.svg', color: AppColors.getColor('mono').grey, height: 12),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Center(
+                      child: Container(
+                          width: 160,
+                          height: 40,
+                          child: ReButton(
+                            activeColor: AppColors.getColor('primary').light, 
+                            defaultColor: AppColors.getColor('mono').lighterGrey, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('primary').light, 
+                            hoverColor: AppColors.getColor('primary').lighter, 
+                            textColor: AppColors.getColor('primary').main, 
+                            iconColor: AppColors.getColor('mono').black, 
+                            text: 'Odhlásiť sa',
+                            rightIcon: 'assets/icons/logoutIcon.svg',
+                            onTap: () {
+                                widget.logOut();
+                            }
+                          ),
+                        )
+                  ),
+                  SizedBox(height: 30,)
+                ],
+              ),
             ),
           ),
         ),
