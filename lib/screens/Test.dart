@@ -291,47 +291,70 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
         
       Scaffold(
       appBar: AppBar(
-  backgroundColor: (MediaQuery.of(context).size.width  < 1000 && (definition != '' || images.length > 0)) || screen
-    ? Theme.of(context).primaryColor
-    : Theme.of(context).colorScheme.background,
+  backgroundColor: (MediaQuery.of(context).size.width < 1000 &&
+          (definition != '' || images.length > 0)) ||
+      screen
+      ? Theme.of(context).primaryColor
+      : Theme.of(context).colorScheme.background,
   elevation: 0,
   flexibleSpace: Container(
-    height: 120,  // adjust this to make the AppBar taller
-    child: !screen ? Column(
-      mainAxisAlignment: MainAxisAlignment.center,  // this centers the Row vertically
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            questionsPoint ?? 0,
-            (index) => Container(
-              margin: EdgeInsets.symmetric(horizontal: 2.0),
-              width: 40,
-              height: 10,
-              decoration: BoxDecoration(
-                color: questionIndex >= index ? AppColors.getColor('green').main : AppColors.getColor('primary').lighter,
-                borderRadius: BorderRadius.circular(5),
+    height: 120, // adjust this to make the AppBar taller
+    child: !screen
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    questionsPoint ?? 0,
+                    (index) {
+                      final cellWidth = 40.0; // Specify the desired cell width
+                      final availableWidth =
+                          MediaQuery.of(context).size.width -
+                              (questionsPoint ?? 0 - 1) * 2.0 * 2.0; // Calculate available width considering margins
+                      final width =
+                          (availableWidth / (questionsPoint ?? 1))
+                              .clamp(0.0, cellWidth); // Calculate cell width while clamping it to a minimum of 0
+
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 2.0),
+                        width: width,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: questionIndex >= index
+                              ? AppColors.getColor('green').main
+                              : AppColors.getColor('primary').lighter,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      ],
-    ) : null,
+            ],
+          )
+        : null,
   ),
   leading: IconButton(
     icon: Icon(
       Icons.arrow_back,
-      color: (MediaQuery.of(context).size.width < 1000 && (definition != '' || images.length > 0))|| screen ? AppColors.getColor('mono').white : AppColors.getColor('mono').black,
+      color: (MediaQuery.of(context).size.width < 1000 &&
+                  (definition != '' || images.length > 0)) ||
+              screen
+          ? AppColors.getColor('mono').white
+          : AppColors.getColor('mono').black,
     ),
-    onPressed: () => 
-      questionIndex > 0 ? 
-        setState(() {
-          questionIndex--;
-          fetchQuestionData(questionIndex);
-        })
-      : widget.overlay(),
+    onPressed: () =>
+        questionIndex > 0
+            ? setState(() {
+                questionIndex--;
+                fetchQuestionData(questionIndex);
+              })
+            : widget.overlay(),
   ),
 ),
+
 
       backgroundColor: MediaQuery.of(context).size.width < 1000 ? (definition != '' || images.length > 0) || screen ? Colors.transparent : Theme.of(context).colorScheme.background  : screen ?  Colors.transparent : Theme.of(context).colorScheme.background,
       body: !screen ? Column(
