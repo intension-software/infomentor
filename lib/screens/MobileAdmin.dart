@@ -109,9 +109,9 @@ class _MobileAdminState extends State<MobileAdmin> {
         SingleChildScrollView(
           child: Container(
             width: 900,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child: ListView(
+                shrinkWrap: true,
+                children: [
                 SizedBox(height: 30,),
                 Container(
                   margin: EdgeInsets.all(12),
@@ -386,25 +386,18 @@ class _MobileAdminState extends State<MobileAdmin> {
                     },
                   ),
                 ),
-                Center(
-                     child: Container(
-                        width: 160,
-                        height: 40,
-                        child: ReButton(
-                          activeColor: AppColors.getColor('primary').light, 
-                          defaultColor: AppColors.getColor('mono').lighterGrey, 
-                          disabledColor: AppColors.getColor('mono').lightGrey, 
-                          focusedColor: AppColors.getColor('primary').light, 
-                          hoverColor: AppColors.getColor('primary').lighter, 
-                          textColor: AppColors.getColor('primary').main, 
-                          iconColor: AppColors.getColor('mono').black, 
-                          text: 'Odhlásiť sa',
-                          rightIcon: 'assets/icons/logoutIcon.svg',
-                          onTap: () {
-                              widget.logOut();
-                          }
-                        ),
-                      )
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: 160,
+                    height: 40,
+                    child: ReButton(
+                      // Logout button properties
+                      onTap: () {
+                        widget.logOut();
+                      },
+                    ),
+                  ),
                 ),
                 SizedBox(height: 30,)
               ],
