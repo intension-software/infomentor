@@ -56,8 +56,8 @@ class _StudentFeedState extends State<StudentFeed> {
                         color: MediaQuery.of(context).size.width < 1000 ?  null : Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      margin: EdgeInsets.all(16),
                       padding: EdgeInsets.all(16),
+                      margin: EdgeInsets.all(16),
                       child: Center(
                         child: !widget.weeklyBool ? Column(
                           mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
@@ -81,7 +81,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 16), // Add some spacing between the items
+                            SizedBox(height: 20), // Add some spacing between the items
                             Padding(
                               padding: EdgeInsets.all(50),
                               child: Center(
@@ -109,7 +109,6 @@ class _StudentFeedState extends State<StudentFeed> {
                             ),
                           ],
                         ) : Column(
-                          mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
                           crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
                           children: [
                             Row(
@@ -127,7 +126,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 16), // Add some spacing between the items
+                            SizedBox(height: 40), // Add some spacing between the items
                             Text(
                               "budúci týždeň ťa čaká",
                               style: Theme.of(context)
@@ -137,8 +136,6 @@ class _StudentFeedState extends State<StudentFeed> {
                                 color: AppColors.getColor('primary').lighter,
                               ),
                             ),
-                            SizedBox(height: 16), // Add some spacing between the items
-                            
                               Text(
                                 textAlign: TextAlign.center,
                               widget.futureWeeklyTitle ?? '',

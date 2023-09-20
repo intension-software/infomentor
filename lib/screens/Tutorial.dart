@@ -25,9 +25,9 @@ class _TutorialState extends State<Tutorial> {
     Column(
       children: [
         Container(
-            padding: EdgeInsets.all(80),
               child: Text(
             'Ako funguje appka Infomentor?',
+            textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
                 .displayLarge!
@@ -302,7 +302,6 @@ class _TutorialState extends State<Tutorial> {
   if (_currentStep >= _steps.length && !_isEnterScreen) {
       return const Home();
     }
-
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Column(
