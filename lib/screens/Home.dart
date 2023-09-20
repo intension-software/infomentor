@@ -257,14 +257,14 @@ class _HomeState extends State<Home> {
           Challenges(fetch: fetchUserData(), currentUserData: currentUserData),
           Discussions(currentUserData: currentUserData),
           Learning(currentUserData: currentUserData),
+          if (currentUserData!.teacher) Results(),
           Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected),
-          Profile(logOut: () {
+          if(!currentUserData!.teacher) Profile(logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
               });
           },),
-          if (currentUserData!.teacher) Results(),
           if (currentUserData!.teacher) MediaQuery.of(context).size.width < 1000 ? MobileAdmin(currentUserData: currentUserData, logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {

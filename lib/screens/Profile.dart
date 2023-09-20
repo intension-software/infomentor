@@ -715,7 +715,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     )
                       )
-                      ,if (students != null) SingleChildScrollView(
+                      ,if (students != null && MediaQuery.of(context).size.width < 1000) SingleChildScrollView(
                         child:Container(
                           padding: EdgeInsets.all(20),
                           width: 392,

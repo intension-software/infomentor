@@ -257,7 +257,7 @@ class _LearningState extends State<Learning> {
           ),
         ),
       ),
-      Center(
+      if (widget.currentUserData!.teacher)Center(
         child: Column(
           children: [
             Container(

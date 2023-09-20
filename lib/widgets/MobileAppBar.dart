@@ -54,7 +54,6 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                         onNavigationItemSelected(4),
                     ),
                     SizedBox(width: 8),
-
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
