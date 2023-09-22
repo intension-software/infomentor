@@ -45,15 +45,15 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                       ),
-                    SizedBox(width: 4),
-                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                     SizedBox(width: 8),
+                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                    SizedBox(width: 12),
                      IconButton(
                       icon: SvgPicture.asset('assets/icons/bellWhiteIcon.svg'),
                       onPressed: () => 
                         onNavigationItemSelected(4),
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: 12),
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(

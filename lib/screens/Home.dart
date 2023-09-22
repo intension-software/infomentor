@@ -47,6 +47,7 @@ class _HomeState extends State<Home> {
   String? capitolTitle;
   bool _loadingCapitols = true;
   bool _loadingUser = true;
+  String? capitolColor;
 
 
 
@@ -104,9 +105,10 @@ class _HomeState extends State<Home> {
                   .completed;
           weeklyCapitolLength = capitol!.capitolsData!.tests.length;
           completedCount =
-              countTrueTests(currentUserData!.capitols![weeklyChallenge].tests);
+              countTrueTests(currentUserData!.capitols![1].tests);
           capitolTitle = capitol!.capitolsData!.name;
           _loadingCapitols = false;
+          capitolColor = one.capitolsData!.color;
         }
       });
     } catch (e) {
@@ -231,6 +233,8 @@ class _HomeState extends State<Home> {
         onPageChanged: _onPageChanged,
         children: [
           !currentUserData!.teacher ? StudentFeed(
+            capitolColor: capitolColor,
+            capitolData: currentUserData!.capitols[capitolsId],
             onNavigationItemSelected: _onNavigationItemSelected,
             capitol: capitol,
             capitolLength: capitolLength,

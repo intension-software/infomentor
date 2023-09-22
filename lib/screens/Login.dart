@@ -17,6 +17,7 @@ class _LoginState extends State<Login> {
   Color _emailBorderColor = Colors.white;
   Color _passwordBorderColor = Colors.white;
   String? _errorMessage;
+  bool _isEnterScreen = true;
 
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
@@ -51,6 +52,46 @@ class _LoginState extends State<Login> {
 
   @override
 Widget build(BuildContext context) {
+  if (_isEnterScreen)
+  return Container(
+    color: Theme.of(context).primaryColor,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16),
+                child: SvgPicture.asset('assets/logo.svg', width: 500),
+              ),
+            ],
+          ),
+        ),
+        Center(
+          child: ReButton(
+            activeColor: AppColors.getColor('mono').white,
+            defaultColor: AppColors.getColor('mono').white,
+            disabledColor: AppColors.getColor('mono').lightGrey,
+            focusedColor: AppColors.getColor('primary').light,
+            hoverColor: AppColors.getColor('mono').lighterGrey,
+            textColor: AppColors.getColor('mono').black,
+            iconColor: AppColors.getColor('mono').black,
+            text: 'PRIHLÁSENIE',
+            onTap: () {
+              setState(() {
+                _isEnterScreen = false;
+              });
+            },
+          ),
+        ),
+        SizedBox(height: 30),
+      ],
+    ),
+  );
+
   return Scaffold(
     backgroundColor: Theme.of(context).primaryColor,
     body: SingleChildScrollView(

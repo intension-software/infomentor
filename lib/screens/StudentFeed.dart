@@ -18,10 +18,14 @@ class StudentFeed extends StatefulWidget {
   final int weeklyCapitolLength ;
   final int completedCount;
   final String? capitolTitle;
+  final UserCapitolsData? capitolData;
+  final String? capitolColor;
 
   StudentFeed({
     Key? key,
+    required this.capitolColor,
     required this.onNavigationItemSelected,
+    required this.capitolData,
     required this.capitol,
     required this.capitolLength,
     required this.capitolTitle,
@@ -63,6 +67,7 @@ class _StudentFeedState extends State<StudentFeed> {
                           mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
                           crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
                           children: [
+                            if (MediaQuery.of(context).size.width > 1000) SizedBox(height: 50,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
                               children: [
@@ -111,6 +116,7 @@ class _StudentFeedState extends State<StudentFeed> {
                         ) : Column(
                           crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
                           children: [
+                            if (MediaQuery.of(context).size.width > 1000) SizedBox(height: 50,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
                               children: [
@@ -212,74 +218,158 @@ class _StudentFeedState extends State<StudentFeed> {
                             ),
                           ],
                         )
-                  ) :  Container(
-                        height: 350,
-                        width: 700,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: AppColors.getColor('mono').lightGrey,
-                            width: 2,
-                          ),
-                        ),
-                        margin: EdgeInsets.all(16),
-                        padding: EdgeInsets.all(16),
-                        child: Column(children: [
-                          
-                            Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/badges/badgeArg.svg',
-                              width: 80,
-                              fit: BoxFit.contain,
+                  ) :  ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: 350),
+                        child:Container(
+                          width: 700,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: AppColors.getColor('mono').lightGrey,
+                              width: 2,
                             ),
-                            SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                widget.capitolTitle ?? '',
-                                style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall!.copyWith(
-                                        color: AppColors.getColor('mono').darkGrey,
-                                      ),
-                              ),
-                              SizedBox(height: 10),
+                          ),
+                          margin: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16),
+                          child: Column(children: [
+                            
                               Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/badges/badgeArg.svg',
+                                width: 80,
+                                fit: BoxFit.contain,
+                              ),
+                              SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                Container(
-                                  width:  MediaQuery.of(context).size.width < 630 ? 80 : 300,
-                                  height: 20,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: LinearProgressIndicator(
-                                      value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / widget.weeklyCapitolLength : 0.0,
-                                      backgroundColor: AppColors.getColor('blue').lighter,
-                                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
-                                    ),
-                                  )
-                                ),
-                                SizedBox(width: MediaQuery.of(context).size.width < 630 ? 5 : 10),
-                                Text(
-                                  "${widget.completedCount}/${widget.weeklyCapitolLength} výziev hotových",
+                                  Text(
+                                  widget.capitolTitle ?? '',
                                   style: Theme.of(context)
                                         .textTheme
-                                        .labelSmall!
-                                        .copyWith(
-                                                color: AppColors.getColor('mono').grey,
-                                            ),
+                                        .headlineSmall!.copyWith(
+                                          color: AppColors.getColor('mono').darkGrey,
+                                        ),
                                 ),
-                                ]
-                              ,)
-                              ],
-                            ),
-                          ],
-                        ),
-                        
-                      ],
-                    )
-                  ),
+                                SizedBox(height: 10),
+                                MediaQuery.of(context).size.width > 1000 ?
+                                Row(
+                                  children: [
+                                  Container(
+                                    width:  300,
+                                    height: 18,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: LinearProgressIndicator(
+                                        value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / widget.weeklyCapitolLength : 0.0,
+                                        backgroundColor: AppColors.getColor('blue').lighter,
+                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
+                                      ),
+                                    )
+                                  ),
+                                  SizedBox(width: MediaQuery.of(context).size.width < 630 ? 5 : 10),
+                                  Text(
+                                    "${widget.completedCount}/${widget.weeklyCapitolLength} výziev hotových",
+                                    style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall!
+                                          .copyWith(
+                                                  color: AppColors.getColor('mono').grey,
+                                              ),
+                                      ),
+                                  ]
+                                ,) : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                    width:  200,
+                                    height: 10,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: LinearProgressIndicator(
+                                        value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / widget.weeklyCapitolLength : 0.0,
+                                        backgroundColor: AppColors.getColor('blue').lighter,
+                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
+                                      ),
+                                    )
+                                  ),
+                                  SizedBox(height: 5,),
+                                  Text(
+                                    "${widget.completedCount}/${widget.weeklyCapitolLength} výziev hotových",
+                                    style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall!
+                                          .copyWith(
+                                                  color: AppColors.getColor('mono').grey,
+                                              ),
+                                  ),
+                                  ],
+                                )
+                                ],
+                              ),
+                            ],
+                          ),
+                            Container(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: (widget.capitolData?.tests ?? []).where((test) => test.completed == true).map((test) {
+                                    return Container(
+                                      height: 56,
+                                      margin: EdgeInsets.all(2.0), // Add margin for spacing
+                                      decoration: BoxDecoration(
+                                        color: widget.capitolData?.tests[widget.weeklyChallenge] == test ?  AppColors.getColor(widget.capitolColor!).main : AppColors.getColor('mono').lighterGrey, // Grey background color
+                                        borderRadius: BorderRadius.circular(10.0), // Rounded borders
+                                      ),
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      child:  Row(
+                                        children: [
+                                          Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              test.name,
+                                              style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(
+                                                      color: widget.capitolData?.tests[widget.weeklyChallenge] == test ? AppColors.getColor('mono').white : AppColors.getColor('mono').darkGrey ,
+                                                  ),
+                                              ),
+                                              SizedBox(height: 5,),
+                                                Text(
+                                                  '${test.points}/${test.questions.length} správných odpovedí',
+                                                  style: TextStyle(color:  widget.capitolData?.tests[widget.weeklyChallenge] == test ? AppColors.getColor('mono').white : AppColors.getColor('mono').grey , fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                            Spacer(),
+                                            Row(
+                                              children: [
+                                                Text('+ ${test.points}',
+                                                style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleSmall!
+                                                  .copyWith(
+                                                          color: widget.capitolData?.tests[widget.weeklyChallenge] == test ? AppColors.getColor('mono').white : AppColors.getColor('mono').grey ,
+                                                      ),
+                                                  ),
+                                                  SizedBox(width: 8,),
+                                                SvgPicture.asset('assets/icons/starYellowIcon.svg', height: 20,)
+                                              ],
+                                            )
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            )
+                        ],
+                      )
+                    ),
+                  )
                 ],
               ),
             ),

@@ -145,12 +145,22 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         toggleFavorite();
                       },
                     ),
-                    IconButton(
-                      icon: SvgPicture.asset('assets/icons/linkIcon.svg', color: Colors.black,),
-                      onPressed: () {
-                        _launchURL(widget.link);
-                      },
+                    SizedBox(width: 4,),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.getColor('mono').lighterGrey
+                      ),
+                      child: IconButton(
+                        icon: SvgPicture.asset('assets/icons/linkIcon.svg', color: Colors.black,),
+                        onPressed: () {
+                          _launchURL(widget.link);
+                        },
+                      ),
                     ),
+                    
                   ],
                 ),
               ),

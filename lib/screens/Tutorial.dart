@@ -15,17 +15,19 @@ class Tutorial extends StatefulWidget {
 
 class _TutorialState extends State<Tutorial> {
   int _currentStep = 0;
-  bool _isEnterScreen = true;
+  bool _showNavigationIcons = false;
+  bool _end = false;
   
 
   @override
   Widget build(BuildContext context) {
-  
+    final PageController _pageController = PageController();
     List<Widget> _steps = [
     Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-              child: Text(
+          child: Text(
             'Ako funguje appka Infomentor?',
             textAlign: TextAlign.center,
             style: Theme.of(context)
@@ -90,6 +92,7 @@ class _TutorialState extends State<Tutorial> {
       ]
     ),
     Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           textAlign: TextAlign.center,
@@ -155,6 +158,7 @@ class _TutorialState extends State<Tutorial> {
       ]
     ),
     Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           textAlign: TextAlign.center,
@@ -220,10 +224,8 @@ class _TutorialState extends State<Tutorial> {
       ]
     ),
     Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-         SizedBox(height: 20),
-            SvgPicture.asset('assets/tutorial/tutorialWoman.svg', width: 250,),
-            SizedBox(height: 20),
         Text(
           textAlign: TextAlign.center,
           'Je moja aktivita v appke dôležitá?',
@@ -235,11 +237,15 @@ class _TutorialState extends State<Tutorial> {
               ),
         ),
         SizedBox(height: 20),
-        Container(
-          width: 350,
-          child: Text(
-            textAlign: TextAlign.center,
-            'Výsledky tvojich testov a tvoja aktivita v diskusnom fóre je hodnotená bodmi, ktoré vždy vidíš v pravom hornom rohu.',
+        Center(
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+            SvgPicture.asset('assets/tutorial/tutorialPoints.svg'),
+            SizedBox(height: 20),
+            Text(
+              textAlign: TextAlign.center,
+            'Vzdelávanie',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -247,25 +253,41 @@ class _TutorialState extends State<Tutorial> {
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
             ),
-        ),
-        SizedBox(height: 5),
-        Container(
-          width: 350,
-          child: Text(
-            textAlign: TextAlign.center,
-            'Tvoj vyučujúci/a sa môže rozhodnúť brať tieto body do úvahy pri známkovaní.',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
+            Container(
+              width: 350,
+              child: Text(
+                textAlign: TextAlign.center,
+                'Výsledky tvojich testov a tvoja aktivita v diskusnom fóre je hodnotená bodmi, ktoré vždy vidíš v pravom hornom rohu.',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                 ),
             ),
-        ),
-        SizedBox(height: 20),
+            SizedBox(height: 5),
+            Container(
+              width: 350,
+              child: Text(
+                textAlign: TextAlign.center,
+                'Tvoj vyučujúci/a sa môže rozhodnúť brať tieto body do úvahy pri známkovaní.',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                ),
+            ),
+            SizedBox(height: 20),
+          ]
+          )
+        )
       ]
     ),
     Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
          SizedBox(height: 20),
             SvgPicture.asset('assets/tutorial/tutorialMan.svg', width: 250,),
@@ -299,53 +321,139 @@ class _TutorialState extends State<Tutorial> {
     ),
   ];
 
-  if (_currentStep >= _steps.length && !_isEnterScreen) {
-      return const Home();
-    }
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          SizedBox(height: 30),
-          Spacer(),
-          _isEnterScreen
-              ? Container( padding: EdgeInsets.all(16), child: SvgPicture.asset('assets/logo.svg', width: 500)) // Replace with your SVG asset path
-              : _steps[_currentStep],
-          Spacer(),
-          if (!_isEnterScreen)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _steps.length,
-                (index) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4.0),
-                  width: _currentStep == index ? 10 : 5,
-                  height: _currentStep == index ? 10 : 5,
-                  decoration: BoxDecoration(
-                    color: _currentStep >= index ? AppColors.getColor('green').main : AppColors.getColor('primary').lighter,
-                    shape: BoxShape.circle,
-                  ),
-                ),
+if (_end) {
+  return const Home();
+}
+return Scaffold(
+  backgroundColor: Theme.of(context).primaryColor,
+  body: Column(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: <Widget>[
+      SizedBox(height: 30),
+      Spacer(),
+      MouseRegion(
+        onEnter: (_) {
+          setState(() {
+            if ( MediaQuery.of(context).size.width > 1000) {
+              _showNavigationIcons = true;
+            }
+          });
+        },
+        onExit: (_) {
+          setState(() {
+            _showNavigationIcons = false;
+          });
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              alignment: Alignment.bottomCenter,
+              height: 600,
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (int page) {
+                  setState(() {
+                    _currentStep = page;
+                  });
+                },
+                children: _steps,
               ),
             ),
-          SizedBox(height: 40),
-          Center(
-            child: ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'VSTÚPIŤ', rightIcon: 'assets/icons/arrowRightIcon.svg', onTap:
-              () {
-                setState(() {
-                  if (_isEnterScreen) {
-                    _isEnterScreen = false;
-                  } else {
-                    _currentStep = (_currentStep + 1);
-                  }
-                });
-              },
+            if (_showNavigationIcons)
+              if(_currentStep != 0)Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: SvgPicture.asset(
+                    'assets/icons/leftIcon.svg',
+                    width: 24,
+                    height: 24,
+                    color: AppColors.getColor('mono').lighterGrey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_currentStep > 0) {
+                        _pageController.previousPage(
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeInOut,
+                        );
+                      }
+                    });
+                  },
+                ),
+              ),
+            if (_showNavigationIcons)
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: SvgPicture.asset(
+                    'assets/icons/rightIcon.svg',
+                    width: 24,
+                    height: 24,
+                    color: AppColors.getColor('mono').lighterGrey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_currentStep < _steps.length - 1) {
+                        _pageController.nextPage(
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeInOut,
+                        );
+                      } else if (_currentStep == _steps.length - 1) {
+                        setState(() {
+                          _end = true;
+                        });
+                      }
+                    });
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
+      Spacer(),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          _steps.length,
+          (index) => Container(
+            margin: EdgeInsets.symmetric(horizontal: 4.0),
+            width: _currentStep == index ? 10 : 5,
+            height: _currentStep == index ? 10 : 5,
+            decoration: BoxDecoration(
+              color: _currentStep >= index
+                  ? AppColors.getColor('green').main
+                  : AppColors.getColor('primary').lighter,
+              shape: BoxShape.circle,
             ),
           ),
-          SizedBox(height: 30),
-        ],
+        ),
       ),
-    );
+      SizedBox(height: 40),
+      Center(
+        child: ReButton(
+          activeColor: AppColors.getColor('mono').white,
+          defaultColor: AppColors.getColor('mono').white,
+          disabledColor: AppColors.getColor('mono').lightGrey,
+          focusedColor: AppColors.getColor('primary').light,
+          hoverColor: AppColors.getColor('mono').lighterGrey,
+          textColor: AppColors.getColor('mono').black,
+          iconColor: AppColors.getColor('mono').black,
+          text: 'VSTÚPIŤ',
+          rightIcon: 'assets/icons/arrowRightIcon.svg',
+          onTap: () {
+            setState(() {
+              _end = true;
+            });
+          },
+        ),
+      ),
+      SizedBox(height: 30),
+    ],
+  ),
+);
+
+
+
   }
 }
