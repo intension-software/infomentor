@@ -4,7 +4,6 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -161,7 +160,7 @@ class _LoginState extends State<Login> {
                                 .textTheme
                                 .displayLarge!
                                 .copyWith(
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.bold,
                                   color: Theme.of(context).colorScheme.onPrimary,
                                   
                                 ),

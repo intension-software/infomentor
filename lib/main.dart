@@ -4,9 +4,9 @@ import 'package:infomentor/screens/Login.dart';
 import 'package:infomentor/screens/Tutorial.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/Colors.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:ui_web' as ui;
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   ui.bootstrapEngine();
@@ -56,12 +56,13 @@ class MainApp extends StatelessWidget {
           error: AppColors.getColor('red').main,
         ),
 
-        // Define the default font family.
         fontFamily: GoogleFonts.inter().fontFamily,
+
+        // Define the default font family.
 
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
-          displayLarge: TextStyle(fontSize: 32, fontFamily: 'Poppins', fontWeight: FontWeight.w900),
+          displayLarge: TextStyle(fontSize: 32, fontFamily: GoogleFonts.poppins(fontWeight: FontWeight.w700).fontFamily),
           displayMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
           displaySmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
 
@@ -69,9 +70,9 @@ class MainApp extends StatelessWidget {
           titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
           titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
 
-          headlineLarge: TextStyle(fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w700 ),
-          headlineMedium: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
-          headlineSmall: TextStyle(fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+          headlineLarge: TextStyle(fontSize: 24, fontFamily: GoogleFonts.poppins(fontWeight: FontWeight.w700).fontFamily),
+          headlineMedium: TextStyle(fontSize: 20, fontFamily: GoogleFonts.poppins(fontWeight: FontWeight.w700).fontFamily),
+          headlineSmall: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins(fontWeight: FontWeight.w700).fontFamily),
 
           labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
           labelMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),

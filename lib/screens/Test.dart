@@ -298,26 +298,30 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       : Theme.of(context).colorScheme.background,
   elevation: 0,
   flexibleSpace: Container(
+    padding: EdgeInsets.symmetric(horizontal: 50),
     height: 120, // adjust this to make the AppBar taller
     child: !screen
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    questionsPoint ?? 0,
-                    (index) {
-                      final cellWidth = 40.0; // Specify the desired cell width
-                      final availableWidth =
-                          MediaQuery.of(context).size.width -
-                              (questionsPoint ?? 0 - 1) * 2.0 * 2.0; // Calculate available width considering margins
-                      final width =
-                          (availableWidth / (questionsPoint ?? 1))
-                              .clamp(0.0, cellWidth); // Calculate cell width while clamping it to a minimum of 0
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  questionsPoint ?? 0,
+                  (index) {
+                    final maxCellWidth = 80.0; // Specify the maximum cell width
+                    final minWidth = 40.0; // Specify the minimum cell width
+                    final totalWidth =
+                        maxCellWidth * (questionsPoint ?? 1);
+                    final availableWidth =
+                        MediaQuery.of(context).size.width -
+                            (questionsPoint ?? 0 - 1) * 2.0 * 2.0;
 
-                      return Container(
+                    final width = (availableWidth / totalWidth * maxCellWidth)
+                        .clamp(minWidth, maxCellWidth);
+
+                    return Flexible(
+                      child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 2.0),
                         width: width,
                         height: 10,
@@ -327,9 +331,9 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                               : AppColors.getColor('primary').lighter,
                           borderRadius: BorderRadius.circular(5),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -354,6 +358,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
             : widget.overlay(),
   ),
 ),
+
 
 
       backgroundColor: MediaQuery.of(context).size.width < 1000 ? (definition != '' || images.length > 0) || screen ? Colors.transparent : Theme.of(context).colorScheme.background  : screen ?  Colors.transparent : Theme.of(context).colorScheme.background,

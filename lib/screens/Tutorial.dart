@@ -50,7 +50,7 @@ class _TutorialState extends State<Tutorial> {
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
-                .bodyLarge!
+                .headlineSmall!
                 .copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
@@ -116,7 +116,7 @@ class _TutorialState extends State<Tutorial> {
             'Diskusné fórum',
             style: Theme.of(context)
                 .textTheme
-                .bodyLarge!
+                .headlineSmall!
                 .copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
@@ -182,7 +182,7 @@ class _TutorialState extends State<Tutorial> {
             'Vzdelávanie',
             style: Theme.of(context)
                 .textTheme
-                .bodyLarge!
+                .headlineSmall!
                 .copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),

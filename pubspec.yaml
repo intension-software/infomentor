@@ -26,14 +26,6 @@ dependencies:
   g_recaptcha_v3: ^0.0.5
   google_fonts: ^6.1.0
 
-fonts:
-  - family: Poppins
-    fonts:
-      - asset: fonts/Poppins-Bold.ttf
-        weight: 700
-      - asset: fonts/Poppins-ExtraBold.ttf
-        weight: 800
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
