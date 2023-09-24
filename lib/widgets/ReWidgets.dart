@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Test.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Container reTextField(
   String text,
@@ -96,6 +97,7 @@ class ReButton extends StatefulWidget {
   final String? leftIcon;
   final String? rightIcon;
   final bool isDisabled;
+  final bool bold;
 
   ReButton({
     this.text = '',
@@ -111,6 +113,7 @@ class ReButton extends StatefulWidget {
     this.leftIcon,
     this.rightIcon,
     this.isDisabled = false,
+    this.bold = false,
   });
 
   @override
@@ -137,6 +140,7 @@ class _ReButtonState extends State<ReButton> {
               widget.text!,
               style: TextStyle(
                 color: widget.textColor,
+                fontFamily: widget.bold ? GoogleFonts.inter(fontWeight: FontWeight.w500).fontFamily : GoogleFonts.inter(fontWeight: FontWeight.w400).fontFamily
               ),
               textAlign: TextAlign.center,
             ),

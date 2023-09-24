@@ -27,9 +27,10 @@ class _TutorialState extends State<Tutorial> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
+          width: 360,
+          padding: EdgeInsets.all(16),
           child: Text(
             'Ako funguje appka Infomentor?',
-            textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
                 .displayLarge!
@@ -43,7 +44,7 @@ class _TutorialState extends State<Tutorial> {
           child: Column(
             children: [
               SizedBox(height: 20),
-            SvgPicture.asset('assets/tutorial/tutorialChallenge.svg', width: 250,),
+            Image.asset('assets/tutorial/tutorialChallenge.png', width: 250,),
             SizedBox(height: 20),
             Text(
             'Týždenné výzvy',
@@ -94,22 +95,25 @@ class _TutorialState extends State<Tutorial> {
     Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          textAlign: TextAlign.center,
-          'Ako funguje appka Infomentor?',
-          style: Theme.of(context)
-              .textTheme
-              .displayLarge!
-              .copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+        Container(
+          width: 360,
+          padding: EdgeInsets.all(16),
+          child: Text(
+            'Ako funguje appka Infomentor?',
+            style: Theme.of(context)
+                .textTheme
+                .displayLarge!
+                .copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+          ),
         ),
         SizedBox(height: 20),
         Center(
           child: Column(
             children: [
               SizedBox(height: 20),
-            SvgPicture.asset('assets/tutorial/tutorialDiscussions.svg', width: 250,),
+            Image.asset('assets/tutorial/tutorialDiscussions.png', width: 250,),
             SizedBox(height: 20),
             Text(
               textAlign: TextAlign.center,
@@ -160,22 +164,25 @@ class _TutorialState extends State<Tutorial> {
     Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          textAlign: TextAlign.center,
-          'Ako funguje appka Infomentor?',
-          style: Theme.of(context)
-              .textTheme
-              .displayLarge!
-              .copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+        Container(
+          width: 360,
+          padding: EdgeInsets.all(16),
+          child: Text(
+            'Ako funguje appka Infomentor?',
+            style: Theme.of(context)
+                .textTheme
+                .displayLarge!
+                .copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+          ),
         ),
         SizedBox(height: 20),
         Center(
           child: Column(
             children: [
               SizedBox(height: 20),
-            SvgPicture.asset('assets/tutorial/tutorialLearning.svg', width: 250,),
+            Image.asset('assets/tutorial/tutorialLearning.png', width: 250,),
             SizedBox(height: 20),
             Text(
               textAlign: TextAlign.center,
@@ -226,22 +233,25 @@ class _TutorialState extends State<Tutorial> {
     Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          textAlign: TextAlign.center,
-          'Je moja aktivita v appke dôležitá?',
-          style: Theme.of(context)
-              .textTheme
-              .displayLarge!
-              .copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+        Container(
+          width: 360,
+          padding: EdgeInsets.all(16),
+          child: Text(
+            'Ako funguje appka Infomentor?',
+            style: Theme.of(context)
+                .textTheme
+                .displayLarge!
+                .copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+          ),
         ),
         SizedBox(height: 20),
         Center(
           child: Column(
             children: [
               SizedBox(height: 20),
-            SvgPicture.asset('assets/tutorial/tutorialPoints.svg'),
+            Image.asset('assets/tutorial/tutorialPoints.png', width: 300,),
             SizedBox(height: 20),
             Text(
               textAlign: TextAlign.center,
@@ -290,7 +300,7 @@ class _TutorialState extends State<Tutorial> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
          SizedBox(height: 20),
-            SvgPicture.asset('assets/tutorial/tutorialMan.svg', width: 250,),
+            Image.asset('assets/tutorial/tutorialMan.png', width: 250,),
             SizedBox(height: 20),
         Text(
           textAlign: TextAlign.center,

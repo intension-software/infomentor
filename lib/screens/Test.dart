@@ -509,13 +509,13 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                   } else {
                                     double? correctPercentage = snapshot.data?['correctPercentage'];
                                     return Text('Priemerná Úspešnosť: ${correctPercentage?.toStringAsFixed(2) ?? "N/A"}%',
-                                                style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineMedium!
-                                                        .copyWith(
-                                                          color: Theme.of(context).colorScheme.onBackground,
-                                                        ),
-                                              );
+                                        style: Theme.of(context)
+                                                .textTheme
+                                                .headlineMedium!
+                                                .copyWith(
+                                                  color: Theme.of(context).colorScheme.onBackground,
+                                                ),
+                                      );
                                   }
                                 },
                               )

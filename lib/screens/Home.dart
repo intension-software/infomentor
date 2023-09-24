@@ -20,8 +20,12 @@ import 'package:infomentor/widgets/DesktopAppBar.dart';
 import 'package:infomentor/widgets/MobileBottomNavigation.dart';
 import 'package:infomentor/widgets/TeacherMobileAppBar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-
+class NonSwipeablePageController extends PageController {
+  @override
+  bool get canScroll => false;
+}
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -31,7 +35,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final PageController _pageController = PageController();
+  final NonSwipeablePageController _pageController = NonSwipeablePageController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
   UserData? currentUserData;
@@ -56,6 +60,7 @@ class _HomeState extends State<Home> {
     super.initState();
     fetchUserData(); // Fetch the user data when the app starts
     fetchCapitolsData();
+    debugPrint(GoogleFonts.poppins().fontFamily);
     
   }
 
@@ -229,6 +234,7 @@ class _HomeState extends State<Home> {
         onItemTapped: _onItemTapped,
       ) : null,
       body: PageView(
+        physics: NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: [
@@ -293,7 +299,7 @@ class _HomeState extends State<Home> {
       _selectedIndex = index;
       _pageController.animateToPage(
         index,
-        duration: Duration(milliseconds: 300),
+        duration: Duration(milliseconds: 1),
         curve: Curves.ease,
       );
     });
@@ -301,7 +307,7 @@ class _HomeState extends State<Home> {
   void _onItemTapped(int index) {
     _pageController.animateToPage(
       index,
-      duration: Duration(milliseconds: 300),
+      duration: Duration(milliseconds: 1),
       curve: Curves.ease,
     );
   }

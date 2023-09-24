@@ -117,6 +117,7 @@ class _LoginState extends State<Login> {
                 textColor: AppColors.getColor('mono').black,
                 iconColor: AppColors.getColor('mono').black,
                 text: 'PRIHLÁSENIE',
+                bold: true,
                 onTap: () {
                   setState(() {
                     _isEnterScreen = false;
@@ -124,7 +125,7 @@ class _LoginState extends State<Login> {
                 },
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 60),
           ],
         ),
       );
@@ -136,11 +137,11 @@ class _LoginState extends State<Login> {
           height: MediaQuery.of(context).size.height,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 30),
+              SizedBox(height: 60),
               Container(
                 child: SvgPicture.asset(
                   'assets/logo.svg',
-                  width: 200,
+                  width:  MediaQuery.of(context).size.width < 1000 ? 132 : 172,
                 ),
                 padding: EdgeInsets.all(16),
               ),
@@ -160,7 +161,6 @@ class _LoginState extends State<Login> {
                                 .textTheme
                                 .displayLarge!
                                 .copyWith(
-                                  fontWeight: FontWeight.bold,
                                   color: Theme.of(context).colorScheme.onPrimary,
                                   
                                 ),
@@ -184,6 +184,7 @@ class _LoginState extends State<Login> {
                           SizedBox(height: 8),
                           _errorMessage != null
                             ? Container(
+                                margin: EdgeInsets.only(top: 22),
                                 width: 300,
                                 height: 60,
                                 decoration: BoxDecoration(
@@ -260,10 +261,10 @@ class _LoginState extends State<Login> {
                 disabledColor: AppColors.getColor('mono').lightGrey,
                 focusedColor: AppColors.getColor('primary').lighter,
                 hoverColor: AppColors.getColor('green').main,
-                text: 'PRIHLÁSIŤ',
+                text: 'PRIHLÁSIŤ SA',
                 onTap: handleLogin,
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 60),
             ],
           ),
         ),

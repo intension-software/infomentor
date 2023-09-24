@@ -22,6 +22,7 @@ class Challenges extends StatefulWidget {
 }
 
 class _ChallengesState extends State<Challenges> {
+  bool _loading = true;
   bool isOverlayVisible = false;
   late OverlayEntry overlayEntry;
   String? title;
@@ -166,14 +167,15 @@ Future<List<FetchResult>> fetchQuestionData() async {
     computeCompletionPercentages(currentUserClass,userDataList);
 
       capitolsIds = currentUserClass.capitolOrder;
-
-
     
-
 
     for (int order in [0,1]) {
       localResults.add(await fetchCapitols(order.toString()));
     }
+
+    setState(() {
+      _loading = false;
+    });
 
   } catch (e) {
     print('Error fetching question data: $e');
@@ -210,6 +212,9 @@ Future<List<FetchResult>> fetchQuestionData() async {
 
   @override
 Widget build(BuildContext context) {
+  if (_loading) {
+      return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
+  }
   return Scaffold(
     backgroundColor: Theme.of(context).colorScheme.background,
     body: FutureBuilder<List<FetchResult>>(
