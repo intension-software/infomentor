@@ -8,6 +8,7 @@ Container reTextField(
   bool isPasswordType,
   TextEditingController controller,
   Color? borderColor,
+  {bool? visibility, Function()? toggle}
 ) {
   return Container(
     decoration: BoxDecoration(
@@ -16,41 +17,40 @@ Container reTextField(
           color: AppColors.getColor('mono').black.withOpacity(0.1),
           spreadRadius: 0.5,
           blurRadius: 5,
-
         ),
       ],
     ),
     child: TextField(
       controller: controller,
-      obscureText: isPasswordType,
+      obscureText: visibility ?? false,
       enableSuggestions: !isPasswordType,
       autocorrect: !isPasswordType,
-      style: TextStyle(color: AppColors.getColor('mono').black), // Set the text color to black
-      cursorColor: Colors.transparent, // Set the cursor color to transparent
+      style: TextStyle(color: AppColors.getColor('mono').black),
+      cursorColor: Colors.transparent,
       decoration: InputDecoration(
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: text,
-        hintText: '', // Remove the text in the left corner when active
-        filled: true, // Add a background color to the TextField
-        fillColor: AppColors.getColor('mono').white, // Set the background color to white
-         border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.0),
-        borderSide: BorderSide(
-          color: borderColor ?? AppColors.getColor('mono').white, // Use the provided borderColor or fallback to white if null
-          width: 2.0,
+        hintText: '',
+        filled: true,
+        fillColor: AppColors.getColor('mono').white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColors.getColor('mono').white,
+            width: 2.0,
+          ),
         ),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.0),
-        borderSide: BorderSide(
-          color: borderColor ?? AppColors.getColor('mono').white, // Use the provided borderColor or fallback to white if null
-          width: 2.0,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColors.getColor('mono').white,
+            width: 2.0,
+          ),
         ),
-      ),
         focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.0),
-        borderSide: BorderSide(
-            color: AppColors.getColor('green').main, // Set the focused border color to green
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            color: AppColors.getColor('green').main,
             width: 2.0,
           ),
         ),
@@ -58,13 +58,29 @@ Container reTextField(
           vertical: 20.0,
           horizontal: 20.0,
         ),
+        // Add a suffix icon (eye) to toggle password visibility when isPasswordType is true
+         suffixIcon: isPasswordType
+        ? StatefulBuilder(
+            builder: (context, setState) {
+
+              return Padding(
+                padding: EdgeInsets.only(left: 20.0), // Adjust the left padding as needed
+                child: IconButton(
+                  icon: Icon(
+                    visibility ?? false ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    color: AppColors.getColor('mono').darkGrey,
+                  ),
+                  onPressed: toggle,
+            ),
+              );
+            },
+          )
+        : null,
       ),
-      keyboardType: isPasswordType
-          ? TextInputType.visiblePassword
-          : TextInputType.emailAddress,
     ),
   );
 }
+
 
 class ReButton extends StatefulWidget {
   final String? text;

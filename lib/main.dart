@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/screens/Login.dart';
 import 'package:infomentor/screens/Tutorial.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,12 +25,12 @@ void main() async {
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: "AIzaSyCKxORmtJ4yQBMBT87i1tQiw1675VM39II",
-  authDomain: "infomentor-d71f7.firebaseapp.com",
-  projectId: "infomentor-d71f7",
-  storageBucket: "infomentor-d71f7.appspot.com",
-  messagingSenderId: "383337818314",
-  appId: "1:383337818314:web:a6e8c3e5cd1323fee1ac33",
-  measurementId: "G-DF2Y7P0QX9"
+      authDomain: "infomentor-d71f7.firebaseapp.com",
+      projectId: "infomentor-d71f7",
+      storageBucket: "infomentor-d71f7.appspot.com",
+      messagingSenderId: "383337818314",
+      appId: "1:383337818314:web:a6e8c3e5cd1323fee1ac33",
+      measurementId: "G-DF2Y7P0QX9"
     ),
   );
   
@@ -62,7 +61,7 @@ class MainApp extends StatelessWidget {
 
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
-          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
+          displayLarge: TextStyle(fontSize: 32, fontFamily: 'Poppins', fontWeight: FontWeight.w900),
           displayMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
           displaySmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
 
@@ -70,9 +69,9 @@ class MainApp extends StatelessWidget {
           titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
           titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
 
-          headlineLarge: TextStyle(fontSize: 24, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
-          headlineMedium: TextStyle(fontSize: 20, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
-          headlineSmall: TextStyle(fontSize: 16, fontFamily: GoogleFonts.poppins().fontFamily, fontWeight: FontWeight.w900),
+          headlineLarge: TextStyle(fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w700 ),
+          headlineMedium: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+          headlineSmall: TextStyle(fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
 
           labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
           labelMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
@@ -81,6 +80,7 @@ class MainApp extends StatelessWidget {
           bodyLarge: TextStyle(fontSize: 16),
           bodyMedium: TextStyle(fontSize: 14),
           bodySmall: TextStyle(fontSize: 12),
+          
         ),
       ), // Apply your custom theme
       home: StreamBuilder<User?>(

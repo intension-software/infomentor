@@ -20,6 +20,7 @@ import 'package:infomentor/widgets/DesktopAppBar.dart';
 import 'package:infomentor/widgets/MobileBottomNavigation.dart';
 import 'package:infomentor/widgets/TeacherMobileAppBar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 
@@ -56,6 +57,7 @@ class _HomeState extends State<Home> {
     super.initState();
     fetchUserData(); // Fetch the user data when the app starts
     fetchCapitolsData();
+    debugPrint(GoogleFonts.poppins().fontFamily);
     
   }
 
