@@ -113,7 +113,7 @@ Widget build(BuildContext context) {
             );
 
             showMenu(
-              constraints: BoxConstraints(maxWidth: 350, minWidth: 0),
+              constraints: BoxConstraints(maxWidth: 500, minWidth: 390),
               context: context,
               position: position, // Adjusted the position
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)), // Rounded corners

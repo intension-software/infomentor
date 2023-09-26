@@ -4,6 +4,7 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
+import 'dart:html' as html;
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -20,9 +21,24 @@ class _LoginState extends State<Login> {
   String? _errorMessage;
   bool _isEnterScreen = true;
   bool _isVisible = true;
+  bool isMobile = false;
+  bool isDesktop = false;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
 
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
+  }
 
   int _loginAttempts = 0;
   bool _showCaptcha = false;
@@ -141,7 +157,7 @@ class _LoginState extends State<Login> {
               Container(
                 child: SvgPicture.asset(
                   'assets/logo.svg',
-                  width:  MediaQuery.of(context).size.width < 1000 ? 132 : 172,
+                  width:  isMobile ? 132 : 172,
                 ),
                 padding: EdgeInsets.all(16),
               ),

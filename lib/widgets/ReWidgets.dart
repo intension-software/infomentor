@@ -1,8 +1,11 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Test.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 Container reTextField(
   String text,
@@ -183,7 +186,7 @@ class _ReButtonState extends State<ReButton> {
   }
 }
 
-Container reTileImage(Color color, Color borderColor, int index, String? item, BuildContext context, {List<dynamic>? percentage, bool? correct}) {
+Container reTileImage(Color color, Color borderColor, int index, String? item, BuildContext context, {List<dynamic>? percentage, bool? correct, Color? percentageColor}) {
   return Container(
     margin: EdgeInsets.all(8),
     decoration: BoxDecoration(
@@ -212,7 +215,7 @@ Container reTileImage(Color color, Color borderColor, int index, String? item, B
             .textTheme
             .headlineSmall!
             .copyWith(
-              color: borderColor,
+              color: percentageColor,
             )
           ),
         ),
@@ -292,11 +295,11 @@ Container reTileMatchmaking(
 }
 
 
-Container reTile(Color color, Color borderColor, int index, String? item, BuildContext context, {List<dynamic>? percentage, bool? correct}) {
+Container reTile(Color color, Color borderColor, int index, String? item, BuildContext context, {List<dynamic>? percentage, bool? correct, Color? percentageColor}) {
   return Container(
     margin: EdgeInsets.all(8),
     decoration: BoxDecoration(
-      border: Border.all(color: borderColor,width: 1),
+      border: Border.all(color: borderColor,width: 2),
       borderRadius: BorderRadius.circular(10),
       color: color,
     ),
@@ -311,7 +314,7 @@ Container reTile(Color color, Color borderColor, int index, String? item, BuildC
       ) : Text(item ?? '',
         style: Theme.of(context)
           .textTheme
-          .headlineSmall!
+          .titleLarge!
           .copyWith(
             color: borderColor,
         ),
@@ -321,16 +324,11 @@ Container reTile(Color color, Color borderColor, int index, String? item, BuildC
         groupValue: null,
         activeColor: AppColors.getColor('mono').lightGrey,
         onChanged: null,
-      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: borderColor == AppColors.getColor('mono').lightGrey ? Theme.of(context)
+      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style:Theme.of(context)
             .textTheme
-            .bodyLarge!
+            .titleLarge!
             .copyWith(
-              color: borderColor,
-            ): Theme.of(context)
-            .textTheme
-            .headlineSmall!
-            .copyWith(
-              color: borderColor,
+              color: percentageColor,
             )
           ),
     ),
@@ -461,5 +459,41 @@ class SvgDropdownPopupMenuButton extends StatelessWidget {
     );
   }
 }
+
+void reShowToast(String message, bool error, BuildContext context) {
+  showToastWidget(
+    Container(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
+      width: 280,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main,
+          width: 2
+        ),
+        color: error ? AppColors.getColor('red').lighter : AppColors.getColor('green').lighter
+      ),
+      child: Row(
+        children: [
+          Text(message, style: TextStyle(color: Colors.black),),
+          Spacer(),
+          Text('Späť', style: TextStyle(color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main),),
+          SvgPicture.asset('assets/icons/xIcon.svg', color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main),
+        ],
+      ),
+    ),
+    context: context,
+    isIgnoring: false,
+    duration: Duration(seconds: 5),
+    position: StyledToastPosition(align: Alignment.bottomRight)
+  );
+}
+
+
+
+
+
+
 
 

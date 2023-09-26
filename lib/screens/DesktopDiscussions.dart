@@ -293,6 +293,7 @@ Widget build(BuildContext context) {
                           _posts.sort((a, b) => b.date.compareTo(a.date));
                         });
 
+                        reShowToast('Príspevok odoslaný', false, context);
                         postController.clear();
                       } catch (e) {
                         print('Error adding post: $e');
@@ -1070,11 +1071,13 @@ Widget build(BuildContext context) {
                                 newComment,
                               );
 
+
                               setState(() {
                                 // Assuming _selectedPost!.comments is of type List<CommentsData>
                                 _selectedPost!.comments.add(newComment);
                               });
-
+                              reShowToast('Komentár odoslaný', false, context);
+                              
                               commentController.clear();
                             } catch (e) {
                               print('Error adding comment: $e');
@@ -1277,6 +1280,8 @@ Widget build(BuildContext context) {
                               // Assuming _selectedComment!.answers is of type List<CommentsAnswersData>
                               _selectedComment!.answers.add(newAnswer);
                             });
+
+                            reShowToast('Komentár odoslaný', false, context);
 
                             answerController.clear();
                           } catch (e) {

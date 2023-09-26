@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:html' as html;
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:infomentor/screens/Learning.dart';
@@ -7,7 +9,8 @@ import 'package:infomentor/screens/Results.dart';
 import 'package:infomentor/screens/Admin.dart';
 import 'package:infomentor/screens/Notifications.dart';
 import 'package:infomentor/screens/Profile.dart';
-import 'package:infomentor/screens/StudentFeed.dart';
+import 'package:infomentor/screens/DesktopStudentFeed.dart';
+import 'package:infomentor/screens/MobileStudentFeed.dart';
 import 'package:infomentor/screens/TeacherFeed.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/screens/DesktopAdmin.dart';
@@ -52,15 +55,23 @@ class _HomeState extends State<Home> {
   bool _loadingCapitols = true;
   bool _loadingUser = true;
   String? capitolColor;
+  bool isMobile = false;
+  bool isDesktop = false;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
 
 
 
   @override
   void initState() {
     super.initState();
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
     fetchUserData(); // Fetch the user data when the app starts
     fetchCapitolsData();
-    debugPrint(GoogleFonts.poppins().fontFamily);
     
   }
 
@@ -151,18 +162,11 @@ class _HomeState extends State<Home> {
     if (_loadingUser || _loadingCapitols) {
         return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
     }
-    return Stack(
-      children: [
-        MediaQuery.of(context).size.width < 1000 ? Positioned.fill(
-          child: SvgPicture.asset(
-            'assets/background.svg',
-            fit: BoxFit.cover,
-          ),
-        ) : Container(),
+    return 
       Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.transparent,
-        appBar: MediaQuery.of(context).size.width < 1000
+        appBar: isMobile
       ? currentUserData!.teacher
           ? PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
@@ -195,7 +199,7 @@ class _HomeState extends State<Home> {
             selectedIndex: _selectedIndex,
           ),
         ),
-      drawer: (currentUserData!.teacher && MediaQuery.of(context).size.width < 1000) ? Drawer(
+      drawer: (currentUserData!.teacher && isMobile) ? Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -229,7 +233,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ) : null,
-      bottomNavigationBar:  (MediaQuery.of(context).size.width < 1000 && !currentUserData!.teacher) ? MobileBottomNavigation(
+      bottomNavigationBar:  (isMobile && !currentUserData!.teacher) ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ) : null,
@@ -238,7 +242,21 @@ class _HomeState extends State<Home> {
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: [
-          !currentUserData!.teacher ? StudentFeed(
+          !currentUserData!.teacher ? isMobile ? MobileStudentFeed(
+            capitolColor: capitolColor,
+            capitolData: currentUserData!.capitols[capitolsId],
+            onNavigationItemSelected: _onNavigationItemSelected,
+            capitol: capitol,
+            capitolLength: capitolLength,
+            capitolTitle: capitolTitle,
+            capitolsId: capitolsId,
+            completedCount: completedCount,
+            futureWeeklyTitle: futureWeeklyTitle,
+            weeklyBool: weeklyBool,
+            weeklyCapitolLength: weeklyCapitolLength,
+            weeklyChallenge: weeklyChallenge,
+            weeklyTitle: weeklyTitle,
+          ) : DesktopStudentFeed(
             capitolColor: capitolColor,
             capitolData: currentUserData!.capitols[capitolsId],
             onNavigationItemSelected: _onNavigationItemSelected,
@@ -276,7 +294,7 @@ class _HomeState extends State<Home> {
                 fetchUserData();
               });
           },),
-          if (currentUserData!.teacher) MediaQuery.of(context).size.width < 1000 ? MobileAdmin(currentUserData: currentUserData, logOut: () {
+          if (currentUserData!.teacher) isMobile ? MobileAdmin(currentUserData: currentUserData, logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
@@ -289,8 +307,6 @@ class _HomeState extends State<Home> {
           }),
         ],
       ),
-    )
-    ]
     );
   }
 

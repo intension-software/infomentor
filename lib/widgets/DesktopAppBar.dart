@@ -81,17 +81,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                             onNavigationItemSelected: widget.onNavigationItemSelected,
                             selectedIndex: widget.selectedIndex,
                           ),
-                          SizedBox(width: 16),
-                          SvgPicture.asset('assets/icons/infoIcon.svg'),
-                          SizedBox(width: 16),
-                          if(widget.currentUserData!.teacher)IconButton(
-                            icon: SvgPicture.asset('assets/icons/adminIcon.svg'),
-                            onPressed: () {
-                              widget.onNavigationItemSelected(7);
-                              widget.selectedIndex = -1;
-                            }
-                          ),
-                          SizedBox(width: 20),
+                          if(!widget.currentUserData!.teacher)SizedBox(width: 16),
                           if(!widget.currentUserData!.teacher)MouseRegion(
                             cursor: SystemMouseCursors.click,
                             child: GestureDetector(
@@ -102,7 +92,16 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                               child: SvgPicture.asset(widget.currentUserData!.image),
                             ),
                           ),
-                          SizedBox(width: 16),
+                          if(widget.currentUserData!.teacher)SizedBox(width: 16),
+                          if(widget.currentUserData!.teacher)IconButton(
+                            icon: SvgPicture.asset('assets/icons/adminIcon.svg'),
+                            onPressed: () {
+                              widget.onNavigationItemSelected(7);
+                              widget.selectedIndex = -1;
+                            }
+                          ),
+                          
+                          SizedBox(width: 30),
                         ],
                       )
                     ],

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
+import 'dart:html' as html;
 
 
 class TeacherFeed extends StatefulWidget {
@@ -39,6 +40,21 @@ class TeacherFeed extends StatefulWidget {
 }
 
 class _TeacherFeedState extends State<TeacherFeed> {
+  bool isMobile = false;
+  bool isDesktop = false;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
+
+  @override
+  void initState() {
+    super.initState();
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Container(
@@ -54,7 +70,7 @@ class _TeacherFeedState extends State<TeacherFeed> {
                       width: 700,
                       height: 250,
                       decoration: BoxDecoration(
-                        color: MediaQuery.of(context).size.width < 1000 ?  null : AppColors.getColor('primary').main,
+                        color: isMobile ?  null : AppColors.getColor('primary').main,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       margin: EdgeInsets.all(16),

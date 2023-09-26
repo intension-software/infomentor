@@ -336,6 +336,8 @@ class _UserFormState extends State<UserForm> {
     await FirebaseFirestore.instance.collection('users').doc(data.id).set({
       'admin': data.admin,
       'email': data.email,
+      'discussionPoints': data.discussionPoints,
+      'weeklyDiscussionPoints': data.weeklyDiscussionPoints,
       'name': data.name,
       'active': data.active,
       'classes': data.classes,

@@ -1,5 +1,8 @@
+import 'dart:js';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchSchool.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 class CommentsAnswersData {
   Timestamp date;
@@ -213,6 +216,71 @@ Future<void> editClass(String classId, ClassData newClassData) async {
   }
 }
 
+Future<void> deleteClass(String classId, String school) async {
+  try {
+    // Reference to the class document in Firestore
+    DocumentReference classRef =
+        FirebaseFirestore.instance.collection('classes').doc(classId);
+
+    // Retrieve the class document
+    DocumentSnapshot classSnapshot = await classRef.get();
+
+    if (classSnapshot.exists) {
+      // Delete the class document
+      await classRef.delete();
+
+      // Remove the class from the school's classes list
+      await removeClassFromSchool(classId, school);
+
+      print('Class deleted successfully with ID: $classId');
+    } else {
+      throw Exception('Class document does not exist.');
+    }
+  } catch (e) {
+    print('Error deleting class: $e');
+    throw Exception('Failed to delete class');
+  }
+}
+
+Future<void> removeClassFromSchool(String classId, String school) async {
+  try {
+    // Reference to the school document in Firestore
+    DocumentReference schoolRef =
+        FirebaseFirestore.instance.collection('schools').doc(school);
+
+    // Retrieve the school document
+    DocumentSnapshot schoolSnapshot = await schoolRef.get();
+
+    if (schoolSnapshot.exists) {
+      // Extract the school data from the school document
+      final schoolData = schoolSnapshot.data() as Map<String, dynamic>?;
+
+      if (schoolData != null) {
+        // Extract the classes field from the school data
+        List<String> classes =
+            List<String>.from(schoolData['classes'] as List<dynamic>? ?? []);
+
+        // Remove the classId from the classes list
+        classes.remove(classId);
+
+        // Update the classes field within the school data
+        schoolData['classes'] = classes;
+
+        // Update the school document in Firestore
+        await schoolRef.update(schoolData);
+
+      } else {
+        throw Exception('Retrieved school data is null.');
+      }
+    } else {
+      throw Exception('School document does not exist.');
+    }
+  } catch (e) {
+    print('Error removing class from school: $e');
+    throw Exception('Failed to remove class from school');
+  }
+}
+
 
 
 Future<void> addComment(String classId, String postId, CommentsData comment) async {
@@ -263,6 +331,7 @@ Future<void> addComment(String classId, String postId, CommentsData comment) asy
 
           // Update the class document in Firestore
           await classRef.update(classData);
+
 
           return;
         } else {

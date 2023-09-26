@@ -500,110 +500,113 @@ class _MobileAdminState extends State<MobileAdmin> {
                             text: '+ Pridať',  
                             onTap: () {
                               showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  content: Container(
+                                    height: 300,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
                                     ),
-                                    content: Container(
-                                      height: 250,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                      ),
-                                      // Add content for the AlertDialog here
-                                      // For example, you can add form fields to input teacher data
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
+                                    // Add content for the AlertDialog here
+                                    // For example, you can add form fields to input teacher data
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Spacer(),
+                                            MouseRegion(
+                                              cursor: SystemMouseCursors.click,
+                                              child: GestureDetector(
+                                                child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                          'Pridať učiteľa',
+                                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                              color: AppColors.getColor('mono').black,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 15,),
+                                        Container(
+                                          width: 250,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Spacer(),
-                                              MouseRegion(
-                                                cursor: SystemMouseCursors.click,
-                                                child: GestureDetector(
-                                                  child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
+                                              Text('Potrebné údaje:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                              Text(' 1. Trieda', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                              Text(' 2. Meno a Priezvisko', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                              Text(' 3. Emailová adresa', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                              Text(' 4. Heslo', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 35,),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child:
+                                            Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                width: 270,
+                                                height: 48,
+                                                child:  ReButton(
+                                                  activeColor: AppColors.getColor('primary').light, 
+                                                  defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                                  disabledColor: AppColors.getColor('mono').lightGrey, 
+                                                  focusedColor: AppColors.getColor('primary').light, 
+                                                  hoverColor: AppColors.getColor('primary').lighter, 
+                                                  textColor: AppColors.getColor('primary').main, 
+                                                  iconColor: AppColors.getColor('mono').black, 
+                                                  text: 'PRIDAŤ MANUÁLNE',  
+                                                  onTap: () async {
+                                                      Navigator.of(context).pop();
+                                                    _onNavigationItemSelected(2);
+                                                    _addUser = true;
+                                                    _teacher = true;
+                                                  }
+                                                ),
+                                              ),
+                                              SizedBox(height: 20,),
+                                              Container(
+                                                width: 270,
+                                                height: 48,
+                                                child: ReButton(
+                                                  activeColor: AppColors.getColor('mono').white, 
+                                                  defaultColor: AppColors.getColor('green').main, 
+                                                  disabledColor: AppColors.getColor('mono').lightGrey, 
+                                                  focusedColor: AppColors.getColor('green').light, 
+                                                  hoverColor: AppColors.getColor('green').light, 
+                                                  textColor: Theme.of(context).colorScheme.onPrimary, 
+                                                  iconColor: AppColors.getColor('mono').black, 
+                                                  text: 'NAHRAŤ .CSV SÚBOR',
                                                   onTap: () {
-                                                    Navigator.of(context).pop();
+                                                    
                                                   },
                                                 ),
                                               )
                                             ],
                                           ),
-                                          Align(
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                            'Pridať učiteľa',
-                                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                                color: AppColors.getColor('mono').black,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 15,),
-                                          Container(
-                                            width: 250,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text('Potrebné údaje:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                                Text(' 1. Trieda', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                                Text(' 2. Meno a Priezvisko', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                                Text(' 3. Emailová adresa', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                                Text(' 4. Heslo', style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(height: 35,),
-                                          Align(
-                                            alignment: Alignment.center,
-                                            child:  Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  width: 270,
-                                                  height: 48,
-                                                  child:  ReButton(
-                                                    activeColor: AppColors.getColor('primary').light, 
-                                                    defaultColor: AppColors.getColor('mono').lighterGrey, 
-                                                    disabledColor: AppColors.getColor('mono').lightGrey, 
-                                                    focusedColor: AppColors.getColor('primary').light, 
-                                                    hoverColor: AppColors.getColor('primary').lighter, 
-                                                    textColor: AppColors.getColor('primary').main, 
-                                                    iconColor: AppColors.getColor('mono').black, 
-                                                    text: 'PRIDAŤ EXISTUJÚCI PROFIL',  
-                                                    onTap: () {}
-                                                  ),
-                                                ),
-                                                SizedBox(width: 20,),
-                                                Container(
-                                                  width: 270,
-                                                  height: 48,
-                                                  child: ReButton(
-                                                    activeColor: AppColors.getColor('mono').white, 
-                                                    defaultColor: AppColors.getColor('green').main, 
-                                                    disabledColor: AppColors.getColor('mono').lightGrey, 
-                                                    focusedColor: AppColors.getColor('green').light, 
-                                                    hoverColor: AppColors.getColor('green').light, 
-                                                    textColor: Theme.of(context).colorScheme.onPrimary, 
-                                                    iconColor: AppColors.getColor('mono').black, 
-                                                    text: 'VYTVORIŤ NOVÝ PROFIL',
-                                                    onTap: () async {
-                                                      Navigator.of(context).pop();
-                                                      _onNavigationItemSelected(2);
-                                                      _addUser = true;
-                                                      _teacher = true;
-                                                    },
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                        )
+                                      ],
                                     ),
-                                  );
-                                },
-                              );
+                                  ),
+                                );
+                              },
+                            );
                             },
                           ),
                         )
@@ -1641,6 +1644,8 @@ Future<void> saveUserDataToFirestore(
       'admin': data.admin,
       'email': data.email,
       'name': data.name,
+      'discussionPoints': data.discussionPoints,
+      'weeklyDiscussionPoints': data.weeklyDiscussionPoints,
       'active': data.active,
       'classes': data.classes,
       'school': data.school,

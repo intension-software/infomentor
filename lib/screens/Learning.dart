@@ -7,6 +7,7 @@ import 'package:infomentor/backend/fetchMaterials.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
+import 'dart:html' as html;
 
 
 class Learning extends StatefulWidget {
@@ -28,6 +29,10 @@ class _LearningState extends State<Learning> {
    final PageController _pageController = PageController();
    int _selectedIndex = 0;
    bool _loading = true;
+   bool isMobile = false;
+  bool isDesktop = false;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
 
   fetchCurrentClass() async {
     try {
@@ -51,6 +56,11 @@ class _LearningState extends State<Learning> {
   @override
   void initState() {
     super.initState();
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
     fetchCurrentClass();
   }
 
@@ -123,7 +133,7 @@ class _LearningState extends State<Learning> {
                     ),
                   ),
                   SizedBox(width: 5),
-              if (widget.currentUserData!.teacher && MediaQuery.of(context).size.width > 1000)Container(
+              if (widget.currentUserData!.teacher && isDesktop)Container(
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -230,7 +240,7 @@ class _LearningState extends State<Learning> {
                   },
                 ),
               ),
-              if (widget.currentUserData!.teacher && MediaQuery.of(context).size.width < 1000)Container(
+              if (widget.currentUserData!.teacher && isMobile)Container(
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(

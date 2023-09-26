@@ -9,7 +9,7 @@ import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-
+import 'dart:html' as html;
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 
@@ -70,6 +70,10 @@ class _TestState extends State<Test> {
   bool usersCompleted = false;
   bool firstScreen = true;
   String? introduction;
+  bool isMobile = false;
+  bool isDesktop = false;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
 
 
   Future<void> fetchQuestionData(int index) async {
@@ -134,7 +138,11 @@ class _TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
 
     fetchQuestionData(questionIndex);
     fetchPercentages();
@@ -223,9 +231,9 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       percentages[index] = double.parse(value.toStringAsFixed(2));
     });
 
-    print(double.parse(((correctResponses / (completedStudents != 0 ? completedStudents : 1)) * 100).toStringAsFixed(2)));
 
     return {
+      'userCompleted': completedStudents > 0,
       'completedStudents': completedStudents,
       'correctPercentage': double.parse(((correctResponses / (completedStudents != 0 ? completedStudents : 1)) * 100).toStringAsFixed(2)),
       'answerPercentages': percentages
@@ -269,7 +277,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
     }
     return Stack(
       children: [
-        (MediaQuery.of(context).size.width < 1000) && !screen  ? Positioned.fill(
+        (isMobile) && !screen  ? Positioned.fill(
           child: SvgPicture.asset(
             'assets/background.svg',
             fit: BoxFit.cover,
@@ -291,77 +299,78 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
         
       Scaffold(
       appBar: AppBar(
-  backgroundColor: (MediaQuery.of(context).size.width < 1000 &&
-          (definition != '' || images.length > 0)) ||
-      screen
-      ? Theme.of(context).primaryColor
-      : Theme.of(context).colorScheme.background,
-  elevation: 0,
-  flexibleSpace: Container(
-    padding: EdgeInsets.symmetric(horizontal: 50),
-    height: 120, // adjust this to make the AppBar taller
-    child: !screen
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  questionsPoint ?? 0,
-                  (index) {
-                    final maxCellWidth = 80.0; // Specify the maximum cell width
-                    final minWidth = 40.0; // Specify the minimum cell width
-                    final totalWidth =
-                        maxCellWidth * (questionsPoint ?? 1);
-                    final availableWidth =
-                        MediaQuery.of(context).size.width -
-                            (questionsPoint ?? 0 - 1) * 2.0 * 2.0;
+        backgroundColor: (isMobile &&
+                (definition != '' || images.length > 0)) ||
+            screen
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).colorScheme.background,
+        elevation: 0,
+        flexibleSpace: Container(
+          padding: EdgeInsets.symmetric(horizontal: 50),
+          height: 120, // adjust this to make the AppBar taller
+          child: !screen
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        questionsPoint ?? 0,
+                        (index) {
+                          final maxCellWidth = 50.0; // Specify the maximum cell width
+                          final minWidth = 40.0; // Specify the minimum cell width
+                          final totalWidth =
+                              maxCellWidth * (questionsPoint ?? 1);
+                          final availableWidth =
+                              MediaQuery.of(context).size.width -
+                                  (questionsPoint ?? 0 - 1) * 2.0 * 2.0;
 
-                    final width = (availableWidth / totalWidth * maxCellWidth)
-                        .clamp(minWidth, maxCellWidth);
+                          final width = (availableWidth / totalWidth * maxCellWidth)
+                              .clamp(minWidth, maxCellWidth);
 
-                    return Flexible(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 2.0),
-                        width: width,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: questionIndex >= index
-                              ? AppColors.getColor('green').main
-                              : AppColors.getColor('primary').lighter,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
+                          return Flexible(
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 2.0),
+                              width: width,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: questionIndex >= index
+                                    ? AppColors.getColor('green').main
+                                    : AppColors.getColor('primary').lighter,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          )
-        : null,
-  ),
-  leading: IconButton(
-    icon: Icon(
-      Icons.arrow_back,
-      color: (MediaQuery.of(context).size.width < 1000 &&
-                  (definition != '' || images.length > 0)) ||
-              screen
-          ? AppColors.getColor('mono').white
-          : AppColors.getColor('mono').black,
-    ),
-    onPressed: () =>
-        questionIndex > 0
-            ? setState(() {
-                questionIndex--;
-                fetchQuestionData(questionIndex);
-              })
-            : widget.overlay(),
-  ),
-),
+                    ),
+                  ],
+                )
+              : null,
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: (isMobile &&
+                        (definition != '' || images.length > 0)) ||
+                    screen
+                ? AppColors.getColor('mono').white
+                : AppColors.getColor('mono').black,
+          ),
+          onPressed: () =>
+              questionIndex > 0
+                  ? setState(() {
+                      questionIndex--;
+                      fetchQuestionData(questionIndex);
+                    })
+                  : widget.overlay(),
+        ),
+      ),
 
 
 
-      backgroundColor: MediaQuery.of(context).size.width < 1000 ? (definition != '' || images.length > 0) || screen ? Colors.transparent : Theme.of(context).colorScheme.background  : screen ?  Colors.transparent : Theme.of(context).colorScheme.background,
+
+      backgroundColor: isMobile ? (definition != '' || images.length > 0) || screen ? Colors.transparent : Theme.of(context).colorScheme.background  : screen ?  Colors.transparent : Theme.of(context).colorScheme.background,
       body: !screen ? Column(
         
         children: [SingleChildScrollView(
@@ -370,7 +379,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
           height: MediaQuery.of(context).size.height - 150,
           child:
           Align( 
-            alignment:  MediaQuery.of(context).size.width < 1000 ? Alignment.topCenter : Alignment.center,
+            alignment:  isMobile ? Alignment.topCenter : Alignment.center,
             child: Wrap(
             direction: Axis.horizontal,
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -379,14 +388,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
             children: [
             if (title != '' || definition != '' || images.length > 0) Container(
               width: 600,
-              height: MediaQuery.of(context).size.width < 1000 
+              height: isMobile 
                 ? calculateHeight(title, definition, images)
                 : 600,
-               margin:  MediaQuery.of(context).size.width < 1000 ? EdgeInsets.all(0) : EdgeInsets.all(12),
+               margin:  isMobile ? EdgeInsets.all(0) : EdgeInsets.all(12),
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                borderRadius:  MediaQuery.of(context).size.width < 1000 ? null : BorderRadius.circular(10),
-                    border: MediaQuery.of(context).size.width < 1000 ? null : Border.all(color: AppColors.getColor('mono').grey),
+                borderRadius:  isMobile ? null : BorderRadius.circular(10),
+                    border: isMobile ? null : Border.all(color: AppColors.getColor('mono').grey),
                 ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -403,7 +412,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                 .textTheme
                                 .headlineMedium!
                                 .copyWith(
-                                  color: (MediaQuery.of(context).size.width < 1000) &&  (definition != '' || images.length > 0)
+                                  color: (isMobile) &&  (definition != '' || images.length > 0)
                                       ? Theme.of(context).colorScheme.onPrimary 
                                       : Theme.of(context).colorScheme.onBackground,
                                 ),
@@ -461,19 +470,19 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
             
             Container(
                width: (title != '' || definition != '' || images.length > 0) ? 600 : 800,
-                height: MediaQuery.of(context).size.width < 1000 
+                height: isMobile 
                 ? (definition != '' || images.length > 0) ? 400 : 700 : 600,
                 margin: EdgeInsets.all(12),
                 padding: EdgeInsets.all(12),
               child: SingleChildScrollView(
                 child:
                 Container(
-                  height: MediaQuery.of(context).size.width < 1000 ? (title != '' || definition != '' || images.length > 0) ? 450 : 700 : 576,
+                  height: isMobile ? (title != '' || definition != '' || images.length > 0) ? 550 : 700 : 576,
                     child: SingleChildScrollView(
                       child: Column(
                       children: [
 
-                        if (widget.userData!.teacher) Container(
+                        if (widget.userData!.teacher && usersCompleted) Container(
                           margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           height: 60,
                           padding: EdgeInsets.symmetric(horizontal: 10),
@@ -489,11 +498,12 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                 Text('Otázka ${questionIndex + 1}: ',
                                   style: Theme.of(context)
                                           .textTheme
-                                          .headlineMedium!
+                                          .displayMedium!
                                           .copyWith(
                                             color: AppColors.getColor('primary').main,
                                           ),
                                 ),
+                                SizedBox(width: 8,),
                                 FutureBuilder<Map<String, dynamic>>(
                                     future:  getQuestionStats(
                                     widget.userData!.schoolClass,
@@ -507,14 +517,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
                                   } else {
-                                    double? correctPercentage = snapshot.data?['correctPercentage'];
-                                    return Text('Priemerná Úspešnosť: ${correctPercentage?.toStringAsFixed(2) ?? "N/A"}%',
+                                    int? correctPercentage = snapshot.data?['correctPercentage'].round();
+                                    return Text('Úspešnosť: ${correctPercentage?.toString() ?? "N/A"}%',
                                         style: Theme.of(context)
-                                                .textTheme
-                                                .headlineMedium!
-                                                .copyWith(
-                                                  color: Theme.of(context).colorScheme.onBackground,
-                                                ),
+                                          .textTheme
+                                          .displayMedium!
+                                          .copyWith(
+                                            color: Theme.of(context).colorScheme.onBackground,
+                                          ),
                                       );
                                   }
                                 },
@@ -522,6 +532,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                               ],
                             )
                         ),
+                        if(isDesktop) SizedBox(height: 30,),
                         question != '' ? Container(
                                   padding: EdgeInsets.all(4),
                                   child: Text(
@@ -547,6 +558,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                   ),
                                 ) : Container(),
                                 if (!(title != '' || definition != '' || images.length > 0)) SizedBox(height: 20,),
+                          if(isDesktop) SizedBox(height: 30,),
                         !widget.userData!.teacher ? 
                           ListView.builder(
                           shrinkWrap: true,
@@ -760,11 +772,34 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                                       child: Row(
                                         children: [
-                                          Radio<bool>(
-                                            value: true,
-                                            groupValue: _answer.any((e) => e.answer == index),
-                                            onChanged: (value) {}, // Disable manual changing by tapping the radio directly
-                                            activeColor: AppColors.getColor('primary').main,
+                                          MouseRegion(
+                                            cursor: SystemMouseCursors.click,
+                                            child: GestureDetector(
+                                            onTap: () {
+                                                setState(() {
+                                                  bool isSelected = _answer.any((e) => e.answer == index);
+                                                  if (!isSelected) {
+                                                    // If selected items are less than the limit, allow adding
+                                                    if ((answers.length + answersImage.length) <= 3) {
+                                                      if (_answer.length < 1) {
+                                                        _answer.add(UserAnswerData(answer: index, index: index));
+                                                      }
+                                                    } else {
+                                                      _answer.add(UserAnswerData(answer: index, index: index));
+                                                    }
+                                                  } else {
+                                                    // Always allow unchecking
+                                                    _answer.removeWhere((element) => element.answer == index);
+                                                  }
+                                                });
+                                              },
+                                              child:Radio<bool>(
+                                                value: true,
+                                                groupValue: _answer.any((e) => e.answer == index),
+                                                onChanged: (value) {}, // Disable manual changing by tapping the radio directly
+                                                activeColor: AppColors.getColor('primary').main,
+                                              ),
+                                            )
                                           ),
                                           SizedBox(width: 32),
                                           Expanded(child: Text('Obrázok ${index + 1},',
@@ -788,74 +823,88 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                         } else if (answers.isNotEmpty && (index - answersImage.length) < answers!.length) {
                           String? item = answers[(index - answersImage.length)];
                          return  MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                bool isSelected = _answer.any((e) => e.answer == index);
-                                if (!isSelected) {
-                                  // If selected items are less than the limit, allow adding
-                                  if ((answers.length + answersImage.length) <= 3) {
-                                    if (_answer.length < 1) {
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  bool isSelected = _answer.any((e) => e.answer == index);
+                                  if (!isSelected) {
+                                    // If selected items are less than the limit, allow adding
+                                    if ((answers.length + answersImage.length) <= 3) {
+                                      if (_answer.length < 1) {
+                                        _answer.add(UserAnswerData(answer: index, index: index));
+                                      }
+                                    } else {
                                       _answer.add(UserAnswerData(answer: index, index: index));
-                                      print(index);
-                                      print(_answer.length);
-                                      print(_answer[0].answer);
                                     }
                                   } else {
-                                    _answer.add(UserAnswerData(answer: index, index: index));
+                                    // Allow toggling off
+                                    _answer.removeWhere((element) => element.answer == index);
                                   }
-                                } else {
-                                  // Always allow unchecking
-                                  _answer.removeWhere((element) => element.answer == index);
-                                }
-                              });
-                            },
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: Container(
-                                margin: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  border: _answer.any((e) => e.index == index)
-                                      ? Border.all(color: Theme.of(context).primaryColor)
-                                      : Border.all(color: AppColors.getColor('mono').lightGrey),
-                                  color: _answer.any((e) => e.index == index)
-                                      ? AppColors.getColor('primary').lighter
-                                      : AppColors.getColor('mono').white,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                                  child: Row(
-                                    children: [
-                                      Radio<bool>(
-                                        value: true,
-                                        groupValue: _answer.any((e) => e.answer == index),
-                                        onChanged: (value) {},
-                                        activeColor: AppColors.getColor('primary').main,
-                                      ),
-                                      SizedBox(width: 32),
-                                      Expanded(
-                                        child: Text(
-                                          item,
-                                          style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                              color: _answer.any((e) => e.index == index)
-                                                  ? Theme.of(context).colorScheme.primary
-                                                  : Theme.of(context).colorScheme.onBackground,
-                                            ),
+                                  print(_answer);
+                                });
+                              },
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: Container(
+                                  margin: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    border: _answer.any((e) => e.index == index)
+                                        ? Border.all(color: Theme.of(context).primaryColor)
+                                        : Border.all(color: AppColors.getColor('mono').lightGrey),
+                                    color: _answer.any((e) => e.index == index)
+                                        ? AppColors.getColor('primary').lighter
+                                        : AppColors.getColor('mono').white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                    child: Row(
+                                      children: [
+                                        Radio<bool>(
+                                          value: _answer.any((e) => e.answer == index), // Use the value based on whether it's selected
+                                          groupValue: true, // This should be a common group value for all radio buttons
+                                          onChanged: (value) {
+                                            setState(() {
+                                              bool isSelected = _answer.any((e) => e.answer == index);
+                                              if (!isSelected) {
+                                                // If selected items are less than the limit, allow adding
+                                                if ((answers.length + answersImage.length) <= 3) {
+                                                  if (_answer.length < 1) {
+                                                    _answer.add(UserAnswerData(answer: index, index: index));
+                                                  }
+                                                } else {
+                                                  _answer.add(UserAnswerData(answer: index, index: index));
+                                                }
+                                              } else {
+                                                // Allow toggling off
+                                                _answer.removeWhere((element) => element.answer == index);
+                                              }
+                                            });
+                                          },
+                                          activeColor: AppColors.getColor('primary').main,
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(width: 32),
+                                        Expanded(
+                                          child: Text(
+                                            item,
+                                            style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                color: _answer.any((e) => e.index == index)
+                                                    ? Theme.of(context).colorScheme.primary
+                                                    : Theme.of(context).colorScheme.onBackground,
+                                              ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-
+                          );
 
                         } else if (matchmaking.isNotEmpty && matches.isNotEmpty && index - (answersImage.length) + ((answers.length)) < matchmaking.length) {
                           String? item = matchmaking[(index - (answersImage.length) - (answers.length))];
@@ -940,6 +989,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                               String? itemText;
                               Color bgColor;
                               Color borderColor;
+                              Color percentageColor;
                               bool isCorrect = correct!.any((cItem) => cItem.index == index);
 
                               Widget mainWidget;
@@ -948,17 +998,27 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                               if (index < answersImage.length &&  answersImage.isNotEmpty) {
                                 String item = answersImage[index];
                                 itemText = explanation!.length > 1 && explanation![index].isNotEmpty  ? explanation![index] : null;
-                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('red').lighter;
-                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
-                                mainWidget = reTileImage(bgColor, borderColor, index, item, context, percentage: data!['answerPercentages'], correct: isCorrect);
+                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('mono').white;
+                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('mono').lightGrey;
+                                percentageColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
+                                if (usersCompleted) {
+                                  mainWidget = reTileImage(bgColor, borderColor, index, item, context, percentage: data!['answerPercentages'], correct: isCorrect, percentageColor: percentageColor);
+                                } else {
+                                  mainWidget = reTileImage(bgColor, borderColor, index, item, context, correct: isCorrect);
+                                }
                               }
                               // Handle answers
                               else if ((index - answersImage.length) < answers.length &&  answers.isNotEmpty && answers[index - answersImage.length].isNotEmpty) {
                                 String? item = answers[index - answersImage.length].isNotEmpty ? answers[index - answersImage.length] : null;
                                 itemText = explanation!.length > 1 && explanation![index - answersImage.length].isNotEmpty  ? explanation![index - answersImage.length] : null;
-                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('red').lighter;
-                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
-                                mainWidget = reTile(bgColor, borderColor, index, item, context, percentage: data!['answerPercentages'], correct: isCorrect);
+                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('mono').white;
+                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('mono').lightGrey;
+                                percentageColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
+                                if (usersCompleted) {
+                                  mainWidget = reTile(bgColor, borderColor, index, item, context, percentage: data!['answerPercentages'], correct: isCorrect, percentageColor: percentageColor);
+                                } else {
+                                  mainWidget = reTile(bgColor, borderColor, index, item, context, correct: isCorrect);
+                                }
                               }
                               // Handle matchmaking
                               else  {
@@ -966,8 +1026,9 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                 String? item = matchmaking[index  - answersImage.length  - answers.length];
                                 List<String> item2 = matches;
                                 itemText = explanation!.length > 1 && explanation![index - answersImage.length  - answers.length].isNotEmpty  ? explanation![index - answersImage.length - answers.length ] : null;
-                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('red').lighter;
-                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
+                                bgColor = isCorrect ? AppColors.getColor('green').lighter : AppColors.getColor('mono').white;
+                                borderColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('mono').lightGrey;
+                                percentageColor = isCorrect ? AppColors.getColor('green').main : AppColors.getColor('red').main;
                                 mainWidget = reTileMatchmaking(bgColor, borderColor, correct!.firstWhere((cItem) => cItem.index == index).correct, index, item, context, item2, true);
                               }
 
@@ -1043,7 +1104,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                           ],
                         ),
                       ),
-                      if(MediaQuery.of(context).size.width < 1000)pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
+                      if(isMobile)pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
                                 onNextButtonPressed,
                               ) : ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'HOTOVO', onTap:
                                 onAnswerPressed,
@@ -1061,7 +1122,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       ),
       
             
-        if(MediaQuery.of(context).size.width > 1000)pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
+        if(!isMobile)pressed || widget.userData!.teacher ? ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
           onNextButtonPressed,
         ) : ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'HOTOVO', onTap:
           onAnswerPressed,
@@ -1134,7 +1195,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                 ),
             ),
             SizedBox(height: 30),
-            SvgPicture.asset('assets/star.svg', height: 100,),
+            Image.asset('assets/star.png', height: 100,),
             SizedBox(height: 10),
             Text(
               getResultBasedOnPercentage(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points, questionsPoint ?? 0),

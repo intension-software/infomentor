@@ -4,9 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:infomentor/backend/fetchUser.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
+import 'dart:html' as html;
 
 
-class StudentFeed extends StatefulWidget {
+class DesktopStudentFeed extends StatefulWidget {
   final Function(int) onNavigationItemSelected;
   final int? capitolLength;
   final int capitolsId;
@@ -21,7 +22,7 @@ class StudentFeed extends StatefulWidget {
   final UserCapitolsData? capitolData;
   final String? capitolColor;
 
-  StudentFeed({
+  DesktopStudentFeed({
     Key? key,
     required this.capitolColor,
     required this.onNavigationItemSelected,
@@ -39,25 +40,50 @@ class StudentFeed extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StudentFeed> createState() => _StudentFeedState();
+  State<DesktopStudentFeed> createState() => _DesktopStudentFeedState();
 }
 
-class _StudentFeedState extends State<StudentFeed> {
+class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
+  bool isMobile = false;
+  bool isDesktop = false;
+  bool _loading = true;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
+
+  @override
+  void initState()
+    {
+      super.initState();
+      final userAgent = html.window.navigator.userAgent.toLowerCase();
+      isMobile = userAgent.contains('mobile');
+      isDesktop = userAgent.contains('macintosh') ||
+          userAgent.contains('windows') ||
+          userAgent.contains('linux');
+
+      setState(() {
+        _loading = false;
+      });
+    }
+   
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+        return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
+    }
     return  Container(
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(height: 50,),
                     Align(
                     alignment: Alignment.center,
                     child: Container(
-                      width: 700,
-                      height: 250,
+                      width: 836,
+                      height: 329,
                       decoration: BoxDecoration(
-                        color: MediaQuery.of(context).size.width < 1000 ?  null : Theme.of(context).primaryColor,
+                        color: isMobile ?  null : Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       padding: EdgeInsets.all(16),
@@ -67,14 +93,11 @@ class _StudentFeedState extends State<StudentFeed> {
                           mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
                           crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
                           children: [
-                            if (MediaQuery.of(context).size.width > 1000) SizedBox(height: 50,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
                               children: [
-                                Icon(
-                                  Icons.star_border_outlined,
-                                  color: AppColors.getColor('primary').lighter,
-                                ),
+                                SvgPicture.asset('assets/icons/smallStarIcon.svg', color: AppColors.getColor('primary').lighter),
+                                SizedBox(width: 8,),
                                 Text(
                                   "Týždenná výzva",
                                   style: Theme.of(context)
@@ -86,27 +109,26 @@ class _StudentFeedState extends State<StudentFeed> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20), // Add some spacing between the items
                             Padding(
-                              padding: EdgeInsets.all(50),
+                              padding: EdgeInsets.all(10),
                               child: Center(
-                                child: OverflowBox(
-                                  maxWidth: double.infinity, // Allow the text to overflow
-                                  alignment: Alignment.center,
+                                child: Container(
+                                  width: 400, // Set your desired maximum width here
                                   child: Text(
                                     widget.weeklyTitle ?? '',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium!
-                                        .copyWith(
-                                          color: Theme.of(context).colorScheme.onPrimary,
-                                        ),
-                                    textAlign: TextAlign.center, // Center align the text horizontally
+                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16), // Add some spacing between the items
+                            Text(
+                                "Čas na dokončenie: 1 týždeň",
+                                style: TextStyle(color: AppColors.getColor('primary').lighter,),
+                              ),
+                            SizedBox(height: 16,),
                             ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', onTap:
                               () {
                                   widget.onNavigationItemSelected(1);
@@ -116,7 +138,7 @@ class _StudentFeedState extends State<StudentFeed> {
                         ) : Column(
                           crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
                           children: [
-                            if (MediaQuery.of(context).size.width > 1000) SizedBox(height: 50,),
+                            SizedBox(height: 50,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
                               children: [
@@ -161,8 +183,8 @@ class _StudentFeedState extends State<StudentFeed> {
 
                   SizedBox(height: 24),
                   !widget.weeklyBool ? Container(
-                    height: 350,
-                    width: 700,
+                    height: 320,
+                    width: 804,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.background,
                       borderRadius: BorderRadius.circular(10),
@@ -178,22 +200,19 @@ class _StudentFeedState extends State<StudentFeed> {
                         children: [
                             SvgPicture.asset(
                               'assets/badges/badgeArg.svg',
+                              height: 100,
                             ),
                             Padding(
-                              padding: EdgeInsets.all(50),
+                              padding: EdgeInsets.all(10),
                               child: Center(
-                                child: OverflowBox(
-                                  maxWidth: double.infinity, // Allow the text to overflow
-                                  alignment: Alignment.center,
+                                child: Container(
+                                  width: 400, // Set your desired maximum width here
                                   child: Text(
                                     widget.weeklyTitle ?? '',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium!
-                                        .copyWith(
-                                          color: Theme.of(context).colorScheme.onPrimary,
-                                        ),
-                                    textAlign: TextAlign.center, // Center align the text horizontally
+                                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                      color: AppColors.getColor('mono').grey,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
@@ -202,7 +221,7 @@ class _StudentFeedState extends State<StudentFeed> {
                               'Splň týždennú výzvu pre',
                               style: Theme.of(context)
                                   .textTheme
-                                  .headlineSmall!
+                                  .titleLarge!
                                   .copyWith(
                                 color: AppColors.getColor('mono').black,
                               ),
@@ -211,7 +230,7 @@ class _StudentFeedState extends State<StudentFeed> {
                               'zobrazenie skóre',
                               style: Theme.of(context)
                                   .textTheme
-                                  .headlineSmall!
+                                  .titleLarge!
                                   .copyWith(
                                 color: AppColors.getColor('mono').black,
                               ),
@@ -221,7 +240,7 @@ class _StudentFeedState extends State<StudentFeed> {
                   ) :  ConstrainedBox(
                         constraints: BoxConstraints(minHeight: 350),
                         child:Container(
-                          width: 700,
+                          width: 804,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
@@ -253,7 +272,6 @@ class _StudentFeedState extends State<StudentFeed> {
                                         ),
                                 ),
                                 SizedBox(height: 10),
-                                MediaQuery.of(context).size.width > 1000 ?
                                 Row(
                                   children: [
                                   Container(
@@ -268,7 +286,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                       ),
                                     )
                                   ),
-                                  SizedBox(width: MediaQuery.of(context).size.width < 630 ? 5 : 10),
+                                  SizedBox(width: isMobile ? 5 : 10),
                                   Text(
                                     "${widget.completedCount}/${widget.weeklyCapitolLength} výziev hotových",
                                     style: Theme.of(context)
@@ -279,33 +297,7 @@ class _StudentFeedState extends State<StudentFeed> {
                                               ),
                                       ),
                                   ]
-                                ,) : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                    width:  200,
-                                    height: 10,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: LinearProgressIndicator(
-                                        value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / widget.weeklyCapitolLength : 0.0,
-                                        backgroundColor: AppColors.getColor('blue').lighter,
-                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
-                                      ),
-                                    )
-                                  ),
-                                  SizedBox(height: 5,),
-                                  Text(
-                                    "${widget.completedCount}/${widget.weeklyCapitolLength} výziev hotových",
-                                    style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .copyWith(
-                                                  color: AppColors.getColor('mono').grey,
-                                              ),
-                                  ),
-                                  ],
-                                )
+                                ,) 
                                 ],
                               ),
                             ],

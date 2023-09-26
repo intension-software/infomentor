@@ -25,6 +25,8 @@ dependencies:
   dropdown_button2: ^2.3.8
   g_recaptcha_v3: ^0.0.5
   google_fonts: ^6.1.0
+  flutter_styled_toast: ^2.2.1
+  flutter_gcaptcha_v3: ^2.0.4
 
 dev_dependencies:
   flutter_test:
@@ -42,7 +44,7 @@ flutter:
     - assets/logoFilled.svg
     - assets/background.svg
     - assets/lastScreenBackground.svg
-    - assets/star.svg
+    - assets/star.png
     - assets/badges/
     - assets/graphs/
     - assets/avatars/

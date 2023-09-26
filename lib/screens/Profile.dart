@@ -8,6 +8,7 @@ import 'package:infomentor/backend/fetchClass.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:async/async.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
+import 'dart:html' as html;
 
 
 class Profile extends StatefulWidget {
@@ -41,16 +42,25 @@ class _ProfileState extends State<Profile> {
   bool _loading = true;
   int percentage = 0;
   bool hide = true;
+  bool isMobile = false;
+  bool isDesktop = false;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
 
   final List<String> placeIcons = [
-    'assets/icons/firstPlaceIcon.svg',
-    'assets/icons/secondPlaceIcon.svg',
-    'assets/icons/thirdPlaceIcon.svg',
+    'assets/icons/firstPlaceIcon.png',
+    'assets/icons/secondPlaceIcon.png',
+    'assets/icons/thirdPlaceIcon.png',
   ];
 
   @override
   void initState() {
     super.initState();
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
     _isDisposed = false; // Resetting _isDisposed state
     fetchUserData();
     fetchCapitolsData();
@@ -459,7 +469,7 @@ class _ProfileState extends State<Profile> {
                                               ],
                                             ),
                                           ),
-                                          if(!hide || MediaQuery.of(context).size.width > 1000)Column(
+                                          if(!hide || isDesktop)Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Divider(color: AppColors.getColor('mono').lightGrey, thickness: 2.5),
@@ -542,7 +552,7 @@ class _ProfileState extends State<Profile> {
                                             ),
                                             ],
                                           ),
-                                          if(MediaQuery.of(context).size.width < 1000)Center(
+                                          if(isMobile)Center(
                                             child: Container(
                                             margin: EdgeInsets.all(12),
                                             width: 181,
@@ -604,7 +614,7 @@ class _ProfileState extends State<Profile> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: List.generate(students!.length, (index) {
-                                              if (index > 2 && MediaQuery.of(context).size.width < 1000) return SizedBox.shrink(); // we only want to display top 3
+                                              if (index > 2 && isMobile) return SizedBox.shrink(); // we only want to display top 3
                                               return Column(
                                                 children: [
                                                   Container(
@@ -630,7 +640,7 @@ class _ProfileState extends State<Profile> {
                                                                   .copyWith(
                                                                 color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
                                                               ),
-                                                            ) : SvgPicture.asset(
+                                                            ) : Image.asset(
                                                                 placeIcons[index], // Use the corresponding SVG asset
                                                                 width: 24,
                                                                 height: 24,
@@ -680,7 +690,7 @@ class _ProfileState extends State<Profile> {
                                               );
                                             }),
                                           ),
-                                          if(MediaQuery.of(context).size.width < 1000)Center(
+                                          if(isMobile)Center(
                                             child: Container(
                                               margin: EdgeInsets.all(12),
                                               width: 191,
@@ -715,7 +725,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     )
                       )
-                      ,if (students != null && MediaQuery.of(context).size.width < 1000) SingleChildScrollView(
+                      ,if (students != null && isMobile) SingleChildScrollView(
                         child:Container(
                           padding: EdgeInsets.all(20),
                           width: 392,
@@ -778,7 +788,7 @@ class _ProfileState extends State<Profile> {
                                                             .copyWith(
                                                           color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
                                                         ),
-                                                      ) : SvgPicture.asset(
+                                                      ) : Image.asset(
                                                           placeIcons[index], // Use the corresponding SVG asset
                                                           width: 24,
                                                           height: 24,

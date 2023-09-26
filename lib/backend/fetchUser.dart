@@ -272,4 +272,19 @@ Future<UserData> fetchUser(String userId) async {
   }
 }
 
+Future<void> deleteUser(String userId) async {
+  try {
+    // Next, delete the user document from Firestore
+    await FirebaseFirestore.instance.collection('users').doc(userId).delete();
+
+    // You may also want to clean up any other related data or documents here
+
+    print('User with ID $userId has been deleted successfully.');
+  } catch (error) {
+    print('Error deleting user: $error');
+    throw error;
+  }
+}
+
+
 

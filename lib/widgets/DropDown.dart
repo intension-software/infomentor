@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchClass.dart';
+import 'dart:html' as html;
 
 class OptionsData {
   String id;
@@ -36,10 +37,19 @@ class DropDown extends StatefulWidget {
 class _DropDownState extends State<DropDown> {
   String? dropdownValue;
   List<OptionsData>? options;
+  bool isMobile = false;
+  bool isDesktop = false;
+
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
 
   @override
 void initState() {
   super.initState();
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
   fetchOptions();
 }
 
@@ -87,7 +97,7 @@ Widget build(BuildContext context) {
           borderRadius: BorderRadius.circular(30.0), // Rounded corners for the entire popup
           child: Container(
             width: 138,
-            height: MediaQuery.of(context).size.width < 1000 ? 20 : 40,
+            height: isMobile ? 20 : 40,
             decoration: BoxDecoration(
               color: AppColors.getColor('mono').lighterGrey, // Set the background color to grey or transparent
               borderRadius: BorderRadius.circular(0.0), // Rounded corners for the button

@@ -266,9 +266,13 @@ Widget build(BuildContext context) {
                     children: [
                       // First page - ListView
                       ListView.builder(
-                          reverse: true,
-                          itemCount: totalTests(),
-                          itemBuilder: (BuildContext context, int globalIndex) {
+                            reverse: true,
+                            itemCount: totalTests() + 1, // Add 1 for the dummy item
+                            itemBuilder: (BuildContext context, int globalIndex) {
+                              if (globalIndex == totalTests()) {
+                                // This is the dummy item, you can control its height
+                                return SizedBox(height: 150.0); // Adjust the height as needed
+                              }
                             int? capitolIndex;
                             int? testIndex;
 
@@ -277,19 +281,15 @@ Widget build(BuildContext context) {
                               int currentCapitolId = capitolsIds[i]; // make sure to get the id correctly
                               int currentCapitolTestCount = results![currentCapitolId].capitolsData!.tests.length;
 
-                              if (globalIndex < (prevTestsSum + currentCapitolTestCount)) {
+                              if (globalIndex - 1 < (prevTestsSum + currentCapitolTestCount)) {
                                 capitolIndex = currentCapitolId;
-                                testIndex = globalIndex - prevTestsSum;
+                                testIndex = globalIndex - 1 - prevTestsSum;
 
                                 break;
                               } else {
                                 prevTestsSum += currentCapitolTestCount;
                               }
                             }
-
-
-
-
                             if (capitolIndex == null || testIndex == null) return Container();  // Handle error
 
                             EdgeInsets padding = EdgeInsets.only(
@@ -371,9 +371,13 @@ Widget build(BuildContext context) {
                     children: [
                       Expanded(
                         child: ListView.builder(
-                          reverse: true,
-                          itemCount: totalTests(),
-                          itemBuilder: (BuildContext context, int globalIndex) {
+                            reverse: true,
+                            itemCount: totalTests() + 1, // Add 1 for the dummy item
+                            itemBuilder: (BuildContext context, int globalIndex) {
+                              if (globalIndex == 0) {
+                                // This is the dummy item, you can control its height
+                                return SizedBox(height: 150.0); // Adjust the height as needed
+                              }
                             int? capitolIndex;
                             int? testIndex;
 
@@ -382,9 +386,9 @@ Widget build(BuildContext context) {
                               int currentCapitolId = capitolsIds[i]; // make sure to get the id correctly
                               int currentCapitolTestCount = results![currentCapitolId].capitolsData!.tests.length;
 
-                              if (globalIndex < (prevTestsSum + currentCapitolTestCount)) {
+                              if (globalIndex - 1 < (prevTestsSum + currentCapitolTestCount)) {
                                 capitolIndex = currentCapitolId;
-                                testIndex = globalIndex - prevTestsSum;
+                                testIndex = globalIndex - 1 - prevTestsSum;
                                 break;
                               } else {
                                 prevTestsSum += currentCapitolTestCount;
@@ -512,6 +516,7 @@ class StarButton extends StatelessWidget {
     return count;
 }
 
+
   @override
 Widget build(BuildContext context) {
   return SizedBox(
@@ -561,8 +566,9 @@ Widget build(BuildContext context) {
                   color: AppColors.getColor('mono').white,
                 ),
                 child: GestureDetector(
-                  onTap: () {
-                    showPopupMenu(context, number % 2 == 0 ? 0 : 1);
+                 onTap: () {
+                    final RenderBox button = context.findRenderObject() as RenderBox;
+                    showPopupMenu(context, number % 2 == 0 ? 0 : 1, button);
                     visibleContainerIndex(number);
                   },
                   child: MouseRegion(
@@ -591,13 +597,14 @@ Widget build(BuildContext context) {
               Container(
                 child: GestureDetector(
                 onTap: () {
-                  showPopupMenu(context, number % 2 == 0 ? 0 : 1);
+                  final RenderBox button = context.findRenderObject() as RenderBox;
+                  showPopupMenu(context, number % 2 == 0 ? 0 : 1, button);
                   visibleContainerIndex(number);
                 },
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
-                  child: SvgPicture.asset(
-                    'assets/star.svg',
+                  child: Image.asset(
+                    'assets/star.png',
                     width: 90.0,
                     height: 90.0,
                   ),
@@ -611,49 +618,24 @@ Widget build(BuildContext context) {
 
 
 
-  void showPopupMenu(BuildContext context, int direction) {
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+void showPopupMenu(BuildContext context, int direction, RenderBox button) {
+   final double menuWidth = 400.0; // Set your desired menu width
+  final double menuHeight = 200.0; // Set your desired menu height
 
-    final Offset buttonTopLeft = button.localToGlobal(Offset.zero, ancestor: overlay);
-    final Offset buttonBottomRight = button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay);
-    final double buttonCenterX = (buttonTopLeft.dx + buttonBottomRight.dx) / 2;
-    final double buttonCenterY = (buttonTopLeft.dy + buttonBottomRight.dy) / 2;
-    final Offset buttonCenter = Offset(buttonCenterX, buttonCenterY);
+  // Calculate the position of the button on the screen
+  final Offset buttonPosition = button.localToGlobal(Offset.zero);
 
-    // Calculate the width of the menu
-    final double menuWidth = MediaQuery.of(context).size.width; // Adjust the width according to your needs
-    final double offsetX;
-    // Calculate the horizontal offset to center the menu
-    if (userData!.teacher) {
-      offsetX = (button.size.width - menuWidth ) / 2 + 689;
-    } else {
-      offsetX = (button.size.width - menuWidth ) / 2 + 252;
-    }
-    
+  double offsetX = buttonPosition.dx + button.size.width / 2 - menuWidth / 2;
+  double offsetY = buttonPosition.dy + button.size.height + 10; // Adjust vertical position as needed
 
-    final RelativeRect position = RelativeRect.fromLTRB(
-      buttonCenter.dx - offsetX,
-      buttonCenter.dy + 45,
-      buttonCenter.dx - offsetX,
-      buttonCenter.dy,
-    );
+  final RelativeRect position = RelativeRect.fromLTRB(
+    offsetX,
+    offsetY,
+    offsetX + menuWidth,
+    offsetY + menuHeight,
+  );
 
-    int countTrueValues(List<UserQuestionsData>? questionList) {
-      int count = 0;
-      if (questionList != null) {
-        for (UserQuestionsData question in questionList) {
-          if (question.completed == true) {
-            count++;
-          }
-        }
-      }
-      return count;
-  }
-
-  
-
-   showMenu<int>(
+  showMenu<int>(
     context: context,
     position: position,
     constraints: BoxConstraints(maxWidth: 400, minWidth: 0),

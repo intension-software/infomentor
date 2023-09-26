@@ -119,8 +119,8 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                     Text(
                       schoolName!,
                       style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                            color: AppColors.getColor('mono').black,
-                          ),
+                        color: AppColors.getColor('mono').black,
+                      ),
                     ),
                     Spacer(),
                     Container(
@@ -919,20 +919,27 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                 Spacer(),
                 Align(
                   alignment: Alignment.center,
-                  child: ReButton(
-                    activeColor: AppColors.getColor('mono').white, 
-                    defaultColor: AppColors.getColor('green').main, 
-                    disabledColor: AppColors.getColor('mono').lightGrey, 
-                    focusedColor: AppColors.getColor('green').light, 
-                    hoverColor: AppColors.getColor('green').light, 
-                    textColor: Theme.of(context).colorScheme.onPrimary, 
-                    iconColor: AppColors.getColor('mono').black, 
-                    text: 'ULOŽIŤ', 
-                    isDisabled: _classNameController.text == '',
-                    onTap: () async {
-                      addClass(_classNameController.text, widget.currentUserData!.school);
-                    },
-                  ),
+                  child: Row(
+                    children: [
+                          ReButton(
+                            activeColor: AppColors.getColor('mono').white, 
+                            defaultColor: AppColors.getColor('green').main, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('green').light, 
+                            hoverColor: AppColors.getColor('green').light, 
+                            textColor: Theme.of(context).colorScheme.onPrimary, 
+                            iconColor: AppColors.getColor('mono').black, 
+                            text: 'ULOŽIŤ', 
+                            isDisabled: _classNameController.text == '',
+                            onTap: () async {
+                              addClass(_classNameController.text, widget.currentUserData!.school);
+                              reShowToast('Trieda úspešne pridaná', false, context);
+                            },
+                          ),
+                    ],
+                  )
+                  
+                  
                 ),
                 SizedBox(height: 30,),
               ],
@@ -1076,7 +1083,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         text: 'ULOŽIŤ', 
                         isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
-                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher);
+                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher, context);
                           }
                       ),
                       Text(
@@ -1142,7 +1149,29 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                 Spacer(),
                 Align(
                   alignment: Alignment.center,
-                  child: ReButton(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ReButton(
+                      activeColor: AppColors.getColor('mono').white, 
+                      defaultColor: AppColors.getColor('mono').white, 
+                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                      focusedColor: AppColors.getColor('mono').white, 
+                      hoverColor: AppColors.getColor('mono').white, 
+                      textColor: Theme.of(context).colorScheme.error, 
+                      iconColor: Theme.of(context).colorScheme.error,
+                      leftIcon: 'assets/icons/binIcon.svg',
+                      text: 'Vymazať triedu', 
+                      onTap: () {
+                          deleteClass(currentClass!.id, widget.currentUserData!.school);
+                          removeClassFromSchool(currentClass!.id, widget.currentUserData!.school);
+                          deleteUserFunction(currentClass!.data.students,currentUser!.data, context);
+                          deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context);
+                          reShowToast('Trieda úspešne vymazaná', false, context);
+                        }
+                    ),
+                  ReButton(
                     activeColor: AppColors.getColor('mono').white, 
                     defaultColor: AppColors.getColor('green').main, 
                     disabledColor: AppColors.getColor('mono').lightGrey, 
@@ -1193,8 +1222,11 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                           );
                         }).toList(),
                       ));
+                      reShowToast('Trieda úspešne upravená', false, context);
                     },
                   ),
+                  ]
+                  )
                 ),
                 SizedBox(height: 30,),
               ],
@@ -1299,23 +1331,46 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                 Align(
                   alignment: Alignment.center,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                       ReButton(
-                        activeColor: AppColors.getColor('mono').white, 
-                        defaultColor: AppColors.getColor('green').main, 
-                        disabledColor: AppColors.getColor('mono').lightGrey, 
-                        focusedColor: AppColors.getColor('green').light, 
-                        hoverColor: AppColors.getColor('green').light, 
-                        textColor: Theme.of(context).colorScheme.onPrimary, 
-                        iconColor: AppColors.getColor('mono').black, 
-                        text: 'ULOŽIŤ', 
-                        isDisabled: (_editUserNameController.text == '' || _editUserEmailController.text == '' ||_editUserPasswordController.text == ''),
-                        onTap: () {
-                            currentUser!.data.name = _editUserNameController.text;
-                            currentUser!.data.email = _editUserEmailController.text;
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ReButton(
+                            activeColor: AppColors.getColor('mono').white, 
+                            defaultColor: AppColors.getColor('mono').white, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('mono').white, 
+                            hoverColor: AppColors.getColor('mono').white, 
+                            textColor: Theme.of(context).colorScheme.error, 
+                            iconColor: Theme.of(context).colorScheme.error,
+                            leftIcon: 'assets/icons/binIcon.svg',
+                            text: currentUser!.data.teacher ? 'Vymazať učiteľa' : 'Vymazať žiaka', 
+                            onTap: () {
+                                deleteUserFunction([currentUser!.id],currentUser!.data, context);
+                              }
+                          ),
+                          ReButton(
+                            activeColor: AppColors.getColor('mono').white, 
+                            defaultColor: AppColors.getColor('green').main, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('green').light, 
+                            hoverColor: AppColors.getColor('green').light, 
+                            textColor: Theme.of(context).colorScheme.onPrimary, 
+                            iconColor: AppColors.getColor('mono').black, 
+                            text: 'ULOŽIŤ', 
+                            isDisabled: (_editUserNameController.text == '' || _editUserEmailController.text == '' ||_editUserPasswordController.text == ''),
+                            onTap: () {
+                                currentUser!.data.name = _editUserNameController.text;
+                                currentUser!.data.email = _editUserEmailController.text;
 
-                            saveUserDataToFirestore(currentUser!.data, currentUser!.id, _editUserEmailController.text, _editUserPasswordController.text, );
-                          }
+                                saveUserDataToFirestore(currentUser!.data, currentUser!.id, _editUserEmailController.text, _editUserPasswordController.text,currentUser!.data, context );
+                              }
+                          ),
+                          
+                        ],
                       ),
                       Text(
                         'Ak učiteľ, ktorého chcete pridať, už má účet v aplikácií, pridáte ho tu.',
@@ -1358,6 +1413,8 @@ Future<void> saveUserDataToFirestore(
   String userId,
   String newEmail,
   String newPassword,
+  UserData? currentUser,
+  BuildContext context
 ) async {
   try {
     // Reference to the user document in Firestore
@@ -1417,14 +1474,15 @@ Future<void> saveUserDataToFirestore(
 
     // Update the user document in Firestore with the new userDataMap
     await userRef.update(userDataMap);
+    reShowToast(currentUser!.teacher ? 'Učiteľ úspešne upravený' : 'Žiak úspešne upravený', false, context);
   } catch (e) {
-    print('Error saving user data to Firestore: $e');
+    reShowToast(currentUser!.teacher ? 'Učiteľ sa nepodarilo upraviť' : 'Žiaka sa nepodarilo upraviť', true, context);
     rethrow;
   }
 }
 
 
- Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher) async {
+ Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher, BuildContext context) async {
   try {
     final functions = FirebaseFunctions.instance;
     final result = await functions.httpsCallable('createAccount').call({
@@ -1619,6 +1677,8 @@ Future<void> saveUserDataToFirestore(
       'admin': data.admin,
       'email': data.email,
       'name': data.name,
+      'discussionPoints': data.discussionPoints,
+      'weeklyDiscussionPoints': data.weeklyDiscussionPoints,
       'active': data.active,
       'classes': data.classes,
       'school': data.school,
@@ -1647,16 +1707,17 @@ Future<void> saveUserDataToFirestore(
       'materials': data.materials,
       'badges': data.badges,
     });
-    updateClassToFirestore(classId, data.id, teacher);
+    updateClassToFirestore(classId, data.id, teacher, context);
+    
+    reShowToast(teacher ? 'Učiteľ úspešne pridaný' : 'Žiak úspešne pridaný', false, context);
   } catch (e) {
-    print('Error registering user: $e');
-    throw Exception('Failed to register user');
+    reShowToast(teacher ? 'Učiteľa sa nepodarilo pridať' : 'Žiaka sa nepodarilo pridať', true, context);
   }
 
   
 }
 
-Future<void> updateClassToFirestore(String classId, String userId, bool teacher) async {
+Future<void> updateClassToFirestore(String classId, String userId, bool teacher, BuildContext context) async {
   try {
     ClassData currentClass = await fetchClass(classId);
 
@@ -1673,8 +1734,7 @@ Future<void> updateClassToFirestore(String classId, String userId, bool teacher)
     await classRef.update(updateData);
 
   } catch (e) {
-    print('Error adding material to class: $e');
-    throw Exception('Failed to add user');
+    reShowToast('Triedu sa nepodarilo upraviť', true, context);
   }
 }
 
@@ -1688,6 +1748,53 @@ Future<Map<String, String>> fetchClassNames(List<String> classIds) async {
 
   return classNames;
 }
+
+Future<void> deleteUserFunction(List<String> userIds, UserData currentUser, BuildContext context) async {
+  try {
+    for (String userId in userIds) {
+      // Find the class document that contains the userId
+      final classQuery = await FirebaseFirestore.instance
+          .collection('classes')
+          .where('students', arrayContains: userId)
+          .get();
+
+      // Check if the userId is also in the 'teachers' array
+      final teacherQuery = await FirebaseFirestore.instance
+          .collection('classes')
+          .where('teachers', arrayContains: userId)
+          .get();
+
+      // Combine the class and teacher queries to ensure we remove the userId from both arrays
+      final combinedQuery = classQuery.docs + teacherQuery.docs;
+
+      for (final classDoc in combinedQuery) {
+        // Remove the userId from the 'students' and 'teachers' arrays in the class document
+        await classDoc.reference.update({
+          'students': FieldValue.arrayRemove([userId]),
+          'teachers': FieldValue.arrayRemove([userId]),
+        });
+      }
+
+      // Call deleteUser(userId) to delete the user document
+      await deleteUser(userId);
+    }
+
+    // Step 3: Call the deleteAccount cloud function
+    // Replace 'your-cloud-function-url' with the actual URL of your deleteAccount function
+    final deleteAccountCallable =
+        FirebaseFunctions.instance.httpsCallable('deleteAccount');
+    await deleteAccountCallable(userIds);
+
+    reShowToast(currentUser.teacher ? 'Učiteľ úspešne vymazaný' : 'Žiak úspešne vymazaný', false, context);
+  } catch (error) {
+    reShowToast(currentUser.teacher ? 'Učiteľa sa nepodarilo vymazať' : 'Žiaka sa nepodarilo vymazať', true, context);
+    throw error;
+  }
+}
+
+
+
+
 
 
 
