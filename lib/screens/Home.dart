@@ -11,7 +11,8 @@ import 'package:infomentor/screens/Notifications.dart';
 import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/screens/DesktopStudentFeed.dart';
 import 'package:infomentor/screens/MobileStudentFeed.dart';
-import 'package:infomentor/screens/TeacherFeed.dart';
+import 'package:infomentor/screens/DesktopTeacherFeed.dart';
+import 'package:infomentor/screens/MobileTeacherFeed.dart';
 import 'package:infomentor/screens/Discussions.dart';
 import 'package:infomentor/screens/DesktopAdmin.dart';
 import 'package:infomentor/screens/MobileAdmin.dart';
@@ -270,7 +271,19 @@ class _HomeState extends State<Home> {
             weeklyCapitolLength: weeklyCapitolLength,
             weeklyChallenge: weeklyChallenge,
             weeklyTitle: weeklyTitle,
-          ) : TeacherFeed(
+          ) : isMobile ? MobileTeacherFeed(
+            onNavigationItemSelected: _onNavigationItemSelected,
+            capitol: capitol,
+            capitolLength: capitolLength,
+            capitolTitle: capitolTitle,
+            capitolsId: capitolsId,
+            completedCount: completedCount,
+            futureWeeklyTitle: futureWeeklyTitle,
+            weeklyBool: weeklyBool,
+            weeklyCapitolLength: weeklyCapitolLength,
+            weeklyChallenge: weeklyChallenge,
+            weeklyTitle: weeklyTitle,
+          ) : DesktopTeacherFeed(
             onNavigationItemSelected: _onNavigationItemSelected,
             capitol: capitol,
             capitolLength: capitolLength,

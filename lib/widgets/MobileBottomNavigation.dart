@@ -31,16 +31,29 @@ class _MobileBottomNavigationState extends State<MobileBottomNavigation> {
     "assets/icons/bookFilledIcon.svg",
   ];
 
+  List<String> labels = ['Domov', 'Výzva', 'Diskusia', 'Vzdelávanie'];
+
   @override
   Widget build(BuildContext context) {
+    // Define the item color based on the selectedIndex
+    Color getItemColor(int index) {
+      if (widget.selectedIndex < 0 || widget.selectedIndex > 3) {
+        return AppColors.getColor('mono').grey; // Gray color when selectedIndex is -1
+      } else {
+        return widget.selectedIndex == index
+            ? Theme.of(context).primaryColor
+            : AppColors.getColor('mono').grey;
+      }
+    }
+
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      showSelectedLabels: true, // Show selected item's label
-      showUnselectedLabels: true, // Show unselected item's label
-      selectedItemColor: Theme.of(context).primaryColor,
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      selectedItemColor: getItemColor(widget.selectedIndex),
       unselectedItemColor: AppColors.getColor('mono').grey,
-      selectedFontSize: 14.0, // Set the font size for selected labels
-      unselectedFontSize: 14.0, // Set the font size for unselected labels
+      selectedFontSize: 14.0,
+      unselectedFontSize: 14.0,
       items: List<BottomNavigationBarItem>.generate(
         normalSvgPaths.length,
         (index) {
@@ -48,15 +61,16 @@ class _MobileBottomNavigationState extends State<MobileBottomNavigation> {
           final selectedSvgPath = selectedSvgPaths[index];
 
           return BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              widget.selectedIndex == index ? selectedSvgPath : normalSvgPath,
-              width: 24,
-              height: 24,
-              color: widget.selectedIndex == index
-                  ? Theme.of(context).primaryColor
-                  : AppColors.getColor('mono').grey,
+            icon: Padding(
+              padding: EdgeInsets.only(bottom: 5.0),
+              child: SvgPicture.asset(
+                widget.selectedIndex == index ? selectedSvgPath : normalSvgPath,
+                width: 24,
+                height: 24,
+                color: getItemColor(index), // Use the getItemColor function
+              ),
             ),
-            label: getLabel(index),
+            label: labels[index],
           );
         },
       ),
@@ -67,18 +81,5 @@ class _MobileBottomNavigationState extends State<MobileBottomNavigation> {
     );
   }
 
-  String getLabel(int index) {
-    switch (index) {
-      case 0:
-        return 'Domov';
-      case 1:
-        return 'Výzva';
-      case 2:
-        return 'Diskusia';
-      case 3:
-        return 'Vzdelávanie';
-      default:
-        return '';
-    }
-  }
+ 
 }

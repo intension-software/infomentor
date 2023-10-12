@@ -104,7 +104,7 @@ class _TutorialState extends State<Tutorial> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child:Text(
                 textAlign: TextAlign.center,
-              'Pripravili sme pre teba krátke testy, ktoré preskúšajú tvoje kritické myslenie na praktických príkladoch',
+              'Pripravili sme pre teba krátke testy, ktoré preskúšajú tvoje kritické myslenie na praktických príkladoch.',
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge!
@@ -185,7 +185,7 @@ class _TutorialState extends State<Tutorial> {
               padding: EdgeInsets.symmetric(horizontal: 16),
               child:Text(
                   textAlign: TextAlign.center,
-                'svete',
+                'svete.',
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
@@ -238,7 +238,7 @@ class _TutorialState extends State<Tutorial> {
               padding: EdgeInsets.all(16),
               child:Text(
                   textAlign: TextAlign.center,
-                'Nájdeš tu tipy na vzdelávacie podujatia, projekty a materiály, ktoré ťa posunú ešte ďalej',
+                'Nájdeš tu tipy na vzdelávacie podujatia, projekty a materiály, ktoré ťa posunú ešte ďalej.',
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
@@ -346,7 +346,7 @@ class _TutorialState extends State<Tutorial> {
            padding: EdgeInsets.symmetric(horizontal: 16),
           width: 350,
           child: Text(
-            'ľudí na Slovensku je náchylných veriť tvrdeniam, ktoré obsahujú klamstvá či konšpirácie (GLOBSEC)',
+            'ľudí na Slovensku je náchylných veriť tvrdeniam, ktoré obsahujú klamstvá či konšpirácie (GLOBSEC).',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -373,7 +373,7 @@ class _TutorialState extends State<Tutorial> {
            padding: EdgeInsets.symmetric(horizontal: 16),
           width: 350,
           child: Text(
-            'mladých ľudí si overuje informácie z médií vždy alebo takmer vždy (RmS)',
+            'mladých ľudí si overuje informácie z médií vždy alebo takmer vždy (RmS).',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -671,7 +671,7 @@ class _TutorialState extends State<Tutorial> {
            padding: EdgeInsets.symmetric(horizontal: 16),
           width: 350,
           child: Text(
-            'ľudí na Slovensku je náchylných veriť tvrdeniam, ktoré obsahujú klamstvá či konšpirácie (GLOBSEC)',
+            'ľudí na Slovensku je náchylných veriť tvrdeniam, ktoré obsahujú klamstvá či konšpirácie (GLOBSEC).',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -685,7 +685,7 @@ class _TutorialState extends State<Tutorial> {
            padding: EdgeInsets.symmetric(horizontal: 16),
           width: 350,
           child: Text(
-            'len 16% ',
+            'Len 16%',
             style: Theme.of(context)
                 .textTheme
                 .displayMedium!
@@ -698,7 +698,7 @@ class _TutorialState extends State<Tutorial> {
            padding: EdgeInsets.symmetric(horizontal: 16),
           width: 350,
           child: Text(
-            'mladých ľudí si overuje informácie z médií vždy alebo takmer vždy (RmS)',
+            'mladých ľudí si overuje informácie z médií vždy alebo takmer vždy (RmS).',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -721,7 +721,11 @@ return Scaffold(
   backgroundColor: Theme.of(context).primaryColor,
   body: SingleChildScrollView(
         child: Container(
-          height: 900,
+          height: MediaQuery.of(context).size.height <= 700
+          ? 700
+          : MediaQuery.of(context).size.height >= 900
+              ? 900
+              : MediaQuery.of(context).size.height,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

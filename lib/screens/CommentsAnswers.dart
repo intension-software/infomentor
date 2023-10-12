@@ -36,7 +36,8 @@ class CommentsAnswers extends StatefulWidget {
 class _CommentsAnswersState extends State<CommentsAnswers> {
   String formatTimestamp(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+    return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+
   }
   @override
   Widget build(BuildContext context) {

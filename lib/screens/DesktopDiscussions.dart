@@ -46,6 +46,8 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
   bool _library = false;
   int? _editIndex;
   String _selectedLibrary = '';
+  bool textFieldIsFocused = false;
+  bool textFieldTwoIsFocused = false;
 
 
   @override
@@ -56,7 +58,7 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
 
   String formatTimestamp(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+    return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
   }
 
@@ -970,34 +972,42 @@ Widget build(BuildContext context) {
               ),
             ),
             Container(
-                  width: 900,
-                  margin: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(color: AppColors.getColor('mono').grey),
-                  ),
-                  padding: EdgeInsets.only(right: 8),
-                  child: Row(
-                    children: [
+              width: 900,
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(
+                  color: textFieldIsFocused ? AppColors.getColor('primary').main : AppColors.getColor('mono').grey,
+                ),
+              ),
+              padding: EdgeInsets.only(right: 8),
+              child: Focus(
+                onFocusChange: (hasFocus) {
+                  setState(() {
+                    textFieldIsFocused = hasFocus;
+                  });
+                },
+                child: Row(
+                  children: [
                     Expanded(
-                      child:  TextField(
+                      child: TextField(
                         minLines: 3,
                         maxLines: 20,
                         controller: _editComment ? editCommentController : commentController,
                         decoration: InputDecoration(
                           hintText: _editComment ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
-                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.transparent),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                            borderSide: BorderSide(color: Colors.transparent),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                            borderSide: BorderSide(color: Colors.transparent),
                           ),
                           filled: true,
                           fillColor: Colors.white,
@@ -1090,6 +1100,7 @@ Widget build(BuildContext context) {
                   ],
                 ),
                 ),
+            )
           ],
         ),
       ),
@@ -1172,16 +1183,24 @@ Widget build(BuildContext context) {
                 ],
               ),
             ),
-            Container(
+           Container(
               width: 900,
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: AppColors.getColor('mono').grey),
+                border: Border.all(
+                  color: textFieldTwoIsFocused ? AppColors.getColor('primary').main : AppColors.getColor('mono').grey,
+                ),
               ),
               padding: EdgeInsets.only(right: 8),
-              child: Row(
+              child: Focus(
+                onFocusChange: (hasFocus) {
+                  setState(() {
+                    textFieldTwoIsFocused = hasFocus;
+                  });
+                },
+                child: Row(
                 children: [
                   Expanded(
                     child: TextField(
@@ -1294,6 +1313,7 @@ Widget build(BuildContext context) {
                 ],
               ),
             ),
+           )
           ],
         ),
       ),

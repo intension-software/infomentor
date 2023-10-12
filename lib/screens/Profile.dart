@@ -43,7 +43,6 @@ class _ProfileState extends State<Profile> {
   int percentage = 0;
   bool hide = true;
   bool isMobile = false;
-  bool isDesktop = false;
 
   final userAgent = html.window.navigator.userAgent.toLowerCase();
 
@@ -58,9 +57,7 @@ class _ProfileState extends State<Profile> {
     super.initState();
     final userAgent = html.window.navigator.userAgent.toLowerCase();
     isMobile = userAgent.contains('mobile');
-    isDesktop = userAgent.contains('macintosh') ||
-        userAgent.contains('windows') ||
-        userAgent.contains('linux');
+    
     _isDisposed = false; // Resetting _isDisposed state
     fetchUserData();
     fetchCapitolsData();
@@ -182,7 +179,10 @@ class _ProfileState extends State<Profile> {
           argumentation = two.capitolsData!.points;
           capitolOne = one.capitolsData!.points;
           capitolTwo = two.capitolsData!.points;
-          percentage = (currentUserData!.points / (capitolOne + capitolTwo)).round();
+          percentage = ((currentUserData!.points / (capitolOne + capitolTwo)) * 100).round();
+          print(currentUserData!.points);
+          print((capitolOne + capitolTwo));
+          print((currentUserData!.points / (capitolOne + capitolTwo)));
         });
       }
     } catch (e) {
@@ -219,7 +219,7 @@ class _ProfileState extends State<Profile> {
                           children: [
                             SizedBox(height: 16),
                             SvgPicture.asset('assets/profilePicture.svg', width: 90),
-                            SizedBox(height: 16),
+                             SizedBox(height: 20),
                             Container(
                               width: double.infinity,
                               child: Column(
@@ -248,7 +248,7 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 4),
+                                   SizedBox(height: 20),
                                   Text(
                                     className ?? '',
                                     style: Theme.of(context)
@@ -258,7 +258,7 @@ class _ProfileState extends State<Profile> {
                                       color: AppColors.getColor('mono').black,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  SizedBox(height: 28),
                                   Container(
                                     width: 160,
                                     height: 40,
@@ -411,7 +411,7 @@ class _ProfileState extends State<Profile> {
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
                                                 Text(
-                                                  'Týždenná výzva',
+                                                  'Týždenná výzva:',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyLarge!
@@ -469,14 +469,14 @@ class _ProfileState extends State<Profile> {
                                               ],
                                             ),
                                           ),
-                                          if(!hide || isDesktop)Column(
+                                          if(!hide || !isMobile)Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Divider(color: AppColors.getColor('mono').lightGrey, thickness: 2.5),
                                                Container(
                                                 padding: EdgeInsets.all(12),
                                                 child: Text(
-                                                  'Skóre za kapitoly',
+                                                  'Skóre za kapitoly:',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .headlineSmall!
@@ -492,7 +492,7 @@ class _ProfileState extends State<Profile> {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    'Kritické myslenie',
+                                                    'Kritické myslenie:',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodyLarge!
@@ -525,7 +525,7 @@ class _ProfileState extends State<Profile> {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    'Argumentácia',
+                                                    'Argumentácia:',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodyLarge!
@@ -615,12 +615,22 @@ class _ProfileState extends State<Profile> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: List.generate(students!.length, (index) {
                                               if (index > 2 && isMobile) return SizedBox.shrink(); // we only want to display top 3
+                                              final bool isFirstItem = index == 0;
+                                              final bool isLastItem = index == students!.length - 1;
+
+                                              // Define the desired radii for each corner
+                                              final BorderRadius borderRadius = BorderRadius.only(
+                                                topLeft: isFirstItem ? Radius.circular(18.0) : Radius.zero,
+                                                topRight: isFirstItem ? Radius.circular(18.0) : Radius.zero,
+                                                bottomLeft: isLastItem ? Radius.circular(18.0) : Radius.zero,
+                                                bottomRight: isLastItem ? Radius.circular(18.0) : Radius.zero,
+                                              );
                                               return Column(
                                                 children: [
                                                   Container(
                                                     decoration: BoxDecoration(
                                                       color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
-                                                      border: index < students!.length - 1 ? Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey, width: 2.5)) : null,
+                                                      borderRadius: borderRadius
                                                     ),
                                                     width: double.infinity, // Set the width to expand to the available space
                                                     child: Padding(
@@ -634,12 +644,7 @@ class _ProfileState extends State<Profile> {
                                                               if(index > 2)SizedBox(width: 5,),
                                                               index > 2 ? Text(
                                                               '${index + 1}',
-                                                              style: Theme.of(context)
-                                                                  .textTheme
-                                                                  .headlineSmall!
-                                                                  .copyWith(
-                                                                color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
-                                                              ),
+                                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onBackground),
                                                             ) : Image.asset(
                                                                 placeIcons[index], // Use the corresponding SVG asset
                                                                 width: 24,
@@ -648,22 +653,12 @@ class _ProfileState extends State<Profile> {
                                                               SizedBox(width: 20,),
                                                               Text(
                                                                 '${students![index].name}',
-                                                                style: Theme.of(context)
-                                                                    .textTheme
-                                                                    .headlineSmall!
-                                                                    .copyWith(
-                                                                  color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
-                                                                ),
+                                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onBackground),
                                                               ),
                                                               SizedBox(width: 5,),
                                                               Text(
                                                                 '${students![index].surname}',
-                                                                style: Theme.of(context)
-                                                                    .textTheme
-                                                                    .headlineSmall!
-                                                                    .copyWith(
-                                                                  color: studentIndex == index ? AppColors.getColor('primary').main : AppColors.getColor('mono').black,
-                                                                ),
+                                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onBackground),
                                                               ),
                                                             ],
                                                           ),
@@ -671,12 +666,7 @@ class _ProfileState extends State<Profile> {
                                                             children: [
                                                               Text(
                                                                 '${students![index].points}',
-                                                                style: Theme.of(context)
-                                                                    .textTheme
-                                                                    .headlineSmall!
-                                                                    .copyWith(
-                                                                  color: AppColors.getColor('yellow').light,
-                                                                ),
+                                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.getColor('yellow').light),
                                                               ),
                                                               SizedBox(width: 5,),
                                                               SvgPicture.asset('assets/icons/starYellowIcon.svg'),

@@ -32,7 +32,7 @@ class Comments extends StatefulWidget {
 class _CommentsState extends State<Comments> {
    String formatTimestamp(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+    return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
   }
   @override
@@ -359,8 +359,22 @@ class _CommentsState extends State<Comments> {
                             ),
                             SizedBox(height: 10.0),
                             Text(comment.value),
-                            if(comment.award || (widget.currentUserData!.teacher))Row(
+                            SizedBox(height: 10.0),
+                            (comment.award || widget.currentUserData!.teacher) ? Row(
                               children: [
+                                Row(
+                                  children: [
+                                    SvgPicture.asset('assets/icons/commentIcon.svg'),
+                                    Text('Odpovedať',
+                                      style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(
+                                        color: AppColors.getColor('mono').darkGrey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 Spacer(),
                                 InkWell(
                                   onTap: () {
@@ -397,7 +411,19 @@ class _CommentsState extends State<Comments> {
                                 ),
                                 SizedBox(width: 4.0),
                               ],
-                            ),
+                            ) : Row(
+                                  children: [
+                                    SvgPicture.asset('assets/icons/commentIcon.svg'),
+                                    Text('Odpovedať',
+                                      style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(
+                                        color: AppColors.getColor('mono').darkGrey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                           ],
                         ),
                         )

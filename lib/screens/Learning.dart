@@ -31,6 +31,7 @@ class _LearningState extends State<Learning> {
    bool _loading = true;
    bool isMobile = false;
   bool isDesktop = false;
+  bool _add = false;
 
   final userAgent = html.window.navigator.userAgent.toLowerCase();
 
@@ -150,6 +151,7 @@ class _LearningState extends State<Learning> {
                       onTap: () {
                         _onNavigationItemSelected(1);
                         _selectedIndex = 1;
+                        _add = true;
                       },
                     ) : null,
                   ),
@@ -267,7 +269,7 @@ class _LearningState extends State<Learning> {
           ),
         ),
       ),
-      if (widget.currentUserData!.teacher)Center(
+      if (widget.currentUserData!.teacher && _add)Center(
         child: Column(
           children: [
             Container(
@@ -280,7 +282,12 @@ class _LearningState extends State<Learning> {
                       Icons.arrow_back,
                       color: AppColors.getColor('mono').darkGrey,
                     ),
-                    onPressed: () => _onNavigationItemSelected(0),
+                    onPressed: () {
+                      _onNavigationItemSelected(0);
+                      setState(() {
+                        _add = false;
+                      });  
+                    },
                   ),
                   Text(
                     'Späť',
@@ -304,7 +311,7 @@ class _LearningState extends State<Learning> {
                 ],
               ),
             ),
-            MaterialForm(currentUserData: widget.currentUserData),
+            MaterialForm(currentUserData: widget.currentUserData, fetch: fetchCurrentClass()),
           ]
         )
       ),

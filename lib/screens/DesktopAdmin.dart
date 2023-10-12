@@ -36,7 +36,6 @@ class UserDataWithId {
 }
 
 class _DesktopAdminState extends State<DesktopAdmin> {
-  final _formKey = GlobalKey<FormState>();
   List<String>? classes;
   String? schoolName;
   UserData? admin;
@@ -251,7 +250,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
-                    child: Container(
+                    child: admin != null ?Container(
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -284,7 +283,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                               SvgPicture.asset('assets/icons/rightIcon.svg', color: AppColors.getColor('mono').grey, height: 12)
                             ],
                           ),
-                        ),
+                        ) : Container(),
                     onTap:  () async {
                       setState(() {
                         currentUser = UserDataWithId(adminId!, admin!);
@@ -868,7 +867,10 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         Icons.arrow_back,
                         color: AppColors.getColor('mono').darkGrey,
                       ),
-                      onPressed: () => _onNavigationItemSelected(0),
+                      onPressed: () {
+                        _addClass = false;
+                        _onNavigationItemSelected(0);
+                      }
                     ),
                     Text(
                       'Späť',
@@ -1249,7 +1251,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         color: AppColors.getColor('mono').darkGrey,
                       ),
                       onPressed: () { 
-                        _onNavigationItemSelected(0);
+                        _onNavigationItemSelected(1);
                         _selectedClass = null;
                         _editUser = false;
 
@@ -1338,7 +1340,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ReButton(
+                          if(!_admin)ReButton(
                             activeColor: AppColors.getColor('mono').white, 
                             defaultColor: AppColors.getColor('mono').white, 
                             disabledColor: AppColors.getColor('mono').lightGrey, 

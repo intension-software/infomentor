@@ -240,9 +240,7 @@ Widget build(BuildContext context) {
                       SizedBox(height: 16),
                       Text(
                         results?[capitolsIds[0]].capitolsData!.name ?? '',
-                        style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onPrimary),
                       ),
                       SizedBox(height: 16),
                       Container(
@@ -376,7 +374,7 @@ Widget build(BuildContext context) {
                             itemBuilder: (BuildContext context, int globalIndex) {
                               if (globalIndex == 0) {
                                 // This is the dummy item, you can control its height
-                                return SizedBox(height: 150.0); // Adjust the height as needed
+                                return SizedBox(height: 200.0); // Adjust the height as needed
                               }
                             int? capitolIndex;
                             int? testIndex;
@@ -663,9 +661,7 @@ void showPopupMenu(BuildContext context, int direction, RenderBox button) {
                   Text(
                     userData?.capitols[int.parse(capitolsId)].tests[number].name ?? '',
                     overflow: TextOverflow.ellipsis, // Add this
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onPrimary),
                   ),
                     SizedBox(height: 12),
                   if (userData != null && !userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)Center(

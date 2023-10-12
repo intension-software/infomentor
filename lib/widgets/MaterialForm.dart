@@ -23,10 +23,12 @@ class OptionsData {
 
 class MaterialForm extends StatefulWidget {
   final UserData? currentUserData;
+  final Future<void> fetch;
 
 
   MaterialForm({
     Key? key,
+    required this.fetch,
     required this.currentUserData,
   }) : super(key: key);
 
@@ -414,6 +416,8 @@ class _MaterialFormState extends State<MaterialForm> {
                             );
                             // TODO: Handle data as needed
                             addMaterialToFirestore(data);
+                            widget.fetch;
+                            reShowToast('Obsah pridaný', false, context);
                           }
                       }
                     ),

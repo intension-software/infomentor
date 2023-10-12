@@ -57,7 +57,7 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
 
   String formatTimestamp(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+    return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
   }
 
@@ -1001,13 +1001,12 @@ Widget build(BuildContext context) {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(color: AppColors.getColor('primary').main),
                   ),
                   padding: EdgeInsets.only(right: 8),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                    Expanded(
-                      child:  TextField(
+                      TextField(
                         minLines: 3,
                         maxLines: 20,
                         controller: _editComment ? editCommentController : commentController,
@@ -1015,98 +1014,103 @@ Widget build(BuildContext context) {
                           hintText: _editComment ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
-                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                            borderSide: BorderSide(color: AppColors.getColor('primary').main), // Light grey border color
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
+                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
                           ),
                           filled: true,
                           fillColor: Colors.white,
                         ),
                       ),
-                    ),
-                    SizedBox(width: 8),
-                    ReButton(
-                      activeColor: AppColors.getColor('mono').white, 
-                      defaultColor: AppColors.getColor('primary').main, 
-                      disabledColor: AppColors.getColor('mono').lightGrey, 
-                      focusedColor: AppColors.getColor('primary').light, 
-                      hoverColor: AppColors.getColor('mono').lighterGrey, 
-                      textColor: Theme.of(context).colorScheme.onPrimary, 
-                      iconColor: AppColors.getColor('mono').black, 
-                      text: _editComment ? 'Uložiť úpravy' : 'Odpovedať', 
-                      onTap: () async {
-                        if (_editComment) {
-                          int commentIndex = _editIndex!; // You need to set this to the appropriate index.
+                    SizedBox(height: 8),
+                    Container(
+                      height: 40,
+                      width: 126,
+                      child:  ReButton(
+                        activeColor: AppColors.getColor('mono').white, 
+                        defaultColor: AppColors.getColor('primary').main, 
+                        disabledColor: AppColors.getColor('mono').lightGrey, 
+                        focusedColor: AppColors.getColor('primary').light, 
+                        hoverColor: AppColors.getColor('mono').lighterGrey, 
+                        textColor: Theme.of(context).colorScheme.onPrimary, 
+                        iconColor: AppColors.getColor('mono').black, 
+                        text: _editComment ? 'Uložiť úpravy' : 'Odpovedať',
+                        isDisabled: _editComment ? editCommentController.text == '' : commentController.text == '', 
+                        onTap: () async {
+                          if (_editComment) {
+                            int commentIndex = _editIndex!; // You need to set this to the appropriate index.
 
-                          // Check if the commentIndex is valid
-                          if (commentIndex >= 0 && commentIndex < _selectedPost!.comments.length) {
-                            // Get the comment to be edited
-                            CommentsData commentToEdit = _selectedPost!.comments[commentIndex];
+                            // Check if the commentIndex is valid
+                            if (commentIndex >= 0 && commentIndex < _selectedPost!.comments.length) {
+                              // Get the comment to be edited
+                              CommentsData commentToEdit = _selectedPost!.comments[commentIndex];
 
-                            // Update the comment value with the new text
-                            commentToEdit.value = editCommentController.text;
+                              // Update the comment value with the new text
+                              commentToEdit.value = editCommentController.text;
+
+                              try {
+                                // Call a function to update the comment in Firestore
+                                await updateCommentValue(
+                                  widget.currentUserData!.schoolClass,
+                                  _selectedPost!.id,
+                                  commentIndex, // Pass the comment index to identify which comment to edit
+                                  commentToEdit.value,
+                                );
+
+                                setState(() {
+                                  // Update the local _selectedPost!.comments list with the edited comment
+                                  _selectedPost!.comments[commentIndex] = commentToEdit;
+                                  _editIndex = null;
+                                  _editComment = false;
+                                });
+
+                                editCommentController.clear();
+                              } catch (e) {
+                                print('Error updating comment: $e');
+                              }
+                            } else {
+                              print('Invalid comment index');
+                            }
+                          } else {
+                            CommentsData newComment = CommentsData(
+                              answers: [],  // Initialize answers list with an empty list
+                              award: false,
+                              date: Timestamp.now(),
+                              user: widget.currentUserData!.name,
+                              pfp: widget.currentUserData!.image,
+                              userId: FirebaseAuth.instance.currentUser!.uid,
+                              value: commentController.text,
+                            );
 
                             try {
-                              // Call a function to update the comment in Firestore
-                              await updateCommentValue(
+                              await addComment(
                                 widget.currentUserData!.schoolClass,
                                 _selectedPost!.id,
-                                commentIndex, // Pass the comment index to identify which comment to edit
-                                commentToEdit.value,
+                                newComment,
                               );
 
                               setState(() {
-                                // Update the local _selectedPost!.comments list with the edited comment
-                                _selectedPost!.comments[commentIndex] = commentToEdit;
-                                _editIndex = null;
-                                _editComment = false;
+                                // Assuming _selectedPost!.comments is of type List<CommentsData>
+                                _selectedPost!.comments.add(newComment);
                               });
 
-                              editCommentController.clear();
+                              reShowToast('Komentár odoslaný', false, context);
+
+                              commentController.clear();
                             } catch (e) {
-                              print('Error updating comment: $e');
+                              print('Error adding comment: $e');
                             }
-                          } else {
-                            print('Invalid comment index');
                           }
-                        } else {
-                          CommentsData newComment = CommentsData(
-                            answers: [],  // Initialize answers list with an empty list
-                            award: false,
-                            date: Timestamp.now(),
-                            user: widget.currentUserData!.name,
-                            pfp: widget.currentUserData!.image,
-                            userId: FirebaseAuth.instance.currentUser!.uid,
-                            value: commentController.text,
-                          );
-
-                          try {
-                            await addComment(
-                              widget.currentUserData!.schoolClass,
-                              _selectedPost!.id,
-                              newComment,
-                            );
-
-                            setState(() {
-                              // Assuming _selectedPost!.comments is of type List<CommentsData>
-                              _selectedPost!.comments.add(newComment);
-                            });
-
-                            reShowToast('Komentár odoslaný', false, context);
-
-                            commentController.clear();
-                          } catch (e) {
-                            print('Error adding comment: $e');
-                          }
-                        }
-                      },
-                    ) 
+                        },
+                      ),
+                    )
+                   
                   ],
                 ),
               ),
@@ -1164,43 +1168,45 @@ Widget build(BuildContext context) {
                 ],
               ),
             ),
+            
             Container(
-              width: 900,
-              margin: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: AppColors.getColor('primary').main),
-              ),
-              padding: EdgeInsets.only(right: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      minLines: 3,
-                      maxLines: 20,
-                      controller: _editAnswer ? editAnswerController : answerController,
-                      decoration: InputDecoration(
-                        hintText: _editAnswer ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
-                          borderSide: BorderSide(color: Colors.transparent), // Light grey border color
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.transparent), // Light grey border color
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.transparent), // Light grey border color
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                    ),
+                  width: 900,
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  SizedBox(width: 8),
-                  ReButton(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TextField(
+                        minLines: 3,
+                        maxLines: 20,
+                        controller: _editAnswer ? editAnswerController : answerController,
+                        decoration: InputDecoration(
+                          hintText: _editAnswer ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
+                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: AppColors.getColor('primary').main), // Light grey border color
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      height: 40,
+                      width: 126,
+                      child:  ReButton(
                     activeColor: AppColors.getColor('mono').white,
                     defaultColor: AppColors.getColor('primary').main,
                     disabledColor: AppColors.getColor('mono').lightGrey,
@@ -1209,6 +1215,7 @@ Widget build(BuildContext context) {
                     textColor: Theme.of(context).colorScheme.onPrimary,
                     iconColor: AppColors.getColor('mono').black,
                     text: _editAnswer ? 'Uložiť úpravy' : 'Odpovedať',
+                    isDisabled: _editAnswer ? editAnswerController == '' : answerController.text == '',
                     onTap: () async {
                       if (_editAnswer) {
                         int answerIndex = _editIndex!; // You need to set this to the appropriate index.
@@ -1277,9 +1284,10 @@ Widget build(BuildContext context) {
                       }
                     },
                   ),
-                ],
-              ),
-            ),
+                    ),
+                    ]
+                  )
+            )
           ],
         ),
       ),

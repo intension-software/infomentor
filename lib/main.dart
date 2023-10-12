@@ -65,10 +65,11 @@ class MainApp extends StatelessWidget {
           displayLarge: TextStyle(fontSize: 32, fontFamily: GoogleFonts.poppins(fontWeight: FontWeight.w700).fontFamily),
           displayMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
           displaySmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-
+          
           titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
           titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
           titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+
 
           headlineLarge: TextStyle(fontSize: 24, fontFamily: GoogleFonts.poppins(fontWeight: FontWeight.w700).fontFamily),
           headlineMedium: TextStyle(fontSize: 20, fontFamily: GoogleFonts.poppins(fontWeight: FontWeight.w700).fontFamily),

@@ -176,9 +176,11 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
               ),
             ),
             Container(
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Theme.of(context).primaryColor))
+              ),
               child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.cover, width:  MediaQuery.of(context).size.width,),
             ),
-            SizedBox(height: 24),
             !widget.weeklyBool ? Container(
               height: 320,
               width: 804,

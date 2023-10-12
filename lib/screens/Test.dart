@@ -945,12 +945,15 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(matches![0],
-                                            style: Theme.of(context).textTheme
-                                              .bodyMedium!
-                                              .copyWith(
-                                              color: _answer.any((e) => e.index == index) == true ? AppColors.getColor('primary').main : Theme.of(context).colorScheme.onBackground,
-                                              ),
+                                          Text(
+                                            _answer.any((e) => e.index == index)
+                                                ? matches[_answer.firstWhere((e) => e.index == index).answer!]
+                                                : matches![0],
+                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                              color: _answer.any((e) => e.index == index) == true
+                                                  ? AppColors.getColor('primary').main
+                                                  : Theme.of(context).colorScheme.onBackground,
+                                            ),
                                           ),
                                           openDropdownIndex == index ? SvgPicture.asset(
                                               'assets/icons/upIcon.svg',  // Make sure to replace this with your SVG asset path

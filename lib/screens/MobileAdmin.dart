@@ -126,7 +126,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                         ),
                   ),
                   ),
-                  MouseRegion(
+                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
                       child: Container(
@@ -890,7 +890,10 @@ class _MobileAdminState extends State<MobileAdmin> {
                         Icons.arrow_back,
                         color: AppColors.getColor('mono').darkGrey,
                       ),
-                      onPressed: () => _onNavigationItemSelected(0),
+                      onPressed: () {
+                        _addClass = false;
+                        _onNavigationItemSelected(0);
+                      }
                     ),
                     Text(
                       'Späť',
@@ -939,9 +942,12 @@ class _MobileAdminState extends State<MobileAdmin> {
                   AppColors.getColor('mono').white, // assuming white is the default border color you want
                 ),
                 Spacer(),
-                Align(
-                  alignment: Alignment.center,
-                  child: ReButton(
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                   
+                  ReButton(
                     activeColor: AppColors.getColor('mono').white, 
                     defaultColor: AppColors.getColor('green').main, 
                     disabledColor: AppColors.getColor('mono').lightGrey, 
@@ -950,12 +956,71 @@ class _MobileAdminState extends State<MobileAdmin> {
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ULOŽIŤ', 
-                    isDisabled: _classNameController.text == '',
+                    isDisabled: _editClassNameController.text == '',
                     onTap: () async {
-                      addClass(_classNameController.text, widget.currentUserData!.school);
+                      currentClass!.data.name = _editClassNameController.text;
+                      editClass(currentClass!.id,
+                      ClassData(
+                        name: _editClassNameController.text,
+                        school: currentClass!.data.school,
+                        students: List<String>.from(currentClass!.data.students),
+                        teachers: List<String>.from(currentClass!.data.teachers),
+                        materials: List<String>.from(currentClass!.data.materials),
+                        capitolOrder: List<int>.from(currentClass!.data.capitolOrder),
+                        posts: currentClass!.data.posts.map((post) {
+                          return PostsData(
+                            date: post.date,
+                            id: post.id,
+                            pfp: post.pfp,
+                            userId: post.userId,
+                            user: post.user,
+                            value: post.value,
+                            comments: post.comments.map((comment) {
+                              return CommentsData(
+                                award: comment.award,
+                                userId: comment.userId,
+                                pfp: comment.pfp,
+                                answers: comment.answers.map((answer) {
+                                  return CommentsAnswersData(
+                                    award: answer.award,
+                                    date: answer.date,
+                                    pfp: answer.pfp,
+                                    userId: answer.userId,
+                                    user: answer.user,
+                                    value: answer.value,
+                                  );
+                                }).toList(),
+                                date: comment.date,
+                                user: comment.user,
+                                value: comment.value,
+                              );
+                            }).toList(),
+                          );
+                        }).toList(),
+                      ));
+                      reShowToast('Trieda úspešne upravená', false, context);
                     },
                   ),
-                ),
+                   ReButton(
+                      activeColor: AppColors.getColor('mono').white, 
+                      defaultColor: AppColors.getColor('mono').white, 
+                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                      focusedColor: AppColors.getColor('mono').white, 
+                      hoverColor: AppColors.getColor('mono').white, 
+                      textColor: Theme.of(context).colorScheme.error, 
+                      iconColor: Theme.of(context).colorScheme.error,
+                      leftIcon: 'assets/icons/binIcon.svg',
+                      text: 'Vymazať triedu', 
+                      onTap: () {
+                          deleteClass(currentClass!.id, widget.currentUserData!.school);
+                          removeClassFromSchool(currentClass!.id, widget.currentUserData!.school);
+                          deleteUserFunction(currentClass!.data.students,currentUser!.data, context);
+                          deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context);
+                          reShowToast('Trieda úspešne vymazaná', false, context);
+                        }
+                    ),
+                  ]
+                  ),
                 SizedBox(height: 30,),
               ],
             ),
@@ -1099,7 +1164,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                         text: 'ULOŽIŤ', 
                         isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
-                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher);
+                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher, context);
                           }
                       ),
                       Text(
@@ -1166,7 +1231,29 @@ class _MobileAdminState extends State<MobileAdmin> {
                 SizedBox(height: 50,),
                 Align(
                   alignment: Alignment.center,
-                  child: ReButton(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ReButton(
+                      activeColor: AppColors.getColor('mono').white, 
+                      defaultColor: AppColors.getColor('mono').white, 
+                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                      focusedColor: AppColors.getColor('mono').white, 
+                      hoverColor: AppColors.getColor('mono').white, 
+                      textColor: Theme.of(context).colorScheme.error, 
+                      iconColor: Theme.of(context).colorScheme.error,
+                      leftIcon: 'assets/icons/binIcon.svg',
+                      text: 'Vymazať triedu', 
+                      onTap: () {
+                          deleteClass(currentClass!.id, widget.currentUserData!.school);
+                          removeClassFromSchool(currentClass!.id, widget.currentUserData!.school);
+                          deleteUserFunction(currentClass!.data.students,currentUser!.data, context);
+                          deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context);
+                          reShowToast('Trieda úspešne vymazaná', false, context);
+                        }
+                    ),
+                  ReButton(
                     activeColor: AppColors.getColor('mono').white, 
                     defaultColor: AppColors.getColor('green').main, 
                     disabledColor: AppColors.getColor('mono').lightGrey, 
@@ -1217,8 +1304,11 @@ class _MobileAdminState extends State<MobileAdmin> {
                           );
                         }).toList(),
                       ));
+                      reShowToast('Trieda úspešne upravená', false, context);
                     },
                   ),
+                  ]
+                  )
                 ),
                 SizedBox(height: 30,),
               ],
@@ -1242,7 +1332,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                         color: AppColors.getColor('mono').darkGrey,
                       ),
                       onPressed: () { 
-                        _onNavigationItemSelected(0);
+                        _onNavigationItemSelected(1);
                         _selectedClass = null;
                         _addUser = false;
                       },
@@ -1324,22 +1414,42 @@ class _MobileAdminState extends State<MobileAdmin> {
                   alignment: Alignment.center,
                   child: Column(
                     children: [
-                       ReButton(
-                        activeColor: AppColors.getColor('mono').white, 
-                        defaultColor: AppColors.getColor('green').main, 
-                        disabledColor: AppColors.getColor('mono').lightGrey, 
-                        focusedColor: AppColors.getColor('green').light, 
-                        hoverColor: AppColors.getColor('green').light, 
-                        textColor: Theme.of(context).colorScheme.onPrimary, 
-                        iconColor: AppColors.getColor('mono').black, 
-                        text: 'ULOŽIŤ', 
-                        isDisabled: (_editUserNameController.text == '' || _editUserEmailController.text == '' ||_editUserPasswordController.text == ''),
-                        onTap: () {
-                            currentUser!.data.name = _editUserNameController.text;
-                            currentUser!.data.email = _editUserEmailController.text;
+                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ReButton(
+                            activeColor: AppColors.getColor('mono').white, 
+                            defaultColor: AppColors.getColor('green').main, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('green').light, 
+                            hoverColor: AppColors.getColor('green').light, 
+                            textColor: Theme.of(context).colorScheme.onPrimary, 
+                            iconColor: AppColors.getColor('mono').black, 
+                            text: 'ULOŽIŤ', 
+                            isDisabled: (_editUserNameController.text == '' || _editUserEmailController.text == '' ||_editUserPasswordController.text == ''),
+                            onTap: () {
+                                currentUser!.data.name = _editUserNameController.text;
+                                currentUser!.data.email = _editUserEmailController.text;
 
-                            saveUserDataToFirestore(currentUser!.data, currentUser!.id, _editUserEmailController.text, _editUserPasswordController.text, );
-                          }
+                                saveUserDataToFirestore(currentUser!.data, currentUser!.id, _editUserEmailController.text, _editUserPasswordController.text,currentUser!.data, context );
+                              }
+                          ),
+                          if(!_admin) ReButton(
+                            activeColor: AppColors.getColor('mono').white, 
+                            defaultColor: AppColors.getColor('mono').white, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('mono').white, 
+                            hoverColor: AppColors.getColor('mono').white, 
+                            textColor: Theme.of(context).colorScheme.error, 
+                            iconColor: Theme.of(context).colorScheme.error,
+                            leftIcon: 'assets/icons/binIcon.svg',
+                            text: currentUser!.data.teacher ? 'Vymazať učiteľa' : 'Vymazať žiaka',
+                            onTap: () {
+                                deleteUserFunction([currentUser!.id],currentUser!.data, context);
+                              }
+                          ),
+                        ],
                       ),
                       Text(
                         'Ak učiteľ, ktorého chcete pridať, už má účet v aplikácií, pridáte ho tu.',
@@ -1383,6 +1493,8 @@ Future<void> saveUserDataToFirestore(
   String userId,
   String newEmail,
   String newPassword,
+  UserData? currentUser,
+  BuildContext context
 ) async {
   try {
     // Reference to the user document in Firestore
@@ -1398,9 +1510,9 @@ Future<void> saveUserDataToFirestore(
     // Convert userData object to a Map
     Map<String, dynamic> userDataMap = {
       'badges': userData.badges,
+      'admin': userData.admin,
       'discussionPoints': userData.discussionPoints,
       'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
-      'admin': userData.admin,
       'teacher': userData.teacher,
       'email': newEmail, // Update the email in Firestore to the new email
       'name': userData.name,
@@ -1442,14 +1554,15 @@ Future<void> saveUserDataToFirestore(
 
     // Update the user document in Firestore with the new userDataMap
     await userRef.update(userDataMap);
+    reShowToast(currentUser!.teacher ? 'Učiteľ úspešne upravený' : 'Žiak úspešne upravený', false, context);
   } catch (e) {
-    print('Error saving user data to Firestore: $e');
+    reShowToast(currentUser!.teacher ? 'Učiteľ sa nepodarilo upraviť' : 'Žiaka sa nepodarilo upraviť', true, context);
     rethrow;
   }
 }
 
 
- Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher) async {
+ Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher, BuildContext context) async {
   try {
     final functions = FirebaseFunctions.instance;
     final result = await functions.httpsCallable('createAccount').call({
@@ -1674,16 +1787,17 @@ Future<void> saveUserDataToFirestore(
       'materials': data.materials,
       'badges': data.badges,
     });
-    updateClassToFirestore(classId, data.id, teacher);
+    updateClassToFirestore(classId, data.id, teacher, context);
+    
+    reShowToast(teacher ? 'Učiteľ úspešne pridaný' : 'Žiak úspešne pridaný', false, context);
   } catch (e) {
-    print('Error registering user: $e');
-    throw Exception('Failed to register user');
+    reShowToast(teacher ? 'Učiteľa sa nepodarilo pridať' : 'Žiaka sa nepodarilo pridať', true, context);
   }
 
   
 }
 
-Future<void> updateClassToFirestore(String classId, String userId, bool teacher) async {
+Future<void> updateClassToFirestore(String classId, String userId, bool teacher, BuildContext context) async {
   try {
     ClassData currentClass = await fetchClass(classId);
 
@@ -1700,8 +1814,7 @@ Future<void> updateClassToFirestore(String classId, String userId, bool teacher)
     await classRef.update(updateData);
 
   } catch (e) {
-    print('Error adding material to class: $e');
-    throw Exception('Failed to add user');
+    reShowToast('Triedu sa nepodarilo upraviť', true, context);
   }
 }
 
@@ -1716,5 +1829,45 @@ Future<Map<String, String>> fetchClassNames(List<String> classIds) async {
   return classNames;
 }
 
+Future<void> deleteUserFunction(List<String> userIds, UserData currentUser, BuildContext context) async {
+  try {
+    for (String userId in userIds) {
+      // Find the class document that contains the userId
+      final classQuery = await FirebaseFirestore.instance
+          .collection('classes')
+          .where('students', arrayContains: userId)
+          .get();
 
+      // Check if the userId is also in the 'teachers' array
+      final teacherQuery = await FirebaseFirestore.instance
+          .collection('classes')
+          .where('teachers', arrayContains: userId)
+          .get();
 
+      // Combine the class and teacher queries to ensure we remove the userId from both arrays
+      final combinedQuery = classQuery.docs + teacherQuery.docs;
+
+      for (final classDoc in combinedQuery) {
+        // Remove the userId from the 'students' and 'teachers' arrays in the class document
+        await classDoc.reference.update({
+          'students': FieldValue.arrayRemove([userId]),
+          'teachers': FieldValue.arrayRemove([userId]),
+        });
+      }
+
+      // Call deleteUser(userId) to delete the user document
+      await deleteUser(userId);
+    }
+
+    // Step 3: Call the deleteAccount cloud function
+    // Replace 'your-cloud-function-url' with the actual URL of your deleteAccount function
+    final deleteAccountCallable =
+        FirebaseFunctions.instance.httpsCallable('deleteAccount');
+    await deleteAccountCallable(userIds);
+
+    reShowToast(currentUser.teacher ? 'Učiteľ úspešne vymazaný' : 'Žiak úspešne vymazaný', false, context);
+  } catch (error) {
+    reShowToast(currentUser.teacher ? 'Učiteľa sa nepodarilo vymazať' : 'Žiaka sa nepodarilo vymazať', true, context);
+    throw error;
+  }
+}

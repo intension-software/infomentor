@@ -74,7 +74,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           ),
                           SizedBox(width: 8),
                           if(!widget.currentUserData!.teacher) SvgPicture.asset('assets/icons/starYellowIcon.svg'),
-                          if(widget.currentUserData!.teacher)DropDown(currentUserData: widget.currentUserData, onUserDataChanged: widget.onUserDataChanged,),
+                          if(widget.currentUserData!.teacher && widget.currentUserData!.classes.length > 0)DropDown(currentUserData: widget.currentUserData, onUserDataChanged: widget.onUserDataChanged,),
                           SizedBox(width: 16),
                           NotificationsDropDown(
                             currentUserData: widget.currentUserData, // Pass your user data

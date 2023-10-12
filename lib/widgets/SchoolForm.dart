@@ -1,0 +1,1249 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:infomentor/backend/fetchClass.dart';
+import 'package:infomentor/screens/Home.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
+import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/fetchSchool.dart';
+import 'package:infomentor/Colors.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'dart:math';
+
+
+
+class SchoolForm extends StatefulWidget {
+  final void Function() isSchool;
+
+  const SchoolForm({
+    Key? key,
+    required this.isSchool,
+  }) : super(key: key);
+  @override
+  _SchoolFormState createState() => _SchoolFormState();
+}
+
+class _SchoolFormState extends State<SchoolForm> {
+   final NonSwipeablePageController _pageController = NonSwipeablePageController();
+   final PageController _pageClassesController = PageController();
+  int currentStep = 1;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _textEditingController = TextEditingController();
+  String? resultMessage;
+  bool isMobile = false;
+  bool isDesktop = false;
+  Color _schoolIdBorderColor = Colors.white;
+  TextEditingController _schoolIdController = TextEditingController();
+  TextEditingController _schoolNameController = TextEditingController();
+  TextEditingController _adminNameController = TextEditingController();
+  TextEditingController _adminEmailController = TextEditingController();
+  TextEditingController _codeController = TextEditingController();
+  int _selectedIndex = 0;
+  int _selectedIndexClasses = 0;
+  bool check = false;
+  String? generatedCode;
+  List<int> selectedNumbers = [-1,-1,-1,-1,-1,-1,-1,-1,-1];
+  List<int> selectedYears = [];
+  bool _class = false;
+
+  TextEditingController _one = TextEditingController();
+  TextEditingController _two = TextEditingController();
+  TextEditingController _three = TextEditingController();
+  TextEditingController _four = TextEditingController();
+  TextEditingController _five = TextEditingController();
+  TextEditingController _six = TextEditingController();
+  TextEditingController _seven = TextEditingController();
+  TextEditingController _eight = TextEditingController();
+  TextEditingController _nine = TextEditingController();
+
+  List<String> one = [];
+  List<String> two = [];
+  List<String> three = [];
+  List<String> four = [];
+  List<String> five = [];
+  List<String> six = [];
+  List<String> seven = [];
+  List<String> eight = [];
+  List<String> nine = [];
+
+  List<String> combinedList = [];
+
+  TextEditingController getController(int index) {
+    switch (index) {
+      case 1: return _one;
+      case 2: return _two;
+      case 3: return _three;
+      case 4: return _four;
+      case 5: return _five;
+      case 6: return _six;
+      case 7: return _seven;
+      case 8: return _eight;
+      case 9: return _nine;
+    }
+    return _one;
+  }
+
+  List<String> getList(int index) {
+    switch (index) {
+      case 1: return one;
+      case 2: return two;
+      case 3: return three;
+      case 4: return four;
+      case 5: return five;
+      case 6: return six;
+      case 7: return seven;
+      case 8: return eight;
+      case 9: return nine;
+    }
+    return one;
+  }
+
+  bool checkLists(List<int> indexes) {
+    for (int index in indexes) {
+      List<String> list = getList(index + 1);
+      if (list.isEmpty) {
+        return false; // If any list has length 0, return false
+      }
+    }
+    return true; // All lists have length greater than 0
+  }
+
+
+  int generateRandomInt({int length = 6}) {
+    final Random random = Random();
+    final int min = pow(10, length - 1).toInt(); // Cast to int
+    final int max = pow(10, length).toInt() - 1; // Cast to int
+    return min + random.nextInt(max - min + 1);
+  }
+  
+
+  Future<void> sendVerificationCode(String recipientEmail, String verificationCode) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance; // Create an instance of FirebaseFirestore
+
+    await firestore.collection('mail').add(
+      {
+        'to': [recipientEmail],
+        'message': {
+          'subject': 'Verifikácia',
+          'text': 'Váš kód je ${verificationCode}'
+        },
+      },
+    ).then(
+      (value) {
+        print('Queued email for delivery!');
+      },
+    );
+    
+    print('done');
+  }
+
+
+
+   
+
+  Future<bool> numberExistsInAssetFile(String number) async {
+    // Read the text file from assets
+    final String data = await rootBundle.loadString('assets/skoly.txt');
+
+    // Split the file contents into lines
+    final List<String> lines = data.split('\n');
+
+    // Check if the number exists in any of the lines
+    for (String line in lines) {
+      if (line.trim() == number) {
+        return true;
+      }
+    }
+
+    // If the number is not found, return false
+    return false;
+  }
+
+
+  @override
+  
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      backgroundColor: check ? Theme.of(context).colorScheme.background : Theme.of(context).primaryColor,
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height <= 700
+          ? 700
+          : MediaQuery.of(context).size.height >= 900
+              ?  MediaQuery.of(context).size.width > 1000 ? MediaQuery.of(context).size.height : 900
+              : MediaQuery.of(context).size.height,
+          width: double.infinity,
+          child: check ? PageView(
+            physics: NeverScrollableScrollPhysics(),
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            children: [
+               Column(
+                  children: <Widget>[
+                    SizedBox(height: 50),
+                    Container(
+                        child: SvgPicture.asset(
+                          'assets/logoFilled.svg',
+                          width:  isMobile ? 132 : 172,
+                        ),
+                        padding: EdgeInsets.all(16),
+                      ),
+                      Expanded(
+                        child: Container(
+                          constraints: BoxConstraints(maxWidth: 900),
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Nadpis',
+                                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                        color: AppColors.getColor('mono').black,
+                                      ),
+                                ),
+                                SizedBox(height: 10,),
+                                Text(
+                                  'Názov školy',
+                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.getColor('mono').grey,
+                                      ),
+                                ),
+                                SizedBox(height: 10,),
+                                reTextField(
+                                  'Názov školy',
+                                  false,
+                                  _schoolNameController,
+                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                ),
+                                SizedBox(height: 10,),
+                                Text(
+                                  'Meno správcu / správkyne',
+                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.getColor('mono').grey,
+                                      ),
+                                ),
+                                reTextField(
+                                  'Meno správcu / správkyne',
+                                  false,
+                                  _adminNameController,
+                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                ),
+                                SizedBox(height: 10,),
+                                Text(
+                                  'Email správcu / správkyne',
+                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.getColor('mono').grey,
+                                      ),
+                                ),
+                                reTextField(
+                                  'Email správcu / správkyne',
+                                  false,
+                                  _adminEmailController,
+                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                ),
+                                Text(
+                                  'Na tento email vám bude zaslaný verifikačný kód',
+                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.getColor('mono').grey,
+                                      ),
+                                ),
+                              ],
+                            ),
+                        )
+                      ),
+                      ReButton(
+                        activeColor: AppColors.getColor('green').main,
+                        defaultColor: AppColors.getColor('green').light,
+                        disabledColor: AppColors.getColor('mono').lightGrey,
+                        focusedColor: AppColors.getColor('primary').lighter,
+                        hoverColor: AppColors.getColor('green').main,
+                        text: 'ĎALEJ',
+                        onTap: () {
+                          if (_schoolNameController.text != '' && _adminEmailController.text != '' && _adminNameController.text != '') {
+                            _onNavigationItemSelected(_selectedIndex + 1);
+                            setState(() {
+                              generatedCode = generateRandomInt().toString();
+                            });
+                            sendVerificationCode(_adminEmailController.text, generatedCode!);
+                          }
+                        },
+                      ),
+                      SizedBox(height: 60),
+                    ],
+                ),
+                Column(
+                  children: <Widget>[
+                    SizedBox(height: 60),
+                     Container(
+                        width: 900,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: AppColors.getColor('mono').darkGrey,
+                              ),
+                              onPressed: () {
+                                _onNavigationItemSelected(_selectedIndex - 1); 
+                              },
+                            ),
+                            Spacer(),
+                              Container(
+                            child: SvgPicture.asset(
+                              'assets/logoFilled.svg',
+                              width:  isMobile ? 132 : 172,
+                            ),
+                            padding: EdgeInsets.all(16),
+                          ),
+                            Spacer(),
+                            Container(width: 2.5,)
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          constraints: BoxConstraints(maxWidth: 900),
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Verifikácia emailovej adresy',
+                                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                        color: AppColors.getColor('mono').black,
+                                      ),
+                                ),
+                                Text(
+                                  'Na adresu ${_adminEmailController.text} sme vám zaslali 6-miestny overovací kód. ',
+                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.getColor('mono').grey,
+                                      ),
+                                ),
+                                SizedBox(height: 20,),
+                                Text(
+                                  'Overovací kód',
+                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.getColor('mono').grey,
+                                      ),
+                                ),
+                                SizedBox(height: 10,),
+                                reTextField(
+                                  'Zadajte 6-miestny kód',
+                                  false,
+                                  _codeController,
+                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                ),
+                              ],
+                            ),
+                        )
+                      ),
+                      ReButton(
+                        activeColor: AppColors.getColor('green').main,
+                        defaultColor: AppColors.getColor('green').light,
+                        disabledColor: AppColors.getColor('mono').lightGrey,
+                        focusedColor: AppColors.getColor('primary').lighter,
+                        hoverColor: AppColors.getColor('green').main,
+                        text: 'ĎALEJ',
+                        onTap: () {
+                          if (generatedCode == _codeController.text) {
+
+            
+                            _onNavigationItemSelected(_selectedIndex + 1);
+
+                          }
+                        },
+                      ),
+                      SizedBox(height: 60),
+                    ],
+                ),
+                 Column(
+                    children: <Widget>[
+                      SizedBox(height: 60),
+                      Container(
+                        width: 900,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: AppColors.getColor('mono').darkGrey,
+                              ),
+                              onPressed: () {
+                                _onNavigationItemSelected(_selectedIndex - 1); 
+                              },
+                            ),
+                            Spacer(),
+                              Container(
+                            child: SvgPicture.asset(
+                              'assets/logoFilled.svg',
+                              width:  isMobile ? 132 : 172,
+                            ),
+                            padding: EdgeInsets.all(16),
+                          ),
+                            Spacer(),
+                            Container(width: 2.5,)
+                          ],
+                        ),
+                      ),
+                          Container(
+                            constraints: BoxConstraints(maxWidth: 900),
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Vyberte ročníky, ktoré budú aplikáciu používať:',
+                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
+                                  ),
+                                  Text(
+                                    'K ročníkom budete môcť priradiť triedy (napríklad 1.A a 1.B pre 1. ročník SŠ)',
+                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                          color: AppColors.getColor('mono').grey,
+                                        ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(5),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(6),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(7),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(8),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(0),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(1),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(2),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(3),
+                                  SizedBox(height: 10,),
+                                  _buildClassesCheckbox(4),
+                                ],
+                              ),
+                          ),
+                        ReButton(
+                          activeColor: AppColors.getColor('green').main,
+                          defaultColor: AppColors.getColor('green').light,
+                          disabledColor: AppColors.getColor('mono').lightGrey,
+                          focusedColor: AppColors.getColor('primary').lighter,
+                          hoverColor: AppColors.getColor('green').main,
+                          text: 'ĎALEJ',
+                          onTap: () {
+                             bool containsNonNegativeOne = false;
+
+                            // Check if there's at least one number different from -1 in the list
+                            for (int number in selectedNumbers) {
+                              if (number != -1) {
+                                containsNonNegativeOne = true;
+                                selectedYears.add(number);
+                              }
+                            }
+
+                            // If there's at least one non-negative one, remove all occurrences of -1
+                            if (containsNonNegativeOne) {
+                              _onNavigationItemSelected(_selectedIndex + 1);
+                              setState(() {
+                                _class = true;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                  ),
+                  if (_class)Column(
+                    children: <Widget>[
+                      SizedBox(height: 60),
+                       Container(
+                        width: 900,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: AppColors.getColor('mono').darkGrey,
+                              ),
+                              onPressed: () {
+                                _onNavigationItemSelected(_selectedIndex - 1); 
+                              },
+                            ),
+                            Spacer(),
+                              Container(
+                            child: SvgPicture.asset(
+                              'assets/logoFilled.svg',
+                              width:  isMobile ? 132 : 172,
+                            ),
+                            padding: EdgeInsets.all(16),
+                          ),
+                            Spacer(),
+                            Container(width: 2.5,)
+                          ],
+                        ),
+                      ),
+                          Container(
+                            constraints: BoxConstraints(maxWidth: 900),
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'K vybraným ročníkom priraďte triedy, ktoré budú aplikáciu používať.',
+                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
+                                  ),
+                                  Text(
+                                    'Toto pomenovanie sa bude následne používať pri označovaní tried v aplikácii.',
+                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                          color: AppColors.getColor('mono').grey,
+                                        ),
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Container(
+                                    height: 300,
+                                    child: PageView.builder(
+                                    itemCount: selectedYears.length,
+                                    controller: _pageClassesController,
+                                    onPageChanged: _onPageClassChanged,
+                                    itemBuilder:(context, index) {
+                                      return 
+                                         Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children:[
+                                            Text(
+                                            '${selectedYears[index] + 1}. ročník ${ (selectedYears[index]) < 5 ? 'SŠ' : 'ZŠ'}',
+                                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                                color: AppColors.getColor('mono').black,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10,),
+                                            reTextField(
+                                              'Názov triedy - napr. ${selectedYears[index] + 1}.A',
+                                              false,
+                                              getController(selectedYears[index] + 1),
+                                              AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                            ),
+                                           SizedBox(height: 10,),
+                                            Container(
+                                              width: 304,
+                                              height: 50,
+                                              child: ReButton(
+                                                activeColor: AppColors.getColor('primary').light, 
+                                                defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                                disabledColor: AppColors.getColor('mono').lightGrey, 
+                                                focusedColor: AppColors.getColor('mono').lightGrey, 
+                                                hoverColor: AppColors.getColor('mono').lighterGrey, 
+                                                textColor: AppColors.getColor('primary').main,
+                                                iconColor: AppColors.getColor('primary').main, 
+                                                text: 'Pridať ďalšiu triedu pre ${selectedYears[index] + 1}. ročník ', 
+                                                leftIcon: 'assets/icons/plusIcon.svg',
+                                                onTap: () {
+                                                  setState(() {
+                                                    if(!getList(selectedYears[index] + 1).contains(getController(selectedYears[index] + 1).text) && getController(selectedYears[index] + 1).text != '') {
+                                                      getList(selectedYears[index] + 1).add(getController(selectedYears[index] + 1).text);
+                                                      combinedList.add(getController(selectedYears[index] + 1).text);
+                                                      print(combinedList);
+                                                    }
+                                                  });
+                                                }
+                                              ),
+                                            ),
+                                            SizedBox(height: 10,),
+                                             Text(getList(selectedYears[index] + 1).join(', '),
+                                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                  color: AppColors.getColor('mono').grey,
+                                                ),
+                                              ),
+                                          ]
+                                      );
+                                      }
+                                  ),
+                                  ),
+                                  Row(
+                                    children: [
+                                        Container(
+                                          width: 60,
+                                          height: 60,
+                                          child: ReButton(
+                                            activeColor: AppColors.getColor('primary').light, 
+                                            defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                            focusedColor: AppColors.getColor('mono').lightGrey, 
+                                            hoverColor: AppColors.getColor('mono').lighterGrey, 
+                                            textColor: AppColors.getColor('primary').main,
+                                            iconColor: AppColors.getColor('primary').main, 
+                                            text: '', 
+                                            leftIcon: 'assets/icons/arrowLeftIcon.svg',
+                                            isDisabled: _selectedIndexClasses - 1 < 0,
+                                            
+                                            onTap: () {
+                                              _onNavigationClassesSelected(_selectedIndexClasses - 1);
+                                            }
+                                          ),
+                                        ),
+
+                                        Spacer(),
+                                        Text('${_selectedIndexClasses + 1}/${selectedYears.length}'),
+                                        Spacer(),
+                                        Container(
+                                          width: 61,
+                                          height: 61,
+                                          child: ReButton(
+                                            activeColor: AppColors.getColor('primary').light, 
+                                            defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                            focusedColor: AppColors.getColor('mono').lightGrey, 
+                                            hoverColor: AppColors.getColor('mono').lighterGrey, 
+                                            textColor: AppColors.getColor('primary').main,
+                                            iconColor: AppColors.getColor('primary').main, 
+                                            text: '', 
+                                            leftIcon: 'assets/icons/arrowRightIcon.svg',
+                                            isDisabled: _selectedIndexClasses + 1 == selectedYears.length,
+                                            onTap: () {
+                                              _onNavigationClassesSelected(_selectedIndexClasses + 1);
+                                            }
+                                          ),
+                                        ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                          ),
+                        ReButton(
+                          activeColor: AppColors.getColor('green').main,
+                          defaultColor: AppColors.getColor('green').light,
+                          disabledColor: AppColors.getColor('mono').lightGrey,
+                          focusedColor: AppColors.getColor('primary').lighter,
+                          hoverColor: AppColors.getColor('green').main,
+                          text: 'ĎALEJ',
+                          onTap: () {
+                             if(checkLists(selectedYears)) {
+                                registerUser(_adminNameController.text, _adminEmailController.text, context);
+
+                             };
+                          },
+                        ),
+                        
+                      ],
+                  ),
+                  Column(
+                  children: <Widget>[
+                    SizedBox(height: 50),
+                    Container(
+                        child: SvgPicture.asset(
+                          'assets/logoFilled.svg',
+                          width:  isMobile ? 132 : 172,
+                        ),
+                        padding: EdgeInsets.all(16),
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min, // Ensure the dialog takes up minimum height
+                            children: [
+                              SvgPicture.asset('assets/icons/correctIcon.svg', width: 72, color: AppColors.getColor('green').main),
+                              SizedBox(height: 25,),
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Účet školy bol vytvorený',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                        color: AppColors.getColor('mono').black,
+                                      ),
+                                ),
+                              ),
+                              SizedBox(height: 15,),
+                              Container(
+                                width: 300,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Údaje o vašej škole boli uložené. V ďalšom kroku pridáte do aplikácie učiteľov a študentov.',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ),
+                      ReButton(
+                        activeColor: AppColors.getColor('green').main,
+                        defaultColor: AppColors.getColor('green').light,
+                        disabledColor: AppColors.getColor('mono').lightGrey,
+                        focusedColor: AppColors.getColor('primary').lighter,
+                        hoverColor: AppColors.getColor('green').main,
+                        text: 'POKRAČOVAŤ DO APLIKÁCIE',
+                        onTap: () {
+                          widget.isSchool();
+                        }
+                      ),
+                      SizedBox(height: 60),
+                    ],
+                ),
+                  
+              ],
+            ) : Container(
+               padding: EdgeInsets.all(16),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 60),
+                    Container(
+                        child: SvgPicture.asset(
+                          'assets/logo.svg',
+                          width:  isMobile ? 132 : 172,
+                        ),
+                        padding: EdgeInsets.all(16),
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Zadajte kód svojej školy',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayLarge!
+                                  .copyWith(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                    
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 40,),
+                            Container(
+                              width: 300,
+                              child: reTextField(
+                                "Zadajte oficiálny kod školy",
+                                false,
+                                _schoolIdController,
+                                _schoolIdBorderColor,
+                              ),
+                            ),
+                            SizedBox(height: 40,),
+                            Text(
+                              'Subheadline kód svojej školy si môžete vypýtať na vedení, zvyčajne ma 9 cifier.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      ReButton(
+                        activeColor: AppColors.getColor('green').main,
+                        defaultColor: AppColors.getColor('green').light,
+                        disabledColor: AppColors.getColor('mono').lightGrey,
+                        focusedColor: AppColors.getColor('primary').lighter,
+                        hoverColor: AppColors.getColor('green').main,
+                        text: 'VYTVORIŤ ÚČET',
+                        onTap: () async {
+                          bool exists = await numberExistsInAssetFile(_schoolIdController.text);
+                          if (exists) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  content: 
+                                  Container(
+                                    width: 328,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min, // Ensure the dialog takes up minimum height
+                                      children: [
+                                        SvgPicture.asset('assets/icons/correctIcon.svg', width: 72, color: AppColors.getColor('green').main),
+                                        SizedBox(height: 25,),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Kód overený',
+                                            textAlign: TextAlign.center,
+                                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                                  color: AppColors.getColor('mono').black,
+                                                ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 15,),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Kód školy bol overený. Teraz môžete vašej škole založiť účet.',
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        SizedBox(height: 30,),
+                                        Container(
+                                          child: Container(
+                                            width: 270,
+                                            height: 48,
+                                            child: ReButton(
+                                              activeColor: AppColors.getColor('green').main,
+                                              defaultColor: AppColors.getColor('green').light,
+                                              disabledColor: AppColors.getColor('mono').lightGrey,
+                                              focusedColor: AppColors.getColor('primary').lighter,
+                                              hoverColor: AppColors.getColor('green').main, 
+                                              textColor: AppColors.getColor('mono').white,
+                                              iconColor: AppColors.getColor('mono').white, 
+                                              text: 'POKRAČOVAŤ',  
+                                              onTap: () {
+                                                setState(() {
+                                                    check = exists;
+                                                  });
+                                                Navigator.of(context).pop();
+                                              }
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                );
+                              },
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  content: Container(
+                                    width: 328,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min, // Ensure the dialog takes up minimum height
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Spacer(),
+                                            MouseRegion(
+                                              cursor: SystemMouseCursors.click,
+                                              child: GestureDetector(
+                                                child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SvgPicture.asset('assets/icons/smallErrorIcon.svg', width: 64, color: Theme.of(context).colorScheme.error,),
+                                        SizedBox(height: 30,),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Nesprávny kód',
+                                            textAlign: TextAlign.center,
+                                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                                  color: AppColors.getColor('mono').black,
+                                                ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 30,),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Kód školy je neplatný. Skontrolujte jeho správnosť, alebo sa obráťte na xxx@xxx.sk.',
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        SizedBox(height: 30,),
+                                      ],
+                                    ),
+                                  )
+                                );
+                              },
+                            );
+                          }
+                            
+                        },
+                      ),
+                      SizedBox(height: 60),
+
+                    ],
+                  ),
+          ),
+        )
+      )
+    );
+  }
+
+  Widget _buildClassesCheckbox(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.getColor('mono').lightGrey), // Grey border
+        borderRadius: BorderRadius.circular(10.0), // Rounded corners
+      ),
+      margin: EdgeInsets.symmetric(vertical: 5.0), // Add margin for spacing
+      child: CheckboxListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          index < 5 ? '${index + 1}. ročník SŠ' : '${index + 1}. ročník ZŠ',
+          style: TextStyle(
+            color: Colors.black, // Purple when checked
+          ),
+        ),
+        value: selectedNumbers[index] == index,
+        onChanged: (value) {
+          setState(() {
+            if (value!) {
+              selectedNumbers[index] = index; // Use assignment operator = here
+            } else {
+              selectedNumbers[index] = -1; // You might want to set a different value when unchecked
+            }
+          });
+        },
+        controlAffinity: ListTileControlAffinity.leading, // Place the checkbox to the left
+        activeColor: AppColors.getColor('primary').main, // Custom active color
+      ),
+    );
+  }
+
+  void _onNavigationItemSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+    });
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _onNavigationClassesSelected(int index) {
+    setState(() {
+      _selectedIndexClasses = index;
+      _pageClassesController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+    });
+  }
+
+  void _onPageClassChanged(int index) {
+    setState(() {
+      _selectedIndexClasses = index;
+    });
+  }
+
+  String generateRandomPassword({int length = 12}) {
+    // Define character sets for different types of characters
+    final String uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    final String lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+    final String numericChars = '0123456789';
+    final String specialChars = '!@#\$%^&*()_-+=<>?/[]{},.:';
+
+    // Combine all character sets
+    final String allChars =
+        uppercaseChars + lowercaseChars + numericChars + specialChars;
+
+    final Random random = Random();
+
+    // Initialize an empty password string
+    String password = '';
+
+    // Ensure the password contains at least one character from each character set
+    password += uppercaseChars[random.nextInt(uppercaseChars.length)];
+    password += lowercaseChars[random.nextInt(lowercaseChars.length)];
+    password += numericChars[random.nextInt(numericChars.length)];
+    password += specialChars[random.nextInt(specialChars.length)];
+
+    // Generate the remaining characters randomly
+    for (int i = 4; i < length; i++) {
+      password += allChars[random.nextInt(allChars.length)];
+    }
+
+    // Shuffle the password to make it more random
+    List<String> passwordCharacters = password.split('');
+    passwordCharacters.shuffle();
+    password = passwordCharacters.join('');
+
+    return password;
+  }
+
+   Future<void> registerUser(String name, String email, BuildContext context) async {
+      try {
+        final functions = FirebaseFunctions.instance;
+
+        String generatePassword = generateRandomPassword();
+        final result = await functions.httpsCallable('createAccount').call({
+          'email': email,
+          'password': generatePassword,
+        });
+
+
+        // updateClassToFirestore(data.schoolClass, result.data['uid']);
+        UserData data = UserData(
+          admin: false,
+          discussionPoints: 0,
+          weeklyDiscussionPoints: 0,
+          id: '',
+          email: email,
+          name: name,
+          school: _schoolIdController.text,
+          active: false,
+          classes: [
+          ],
+          schoolClass: '',
+          image: 'assets/profilePicture.svg',
+          surname: '',
+          teacher: true,
+          points: 0,
+          capitols: [
+            UserCapitolsData(
+              completed: false,
+              id: '1',
+              image: '',
+              name: 'Kritické Myslenie',
+              tests: [
+                UserCapitolsTestData(
+                  completed: false,
+                  name: 'Úvod do kritického myslenia',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false, false, false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false, false, false, false, false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: 'Kognitívne skreslenia',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                  ],
+                ),
+              ],
+            ),
+            UserCapitolsData(
+              completed: false,
+              id: '1',
+              image: '',
+              name: 'Argumentácia',
+              tests: [
+                UserCapitolsTestData(
+                  completed: false,
+                  name: 'Analýza a Tvrdenie',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: '1.1 Časti debatného argumentu',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: 'Čo je argument (úvod do argumentu)',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: 'Dôkaz',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: '1.1  Silné a slabé argumenty',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: '1.2  Silné a slabé argumenty',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: '1. Závery (výroková logika I.)',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                  ],
+                ),
+                UserCapitolsTestData(
+                  completed: false,
+                  name: '1. Predpoklady (výroková logika II.)',
+                  points: 0,
+                  questions: [
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                    UserQuestionsData(answer: [], completed: false, correct: [false]),
+                  ],
+                ),
+              ],
+            ),
+            
+          ],
+          materials: [],
+          notifications: [],
+          badges: [
+            'assets/badges/badgeArgDis.svg',
+            'assets/badges/badgeManDis.svg',
+            'assets/badges/badgeCritDis.svg',
+            'assets/badges/badgeDataDis.svg',
+            'assets/badges/badgeGramDis.svg',
+            'assets/badges/badgeMediaDis.svg',
+            'assets/badges/badgeSocialDis.svg',
+          ]
+        );
+        
+        // Set the user's ID from Firebase
+        data.id = result.data['uid'];
+
+        // Once the user is created in Firebase Auth, add their data to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(data.id).set({
+          'admin': data.admin,
+          'email': data.email,
+          'name': data.name,
+          'discussionPoints': data.discussionPoints,
+          'weeklyDiscussionPoints': data.weeklyDiscussionPoints,
+          'active': data.active,
+          'classes': data.classes,
+          'school': data.school,
+          'schoolClass': data.schoolClass,
+          'image': data.image,
+          'surname': data.surname,
+          'teacher': data.teacher,
+          'points': data.points,
+          'capitols': data.capitols.map((capitol) => {
+            'id': capitol.id,
+            'name': capitol.name,
+            'image': capitol.image,
+            'completed': capitol.completed,
+            'tests': capitol.tests.map((test) => {
+              'name': test.name,
+              'completed': test.completed,
+              'points': test.points,
+              'questions': test.questions.map((question) => {
+                'answer': question.answer,
+                'completed': question.completed,
+                'correct': question.correct
+              }).toList(),
+            }).toList(),
+          }).toList(),
+          'notifications': data.notifications,
+          'materials': data.materials,
+          'badges': data.badges,
+        });
+
+        FirebaseFirestore firestore = FirebaseFirestore.instance; // Create an instance of FirebaseFirestore
+          await firestore.collection('mail').add(
+            {
+              'to': [email],
+              'message': {
+                'subject': 'Heslo',
+                'text': 'Vaše heslo je $generatePassword'
+              },
+            },
+          ).then(
+            (value) {
+              print('Queued email for delivery!');
+            },
+          );
+          addSchool(_schoolIdController.text,_schoolNameController.text, data.id , []);
+
+
+
+          for (String name in combinedList) {
+            addClass(name, _schoolIdController.text);
+          }
+        _onNavigationItemSelected(_selectedIndex + 1);
+        
+      } catch (e) {
+        reShowToast('Správcu sa nepodarilo pridať', true, context);
+      }
+
+      
+    }
+
+    
+}

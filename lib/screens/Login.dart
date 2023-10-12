@@ -4,9 +4,12 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
+import 'package:infomentor/widgets/SchoolForm.dart';
+import 'package:flutter/gestures.dart'; // Import this line
 import 'dart:html' as html;
 
 class Login extends StatefulWidget {
+  
   const Login({Key? key}) : super(key: key);
 
   @override
@@ -23,6 +26,7 @@ class _LoginState extends State<Login> {
   bool _isVisible = true;
   bool isMobile = false;
   bool isDesktop = false;
+  bool isSchool = false;
 
   final userAgent = html.window.navigator.userAgent.toLowerCase();
 
@@ -146,15 +150,23 @@ class _LoginState extends State<Login> {
         ),
       );
 
+    if (isSchool) return SchoolForm(isSchool: () {setState(() {
+      isSchool = false;
+    }); });
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height <= 700
+          ? 700
+          : MediaQuery.of(context).size.height >= 900
+              ? 900
+              : MediaQuery.of(context).size.height,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 60),
               Container(
+                margin: EdgeInsets.only(top: 60),
                 child: SvgPicture.asset(
                   'assets/logo.svg',
                   width:  isMobile ? 132 : 172,
@@ -181,23 +193,26 @@ class _LoginState extends State<Login> {
                                   
                                 ),
                           ),
-                          SizedBox(height: 100),
-                          reTextField(
-                            "Email",
-                            false,
-                            _emailTextController,
-                            _emailBorderColor,
+                          Container(
+                            margin: EdgeInsets.only(top: 100, bottom: 4, right: 4, left: 4),
+                              child:reTextField(
+                              "Email",
+                              false,
+                              _emailTextController,
+                              _emailBorderColor,
+                            ),
                           ),
-                          SizedBox(height: 8),
-                          reTextField(
-                            "Heslo",
-                            true,
-                            _passwordTextController,
-                            _passwordBorderColor,
-                            visibility: _isVisible,
-                            toggle: toggleVisibility
+                          Container(
+                            margin: EdgeInsets.all(4),
+                            child:  reTextField(
+                              "Heslo",
+                              true,
+                              _passwordTextController,
+                              _passwordBorderColor,
+                              visibility: _isVisible,
+                              toggle: toggleVisibility
+                            ),
                           ),
-                          SizedBox(height: 8),
                           _errorMessage != null
                             ? Container(
                                 margin: EdgeInsets.only(top: 22),
@@ -246,15 +261,17 @@ class _LoginState extends State<Login> {
                                 // For example: _showSnackBar('CAPTCHA verification failed');
                               },
                             ),*/
-                          SizedBox(height: 50),
-                          Text(
-                            'Ak prihlasovacie údaje nemáš, vypýtaj ',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                ),
+                          Container(
+                            margin: EdgeInsets.only(top: 50),
+                            child: Text(
+                              'Ak prihlasovacie údaje nemáš, vypýtaj ',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                            ),
                           ),
                           Text(
                             'si ich od svojho vyučujúceho.',
@@ -265,22 +282,45 @@ class _LoginState extends State<Login> {
                                   color: Theme.of(context).colorScheme.onPrimary,
                                 ),
                           ),
+                          Text.rich(
+                            TextSpan(
+                              text: 'pridať školu',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                  decoration: TextDecoration.underline,
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              // You can also add onTap to make it clickable
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  // Handle the tap event here, e.g., open a URL
+                                  // You can use packages like url_launcher to launch URLs.
+                                  setState(() {
+                                    isSchool = true;
+                                  });
+                                },
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-              ReButton(
-                activeColor: AppColors.getColor('green').main,
-                defaultColor: AppColors.getColor('green').light,
-                disabledColor: AppColors.getColor('mono').lightGrey,
-                focusedColor: AppColors.getColor('primary').lighter,
-                hoverColor: AppColors.getColor('green').main,
-                text: 'PRIHLÁSIŤ SA',
-                onTap: handleLogin,
-              ),
-              SizedBox(height: 60),
+              Container(
+                margin: EdgeInsets.only(bottom: 60),
+                child: ReButton(
+                  activeColor: AppColors.getColor('green').main,
+                  defaultColor: AppColors.getColor('green').light,
+                  disabledColor: AppColors.getColor('mono').lightGrey,
+                  focusedColor: AppColors.getColor('primary').lighter,
+                  hoverColor: AppColors.getColor('green').main,
+                  text: 'PRIHLÁSIŤ SA',
+                  onTap: handleLogin,
+                ),
+              )
             ],
           ),
         ),

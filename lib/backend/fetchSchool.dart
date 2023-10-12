@@ -67,3 +67,20 @@ Future<void> addClassToSchool(String newClass, String schoolId) async {
     throw Exception('Failed to add class');
   }
 }
+
+Future<void> addSchool(String schoolId, String name, String admin, List<String> classes) async {
+  try {
+    // Reference to the schools collection in Firestore
+    CollectionReference schoolsCollection = FirebaseFirestore.instance.collection('schools');
+
+    // Add the school data to Firestore with the specified schoolId
+    await schoolsCollection.doc(schoolId).set({
+      'name': name,
+      'admin': admin,
+      'classes': classes,
+    });
+  } catch (e) {
+    print('Error adding school: $e');
+    throw Exception('Failed to add school');
+  }
+}
