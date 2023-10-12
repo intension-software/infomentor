@@ -753,12 +753,22 @@ class _ProfileState extends State<Profile> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: List.generate(students!.length, (index) {
+                                      final bool isFirstItem = index == 0;
+                                      final bool isLastItem = index == students!.length - 1;
+
+                                      // Define the desired radii for each corner
+                                      final BorderRadius borderRadius = BorderRadius.only(
+                                        topLeft: isFirstItem ? Radius.circular(18.0) : Radius.zero,
+                                        topRight: isFirstItem ? Radius.circular(18.0) : Radius.zero,
+                                        bottomLeft: isLastItem ? Radius.circular(18.0) : Radius.zero,
+                                        bottomRight: isLastItem ? Radius.circular(18.0) : Radius.zero,
+                                      );
                                       return Column(
                                         children: [
                                           Container(
                                             decoration: BoxDecoration(
                                               color: studentIndex == index ? AppColors.getColor('primary').lighter : null,
-                                              border: index < students!.length - 1 ? Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey, width: 2.5)) : null,
+                                              borderRadius: borderRadius
                                             ),
                                             width: 900, // Set the width to a fixed value
                                             child: Padding(

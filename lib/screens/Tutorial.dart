@@ -727,9 +727,9 @@ return Scaffold(
               ? 900
               : MediaQuery.of(context).size.height,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MediaQuery.of(context).size.height > 800 ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: <Widget>[
-                if(MediaQuery.of(context).size.height > 800)SizedBox(height: 50) ,
+                SizedBox(height: 50) ,
                 MouseRegion(
                   onEnter: (_) {
                     setState(() {
