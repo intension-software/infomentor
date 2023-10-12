@@ -721,15 +721,15 @@ return Scaffold(
   backgroundColor: Theme.of(context).primaryColor,
   body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height <= 700
-          ? 700
+          height: MediaQuery.of(context).size.height <= 840
+          ? 840
           : MediaQuery.of(context).size.height >= 900
               ? 900
               : MediaQuery.of(context).size.height,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 50),
+                if(MediaQuery.of(context).size.height > 800)SizedBox(height: 50) ,
                 MouseRegion(
                   onEnter: (_) {
                     setState(() {
@@ -748,7 +748,7 @@ return Scaffold(
                     children: [
                       Container(
                         alignment: Alignment.bottomCenter,
-                        height: 600,
+                        height: 500,
                         child: PageView(
                           controller: _pageController,
                           onPageChanged: (int page) {
