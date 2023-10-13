@@ -280,7 +280,7 @@ Widget build(BuildContext context) {
                                   children: [
                                     Container(
                                       margin: EdgeInsets.only(right: 16.0),
-                                      child: SvgPicture.asset('assets/profilePicture.svg'),
+                                      child: CircularAvatar(name: post.user, width: 16, fontSize: 16,),
                                     ),
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,

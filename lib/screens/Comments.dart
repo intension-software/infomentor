@@ -81,7 +81,7 @@ class _CommentsState extends State<Comments> {
                         children: [
                           Container(
                             margin: EdgeInsets.only(right: 16.0),
-                            child: SvgPicture.asset('assets/profilePicture.svg')
+                            child: CircularAvatar(name: widget.post!.user, width: 16, fontSize: 16,)
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +141,6 @@ class _CommentsState extends State<Comments> {
                 Container(
                   width: 900,
                   height: 400,
-                  padding: EdgeInsets.all(12),
                   child: ListView.builder(
                       itemCount: comments.length + 1,
                       itemBuilder: (context, index) {
@@ -177,7 +176,7 @@ class _CommentsState extends State<Comments> {
                               children: [
                                 Container(
                                   margin: EdgeInsets.only(right: 16.0),
-                                  child: SvgPicture.asset('assets/profilePicture.svg')
+                                  child: CircularAvatar(name: comment.user, width: 16, fontSize: 16,)
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -49,7 +49,6 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
         if (snapshot.hasData) {
           List<CommentsAnswersData> answers = snapshot.data!;
           return Container(
-            padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
@@ -107,7 +106,7 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                         children: [
                           Container(
                             margin: EdgeInsets.only(right: 16.0),
-                            child: SvgPicture.asset('assets/profilePicture.svg')
+                            child: CircularAvatar(name: widget.comment!.user, width: 16, fontSize: 16,)
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +153,6 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                 Container(
                   width: 900,
                   height: 250,
-                  padding: EdgeInsets.all(12),
                   child:ListView.builder(
                     itemCount: answers.length + 1,
                     itemBuilder: (context, index) {
@@ -175,7 +173,7 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                               color: Colors.white,
                               border: Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey)),
                             ),
-                            padding: EdgeInsets.all(16.0),
+                            padding: EdgeInsets.only(right: 32, left: 32, top: 16, bottom: 16),
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -185,7 +183,7 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                               children: [
                                 Container(
                                   margin: EdgeInsets.only(right: 16.0),
-                                  child: SvgPicture.asset('assets/profilePicture.svg'),
+                                  child: CircularAvatar(name: answer.user, width: 16, fontSize: 16,),
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
