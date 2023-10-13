@@ -157,7 +157,7 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                     itemCount: answers.length + 1,
                     itemBuilder: (context, index) {
                       
-                      if (index == answers.length) return SizedBox(height: 40,);
+                      if (index == answers.length) return SizedBox(height: 100,);
                       CommentsAnswersData answer = answers[index];
 
                       return MouseRegion(

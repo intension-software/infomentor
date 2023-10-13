@@ -145,7 +145,7 @@ class _CommentsState extends State<Comments> {
                       itemCount: comments.length + 1,
                       itemBuilder: (context, index) {
                         if (index == comments.length ) {
-                        return SizedBox(height: 40,);
+                        return SizedBox(height: 100,);
 
                         } else {
                         CommentsData comment = comments[index];
