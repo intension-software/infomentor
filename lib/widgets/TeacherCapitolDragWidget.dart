@@ -194,7 +194,7 @@ class _TeacherCapitolDragWidgetState extends State<TeacherCapitolDragWidget> {
                           child: ListTile(
                             title: Text(
                               capitol.tests[subIndex].name,
-                              style: TextStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 14, decoration: subIndex == 0 ? TextDecoration.underline : null,),
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,  // To shrink-wrap the Row
