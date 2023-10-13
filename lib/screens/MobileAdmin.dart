@@ -1164,7 +1164,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                         text: 'ULOŽIŤ', 
                         isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
-                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher, context);
+                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher, context, currentClass);
                           }
                       ),
                       Text(
@@ -1562,7 +1562,7 @@ Future<void> saveUserDataToFirestore(
 }
 
 
- Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher, BuildContext context) async {
+ Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher, BuildContext context, ClassDataWithId? currentClass) async {
   try {
     final functions = FirebaseFunctions.instance;
     final result = await functions.httpsCallable('createAccount').call({
@@ -1788,6 +1788,13 @@ Future<void> saveUserDataToFirestore(
       'badges': data.badges,
     });
     updateClassToFirestore(classId, data.id, teacher, context);
+
+     if (teacher) {
+      currentClass!.data.teachers.add(data.id);
+
+    } else {
+      currentClass!.data.students.add(data.id);
+    }
     
     reShowToast(teacher ? 'Učiteľ úspešne pridaný' : 'Žiak úspešne pridaný', false, context);
   } catch (e) {

@@ -48,6 +48,7 @@ class MainApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: AppColors.getColor('primary').light,
         colorScheme: ColorScheme.light().copyWith(
+          primary: AppColors.getColor('primary').light,
           primaryContainer: AppColors.getColor('primary').light,
           onPrimaryContainer: AppColors.getColor('mono').white,
           onPrimary: AppColors.getColor('mono').white,

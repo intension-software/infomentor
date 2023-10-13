@@ -218,7 +218,7 @@ class _ProfileState extends State<Profile> {
                         child: Column(
                           children: [
                             SizedBox(height: 16),
-                            SvgPicture.asset('assets/profilePicture.svg', width: 90),
+                            CircularAvatar(name: currentUserData!.name, width: 90, fontSize: 80,),
                              SizedBox(height: 20),
                             Container(
                               width: double.infinity,

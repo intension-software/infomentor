@@ -13,9 +13,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class DesktopAdmin extends StatefulWidget {
+  final Future<void> fetch;
   final UserData? currentUserData;
   final void Function() logOut;
-  const DesktopAdmin({Key? key, required this.currentUserData, required this.logOut});
+  const DesktopAdmin({Key? key, required this.fetch, required this.currentUserData, required this.logOut});
 
   @override
   State<DesktopAdmin> createState() => _DesktopAdminState();
@@ -36,6 +37,7 @@ class UserDataWithId {
 }
 
 class _DesktopAdminState extends State<DesktopAdmin> {
+  
   List<String>? classes;
   String? schoolName;
   UserData? admin;
@@ -70,6 +72,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
       SchoolData school = await fetchSchool(widget.currentUserData!.school);
       admin = await fetchUser(school.admin);
 
+
       setState(() {
         if (mounted) {
           classes = school.classes;
@@ -77,6 +80,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
           schoolName = school.name;
           _loading = false;
         }
+        classDataList = [];
       });
 
       // Fetch class data once and store it in classDataList with IDs
@@ -101,6 +105,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
     if (_loading) return Center(child: CircularProgressIndicator());
     return PageView(
       controller: _pageController,
+      physics: NeverScrollableScrollPhysics(),
       onPageChanged: _onPageChanged,
       children: [
         Align(
@@ -869,6 +874,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                       ),
                       onPressed: () {
                         _addClass = false;
+                        fetchSchoolData();
                         _onNavigationItemSelected(0);
                       }
                     ),
@@ -922,6 +928,8 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                 Align(
                   alignment: Alignment.center,
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                           ReButton(
                             activeColor: AppColors.getColor('mono').white, 
@@ -933,15 +941,13 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                             iconColor: AppColors.getColor('mono').black, 
                             text: 'ULOŽIŤ', 
                             isDisabled: _classNameController.text == '',
-                            onTap: () async {
+                            onTap: () {
                               addClass(_classNameController.text, widget.currentUserData!.school);
                               reShowToast('Trieda úspešne pridaná', false, context);
                             },
                           ),
                     ],
                   )
-                  
-                  
                 ),
                 SizedBox(height: 30,),
               ],
@@ -1085,7 +1091,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         text: 'ULOŽIŤ', 
                         isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
-                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher, context);
+                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher,context, currentClass);
                           }
                       ),
                       Text(
@@ -1168,8 +1174,8 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                       onTap: () {
                           deleteClass(currentClass!.id, widget.currentUserData!.school);
                           removeClassFromSchool(currentClass!.id, widget.currentUserData!.school);
-                          deleteUserFunction(currentClass!.data.students,currentUser!.data, context);
-                          deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context);
+                          deleteUserFunction(currentClass!.data.students,currentUser!.data, context, currentClass);
+                          deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context, currentClass);
                           reShowToast('Trieda úspešne vymazaná', false, context);
                         }
                     ),
@@ -1351,7 +1357,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                             leftIcon: 'assets/icons/binIcon.svg',
                             text: currentUser!.data.teacher ? 'Vymazať učiteľa' : 'Vymazať žiaka', 
                             onTap: () {
-                                deleteUserFunction([currentUser!.id],currentUser!.data, context);
+                                deleteUserFunction([currentUser!.id],currentUser!.data, context, currentClass);
                               }
                           ),
                           ReButton(
@@ -1484,7 +1490,7 @@ Future<void> saveUserDataToFirestore(
 }
 
 
- Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher, BuildContext context) async {
+ Future<void> registerUser(String schoolId ,String classId, String name, String email, String password, bool teacher, BuildContext context,ClassDataWithId? currentClass) async {
   try {
     final functions = FirebaseFunctions.instance;
     final result = await functions.httpsCallable('createAccount').call({
@@ -1711,6 +1717,13 @@ Future<void> saveUserDataToFirestore(
     });
     updateClassToFirestore(classId, data.id, teacher, context);
     
+
+    if (teacher) {
+      currentClass!.data.teachers.add(data.id);
+
+    } else {
+      currentClass!.data.students.add(data.id);
+    }
     reShowToast(teacher ? 'Učiteľ úspešne pridaný' : 'Žiak úspešne pridaný', false, context);
   } catch (e) {
     reShowToast(teacher ? 'Učiteľa sa nepodarilo pridať' : 'Žiaka sa nepodarilo pridať', true, context);
@@ -1751,8 +1764,10 @@ Future<Map<String, String>> fetchClassNames(List<String> classIds) async {
   return classNames;
 }
 
-Future<void> deleteUserFunction(List<String> userIds, UserData currentUser, BuildContext context) async {
+Future<void> deleteUserFunction(List<String> userIds, UserData currentUser, BuildContext context, ClassDataWithId? currentClass) async {
   try {
+
+    
     for (String userId in userIds) {
       // Find the class document that contains the userId
       final classQuery = await FirebaseFirestore.instance
@@ -1777,6 +1792,9 @@ Future<void> deleteUserFunction(List<String> userIds, UserData currentUser, Buil
         });
       }
 
+        currentClass!.data.teachers.removeWhere((id) => id == userId);
+        currentClass!.data.students.removeWhere((id) => id == userId);
+
       // Call deleteUser(userId) to delete the user document
       await deleteUser(userId);
     }
@@ -1786,6 +1804,8 @@ Future<void> deleteUserFunction(List<String> userIds, UserData currentUser, Buil
     final deleteAccountCallable =
         FirebaseFunctions.instance.httpsCallable('deleteAccount');
     await deleteAccountCallable(userIds);
+
+    
 
     reShowToast(currentUser.teacher ? 'Učiteľ úspešne vymazaný' : 'Žiak úspešne vymazaný', false, context);
   } catch (error) {

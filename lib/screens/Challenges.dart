@@ -6,10 +6,14 @@ import 'package:infomentor/Colors.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/backend/fetchUser.dart';
-import 'package:infomentor/screens/Test.dart';
+import 'package:infomentor/Tests/DesktopTest.dart';
+import 'package:infomentor/Tests/TeacherDesktopTest.dart';
+import 'package:infomentor/Tests/MobileTest.dart';
+import 'package:infomentor/Tests/TeacherMobileTest.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/widgets/CapitolDragWidget.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'dart:html' as html;
 
 class Challenges extends StatefulWidget {
   final Future<void> fetch;
@@ -32,11 +36,20 @@ class _ChallengesState extends State<Challenges> {
   Future<List<FetchResult>>? _dataFuture;
   List<int> capitolsIds = [];
   List<List<double>> percentages = [];
+  bool isMobile = false;
+  bool isDesktop = false;
+
 
 
   @override
   void initState() {
     super.initState();
+
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    isMobile = userAgent.contains('mobile');
+    isDesktop = userAgent.contains('macintosh') ||
+        userAgent.contains('windows') ||
+        userAgent.contains('linux');
 
      _dataFuture = fetchQuestionData();
   }
@@ -195,7 +208,7 @@ Future<List<FetchResult>> fetchQuestionData() async {
           child: Container(
             color: Colors.black.withOpacity(0.5),
             alignment: Alignment.center,
-            child: Test(testIndex: testIndex, overlay: toggle, capitolsId: capitolId.toString(), userData: widget.currentUserData),
+            child: isMobile ? widget.currentUserData!.teacher ?  TeacherMobileTest(testIndex: testIndex, overlay: toggle, capitolsId: capitolId.toString(), userData: widget.currentUserData) :  MobileTest(testIndex: testIndex, overlay: toggle, capitolsId: capitolId.toString(), userData: widget.currentUserData) : widget.currentUserData!.teacher ?  TeacherDesktopTest(testIndex: testIndex, overlay: toggle, capitolsId: capitolId.toString(), userData: widget.currentUserData) : DesktopTest(testIndex: testIndex, overlay: toggle, capitolsId: capitolId.toString(), userData: widget.currentUserData),
           ),
         ),
       ),
@@ -263,13 +276,13 @@ Widget build(BuildContext context) {
                   child: PageView(
                     children: [
                       // First page - ListView
-                      ListView.builder(
+                     ListView.builder(
                             reverse: true,
                             itemCount: totalTests() + 1, // Add 1 for the dummy item
                             itemBuilder: (BuildContext context, int globalIndex) {
-                              if (globalIndex == totalTests()) {
+                              if (globalIndex == 0) {
                                 // This is the dummy item, you can control its height
-                                return SizedBox(height: 150.0); // Adjust the height as needed
+                                return SizedBox(height: 200.0); // Adjust the height as needed
                               }
                             int? capitolIndex;
                             int? testIndex;
@@ -282,12 +295,12 @@ Widget build(BuildContext context) {
                               if (globalIndex - 1 < (prevTestsSum + currentCapitolTestCount)) {
                                 capitolIndex = currentCapitolId;
                                 testIndex = globalIndex - 1 - prevTestsSum;
-
                                 break;
                               } else {
                                 prevTestsSum += currentCapitolTestCount;
                               }
                             }
+
                             if (capitolIndex == null || testIndex == null) return Container();  // Handle error
 
                             EdgeInsets padding = EdgeInsets.only(
@@ -305,10 +318,10 @@ Widget build(BuildContext context) {
                                       OverflowBox(
                                         maxHeight: double.infinity,
                                         child: testIndex % 2 == 0 || testIndex == 0
-                                            ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false)
+                                            ? (!widget.currentUserData!.teacher ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false) : !(percentages[capitolIndex][testIndex] == 1.0))
                                                 ? SvgPicture.asset('assets/roadmap/leftRoad.svg')
                                                 : SvgPicture.asset('assets/roadmap/leftRoadFilled.svg')
-                                            : !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false)
+                                            : (!widget.currentUserData!.teacher ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false) : !(percentages[capitolIndex][testIndex] == 1.0))
                                                 ? SvgPicture.asset('assets/roadmap/rightRoad.svg')
                                                 : SvgPicture.asset('assets/roadmap/rightRoadFilled.svg'),
                                       ),
@@ -331,8 +344,8 @@ Widget build(BuildContext context) {
                                                       height: 170.0,
                                                       decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
-                                                        color: !widget.currentUserData!.capitols[capitolIndex].tests[testIndex].completed
-                                                            ? AppColors.getColor(results?[capitolsIds[capitolIndex]].capitolsData!.color ?? '').lighter
+                                                        color: (!widget.currentUserData!.teacher ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false) : !(percentages[capitolIndex][testIndex] == 1.0))
+                                                            ? AppColors.getColor(results?[capitolIndex].capitolsData!.color ?? '').lighter
                                                             : AppColors.getColor('yellow').lighter,
                                                       ),
                                                     )
@@ -357,7 +370,6 @@ Widget build(BuildContext context) {
                             );
                           },
                         ),
-                      // Second page - CapitolDragWidget (only if the user is a teacher)
                         Container(
                           height: MediaQuery.of(context).size.height,
                           child: CapitolDragWidget(currentUserData: widget.currentUserData, numbers: capitolsIds, refreshData: refreshList, percentages: percentages,),

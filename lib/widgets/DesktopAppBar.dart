@@ -9,6 +9,7 @@ import 'package:infomentor/widgets/DropDown.dart';
 import 'package:infomentor/widgets/NotificationsDropDown.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final FetchResult? capitol;
@@ -89,7 +90,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                                 widget.onNavigationItemSelected(5);
                                 widget.selectedIndex = -1;
                               },
-                              child: SvgPicture.asset(widget.currentUserData!.image),
+                              child: CircularAvatar(name: widget.currentUserData!.name, width: 16, fontSize: 16,),
                             ),
                           ),
                           if(widget.currentUserData!.teacher)SizedBox(width: 16),

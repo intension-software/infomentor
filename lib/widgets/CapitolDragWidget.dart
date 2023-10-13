@@ -30,7 +30,7 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
   ClassData? currentClassData;
   CapitolsData? capitolsData;
   List<FetchResult> localResults = [];
-
+  List<FetchResult> localResultsDrag = [];
 
   fetchCurrentClass() async {
     try {
@@ -53,6 +53,10 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
   try {
     for (int order in widget.numbers) {
       localResults.add(await fetchCapitols(order.toString()));
+    }
+
+    for (int order = 0; order < widget.numbers.length; order++) {
+      localResultsDrag.add(await fetchCapitols(order.toString()));
     }
   } catch (e) {
     print('Error fetching question data: $e');
@@ -100,7 +104,7 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
                       onTap: () async {
-                        final result = await reorderListOverlay(context, widget.numbers, currentClassData!);
+                        final result = await reorderListOverlay(context, currentClassData!);
                         if (result != null) {
                           setState(() {
                             widget.numbers = result;
@@ -213,7 +217,7 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
       ),
     );
   }
- Future<List<int>?> reorderListOverlay(BuildContext context, List<int> numbers, ClassData currentClass) async {
+ Future<List<int>?> reorderListOverlay(BuildContext context, ClassData currentClass) async {
   List<int> reorderedNumbers = List.from(widget.numbers); // Create a deep copy
 
   return await showDialog<List<int>>(
@@ -263,7 +267,7 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
                   },
                   buildDefaultDragHandles: false, // Remove default drag handles
                   children: reorderedNumbers.map((number) {
-                    CapitolsData? capitol = localResults[number].capitolsData;
+                    CapitolsData? capitol = localResultsDrag[number].capitolsData;
 
                     if (capitol == null) {
                       return Container();
@@ -309,7 +313,43 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
                 ),
               ),
             ),
-              Row(
+              MediaQuery.of(context).size.width < 1000 ? 
+                Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ReButton(
+                    activeColor: AppColors.getColor('mono').white, 
+                    defaultColor: AppColors.getColor('green').main, 
+                    disabledColor: AppColors.getColor('mono').lightGrey, 
+                    focusedColor: AppColors.getColor('green').light, 
+                    hoverColor: AppColors.getColor('green').light, 
+                    textColor: Theme.of(context).colorScheme.onPrimary, 
+                    iconColor: AppColors.getColor('mono').black, 
+                    text: 'ULOŽIŤ ZMENY', 
+                    onTap: () async {
+                      Navigator.pop(context, reorderedNumbers);
+                      await updateClassToFirestore(reorderedNumbers);
+                      fetchCurrentClass(); 
+                    },
+                  ),
+                  SizedBox(width: 20,),
+                  ReButton(
+                    activeColor: AppColors.getColor('mono').white, 
+                    defaultColor: AppColors.getColor('mono').white, 
+                    disabledColor: AppColors.getColor('mono').lightGrey, 
+                    focusedColor: AppColors.getColor('mono').lightGrey, 
+                    hoverColor: AppColors.getColor('mono').lighterGrey, 
+                    textColor: Theme.of(context).colorScheme.onBackground, 
+                    iconColor: AppColors.getColor('mono').black, 
+                    text: 'ZRUŠIŤ ZMENY', 
+                    onTap: () async {
+                      Navigator.pop(context, reorderedNumbers);
+                    },
+                  ),
+                ],
+              )
+              : Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

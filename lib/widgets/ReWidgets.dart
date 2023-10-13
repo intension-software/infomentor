@@ -1,7 +1,7 @@
 import 'dart:js';
 
 import 'package:flutter/material.dart';
-import 'package:infomentor/screens/Test.dart';
+import 'package:infomentor/Tests/DesktopTest.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -201,24 +201,39 @@ Container reTileImage(Color color, Color borderColor, int index, String? item, B
           title: Text('Obrázok ${index + 1}',
           style: Theme.of(context)
             .textTheme
-            .headlineSmall!
+            .titleLarge!
             .copyWith(
               color: borderColor,
             )
           ),
-          leading: percentage == [] || percentage == null ? correct == null ? Radio(
-        value: index,
-        groupValue: null,
-        fillColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
-        onChanged: null,
-      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: Theme.of(context)
+          leading: percentage == [] || percentage == null ? correct == null ? Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  ,
+              ) : correct ? Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                  style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: AppColors.getColor('green').main,
+                    ),
+                ) : Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                    style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(
+                        color: AppColors.getColor('red').main,
+                      ),
+                  ) : Text('${percentage[index]}%', style:Theme.of(context)
             .textTheme
-            .headlineSmall!
+            .titleLarge!
             .copyWith(
               color: percentageColor,
             )
           ),
-        ),
+          trailing: correct != null ? correct ?  SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg'): null,
+        )
       ],
     ),
   );
@@ -263,14 +278,28 @@ Container reTileMatchmaking(
             color: color,
           ),
           child: ListTile(
-             leading: percentage == [] || percentage == null ? correct == null ? Radio(
-                value: index,
-                groupValue: _answer,
-                activeColor: AppColors.getColor('mono').lightGrey,
-                onChanged: null,
-              ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style: Theme.of(context)
+             leading: percentage == [] || percentage == null ? correct == null ? Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  ,
+              ) : correct ? Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                  style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: AppColors.getColor('green').main,
+                    ),
+                ) : Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                    style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(
+                        color: AppColors.getColor('red').main,
+                      ),
+                  ) : Text('${percentage[index]}%', style:Theme.of(context)
             .textTheme
-            .headlineSmall!
+            .titleLarge!
             .copyWith(
               color: borderColor,
             )
@@ -284,6 +313,7 @@ Container reTileMatchmaking(
             ),
             ),  // default text displayed
             contentPadding: EdgeInsets.zero,  // to remove any default padding in ListTile
+            trailing: correct != null ? correct ?  SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg'): null,
           ),
         ),
       )
@@ -319,18 +349,34 @@ Container reTile(Color color, Color borderColor, int index, String? item, BuildC
             color: borderColor,
         ),
       ), 
-      leading: percentage == [] || percentage == null ? correct == null ? Radio(
-        value: index,
-        groupValue: null,
-        activeColor: AppColors.getColor('mono').lightGrey,
-        onChanged: null,
-      ) : correct ? SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg') : Text('${percentage[index]}%', style:Theme.of(context)
+      leading: percentage == [] || percentage == null ? correct == null ? Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  ,
+              ) : correct ? Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                  style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: AppColors.getColor('green').main,
+                    ),
+                ) : Text('${String.fromCharCode('a'.codeUnitAt(0) + index)})',
+                    style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(
+                        color: AppColors.getColor('red').main,
+                      ),
+                  ) : Text('${percentage[index]}%', style:Theme.of(context)
             .textTheme
             .titleLarge!
             .copyWith(
               color: percentageColor,
             )
           ),
+          trailing: correct != null ? correct ?  SvgPicture.asset('assets/icons/correctIcon.svg') : SvgPicture.asset('assets/icons/falseIcon.svg'): null,
+
     ),
   );
 }
@@ -488,6 +534,37 @@ void reShowToast(String message, bool error, BuildContext context) {
     duration: Duration(seconds: 5),
     position: StyledToastPosition(align: Alignment.bottomRight)
   );
+}
+
+class CircularAvatar extends StatelessWidget {
+  final String name;
+  final double width;
+  final double fontSize;
+
+  CircularAvatar({required this.name, required this.width, required this.fontSize});
+
+  @override
+  Widget build(BuildContext context) {
+    // Capitalize the first letter of the name
+    String initial = name.isNotEmpty ? name[0].toUpperCase() : '';
+
+    return  Stack(
+        alignment: Alignment.center,
+        children: [
+          CircleAvatar(
+            backgroundColor: AppColors.getColor('blue').lighter, // Border color
+            radius: width, // Adjust the size as needed
+          ),
+          Text(
+            initial,
+            style: TextStyle(
+              color: AppColors.getColor('blue').main, // Text color same as border color
+              fontSize: fontSize, // Adjust the font size as needed
+            ),
+          ),
+        ],
+      );
+  }
 }
 
 

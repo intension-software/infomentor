@@ -298,7 +298,7 @@ class _HomeState extends State<Home> {
           ),
           Challenges(fetch: fetchUserData(), currentUserData: currentUserData),
           Discussions(currentUserData: currentUserData),
-          Learning(currentUserData: currentUserData),
+          Learning(currentUserData: currentUserData, fetch: fetchUserData(),),
           if (currentUserData!.teacher) Results(),
           Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected),
           if(!currentUserData!.teacher) Profile(logOut: () {
@@ -312,7 +312,7 @@ class _HomeState extends State<Home> {
               setState(() {
                 fetchUserData();
               });
-          },) : DesktopAdmin(currentUserData: currentUserData,logOut: () {
+          },) : DesktopAdmin(fetch: fetchUserData() , currentUserData: currentUserData,logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();

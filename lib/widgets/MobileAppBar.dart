@@ -5,6 +5,7 @@ import 'package:infomentor/backend/fetchUser.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 
 class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -61,7 +62,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                         // Open profile overlay
                         onNavigationItemSelected(5);
                       },
-                        child: SvgPicture.asset(currentUserData!.image), // Use user's image
+                        child: CircularAvatar(name: currentUserData!.name, width: 16, fontSize: 16,), // Use user's image
                     ),
                     ),
                     SizedBox(width: 16),

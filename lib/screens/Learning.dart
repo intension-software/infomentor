@@ -11,11 +11,14 @@ import 'dart:html' as html;
 
 
 class Learning extends StatefulWidget {
+  final Future<void> fetch;
   final UserData? currentUserData;
+
 
 
   Learning({
     Key? key,
+    required this.fetch,
     required this.currentUserData,
   }) : super(key: key);
 
