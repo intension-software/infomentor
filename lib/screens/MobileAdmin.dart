@@ -285,7 +285,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                               hoverColor: AppColors.getColor('green').light, 
                                               textColor: Theme.of(context).colorScheme.onPrimary, 
                                               iconColor: AppColors.getColor('mono').black, 
-                                              text: 'NAHRAŤ .CSV SÚBOR',
+                                              text: 'NAHRAŤ .CSV/.XLSX SÚBOR',
                                               onTap: () {
                                                 
                                               },
@@ -592,7 +592,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                   hoverColor: AppColors.getColor('green').light, 
                                                   textColor: Theme.of(context).colorScheme.onPrimary, 
                                                   iconColor: AppColors.getColor('mono').black, 
-                                                  text: 'NAHRAŤ .CSV SÚBOR',
+                                                  text: 'NAHRAŤ .CSV/.XLSX SÚBOR',
                                                   onTap: () {
                                                     
                                                   },
@@ -789,7 +789,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                     hoverColor: AppColors.getColor('green').light, 
                                                     textColor: Theme.of(context).colorScheme.onPrimary, 
                                                     iconColor: AppColors.getColor('mono').black, 
-                                                    text: 'NAHRAŤ .CSV SÚBOR',
+                                                    text: 'NAHRAŤ .CSV/.XLSX SÚBOR',
                                                     onTap: () {
                                                     
                                                     },

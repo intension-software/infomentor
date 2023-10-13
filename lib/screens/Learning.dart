@@ -8,6 +8,7 @@ import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'dart:html' as html;
+import 'dart:async';
 
 
 class Learning extends StatefulWidget {
@@ -35,6 +36,10 @@ class _LearningState extends State<Learning> {
    bool isMobile = false;
   bool isDesktop = false;
   bool _add = false;
+  List<String> favouriteMaterials = [];
+  final List<Future<void>> _databaseUpdateQueue = [];
+  bool _isDatabaseUpdateInProgress = false;
+  UserData? userData;
 
   final userAgent = html.window.navigator.userAgent.toLowerCase();
 
@@ -45,8 +50,10 @@ class _LearningState extends State<Learning> {
         // Fetch the user data using the fetchUser function
         if (mounted) {
           setState(() {
+            userData = widget.currentUserData;
             currentClassData = classData;
             _loading = false;
+            favouriteMaterials = widget.currentUserData!.materials;
           });
         }
       } else {
@@ -164,73 +171,28 @@ class _LearningState extends State<Learning> {
               ),
               Expanded(
                 child: FutureBuilder<List<MaterialData>>(
-                  future: fetchMaterials(currentClassData!),
+                  future: showAll ? fetchMaterials(currentClassData!.materials) : fetchMaterials(favouriteMaterials),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       List<MaterialData> materials = snapshot.data!;
-
-                      if (!showAll) {
-                        // Fetch the user's data
-                        return FutureBuilder<UserData>(
-                          future: fetchUser(FirebaseAuth.instance.currentUser!.uid),
-                          builder: (context, userSnapshot) {
-                            if (userSnapshot.hasData) {
-                              UserData userData = userSnapshot.data!;
-                              List<String> favoriteMaterialIds = userData.materials;
-
-                              // Filter the materials that match the user's favorites
-                              materials = materials
-                                  .where((material) =>
-                                      favoriteMaterialIds.contains(material.materialId))
-                                  .toList();
-
-                              return ListView.builder(
-                                itemCount: materials.length,
-                                itemBuilder: (context, index) {
-                                  MaterialData material = materials[index];
-
-                                  return MaterialCardWidget(
-                                    image: material.image,
-                                    title: material.title,
-                                    description: material.description,
-                                    link: material.link,
-                                    subject: material.subject,
-                                    type: material.type,
-                                    association: material.association,
-                                    video: material.video,
-                                    materialId: material.materialId!,
-                                  );
-                                },
-                              );
-                            } else if (userSnapshot.hasError) {
-                              return Center(
-                                child: Text('Error fetching user data'),
-                              );
-                            } else {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                          },
-                        );
-                      }
 
                       return ListView.builder(
                         itemCount: materials.length,
                         itemBuilder: (context, index) {
                           MaterialData material = materials[index];
-
-                          return MaterialCardWidget(
-                            image: material.image,
-                            title: material.title,
-                            description: material.description,
-                            link: material.link,
-                            subject: material.subject,
-                            type: material.type,
-                            association: material.association,
-                            video: material.video,
-                            materialId: material.materialId!,
-                          );
+                            return MaterialCardWidget(
+                                image: material.image,
+                                title: material.title,
+                                description: material.description,
+                                link: material.link,
+                                subject: material.subject,
+                                type: material.type,
+                                association: material.association,
+                                video: material.video,
+                                materialId: material.materialId!,
+                                favoriteMaterialIds: favouriteMaterials,
+                                userData: userData,
+                              );
                         },
                       );
                     } else if (snapshot.hasError) {

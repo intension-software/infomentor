@@ -7,13 +7,13 @@ import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 
-class CapitolDragWidget extends StatefulWidget {
+class TeacherCapitolDragWidget extends StatefulWidget {
   final List<List<double>> percentages;
   final UserData? currentUserData;
   List<int> numbers;
   Future<void> Function()  refreshData;
 
-  CapitolDragWidget({
+  TeacherCapitolDragWidget({
     Key? key,
     required this.percentages,
     required this.numbers,
@@ -22,10 +22,10 @@ class CapitolDragWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CapitolDragWidgetState createState() => _CapitolDragWidgetState();
+  _TeacherCapitolDragWidgetState createState() => _TeacherCapitolDragWidgetState();
 }
 
-class _CapitolDragWidgetState extends State<CapitolDragWidget> {
+class _TeacherCapitolDragWidgetState extends State<TeacherCapitolDragWidget> {
   int? expandedTileIndex;
   ClassData? currentClassData;
   CapitolsData? capitolsData;
@@ -100,20 +100,25 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
                 Expanded(
                   child: Container(),
                 ),
-                MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () async {
-                        final result = await reorderListOverlay(context, currentClassData!);
-                        if (result != null) {
-                          setState(() {
-                            widget.numbers = result;
-                          });
-                        }
-                      },
-                      child: SvgPicture.asset('assets/icons/editIcon.svg'),
-                    ),
-                  ),
+                 ReButton(
+                  activeColor: AppColors.getColor('primary').light, 
+                  defaultColor: AppColors.getColor('mono').lighterGrey, 
+                  disabledColor: AppColors.getColor('mono').lightGrey, 
+                  focusedColor: AppColors.getColor('primary').light, 
+                  hoverColor: AppColors.getColor('primary').lighter, 
+                  textColor: AppColors.getColor('primary').main, 
+                  iconColor: AppColors.getColor('primary').main,
+                  rightIcon: 'assets/icons/editIcon.svg',
+                  text: 'Upraviť poradie', 
+                  onTap: () async {
+                    final result = await reorderListOverlay(context, currentClassData!);
+                      if (result != null) {
+                        setState(() {
+                          widget.numbers = result;
+                        });
+                      }
+                  },
+                ),
               ],
             ),
           ),
@@ -194,9 +199,11 @@ class _CapitolDragWidgetState extends State<CapitolDragWidget> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,  // To shrink-wrap the Row
                               children: [
-                                Text('${(widget.percentages[widget.numbers[index]][subIndex]*100).toStringAsFixed(2)}%',
+                                Text('Úspešnosť: ${(widget.percentages[widget.numbers[index]][subIndex]*100).toStringAsFixed(0)}%',
                                   style: TextStyle(color: AppColors.getColor('mono').darkGrey)
                                 ),  // Showing upto 2 decimal places
+                                SizedBox(width: 5),
+                                
                                 SizedBox(width: 5),  // Optional: To give some space between the Text and the Icon
                                 SvgPicture.asset('assets/icons/correctIcon.svg')  // Replace with the icon you want
                               ],

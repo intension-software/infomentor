@@ -3,6 +3,7 @@ import 'dart:js';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchSchool.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
+import 'package:infomentor/backend/fetchUser.dart';
 
 class CommentsAnswersData {
   Timestamp date;
@@ -820,7 +821,7 @@ Future<void> deleteAnswer(String classId, String postId, int commentIndex, int a
   }
 }
 
-Future<void> toggleCommentAward(String classId, String postId, int commentIndex) async {
+Future<void> toggleCommentAward(String classId, String postId, int commentIndex, String userId) async {
   try {
     // Reference to the class document in Firestore
     DocumentReference classRef = FirebaseFirestore.instance.collection('classes').doc(classId);
@@ -856,6 +857,7 @@ Future<void> toggleCommentAward(String classId, String postId, int commentIndex)
 
             // Update the class document in Firestore
             await classRef.update(classData);
+            await incrementDiscussionPoints(userId, 1, comments[commentIndex]['award']);
 
             return;
           } else {
@@ -876,7 +878,7 @@ Future<void> toggleCommentAward(String classId, String postId, int commentIndex)
   }
 }
 
-Future<void> toggleAnswerAward(String classId, String postId, int commentIndex, int answerIndex) async {
+Future<void> toggleAnswerAward(String classId, String postId, int commentIndex, int answerIndex, String userId) async {
   try {
     // Reference to the class document in Firestore
     DocumentReference classRef = FirebaseFirestore.instance.collection('classes').doc(classId);
@@ -915,6 +917,8 @@ Future<void> toggleAnswerAward(String classId, String postId, int commentIndex, 
 
               // Update the posts field within the class data
               classData['posts'] = posts;
+
+                await incrementDiscussionPoints(userId, -1, answers[answerIndex]['award']);
 
               // Update the class document in Firestore
               await classRef.update(classData);

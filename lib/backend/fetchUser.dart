@@ -286,5 +286,30 @@ Future<void> deleteUser(String userId) async {
   }
 }
 
+Future<void> incrementDiscussionPoints(String userId, int incrementAmount, bool check) async {
+  try {
+    // Get a reference to the user's document in Firestore
+    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Update the discussionPoints field by incrementAmount
+    if (check) {
+      await userRef.update({
+        'discussionPoints': FieldValue.increment(1),
+      });
+    } else {
+      await userRef.update({
+        'discussionPoints': FieldValue.increment(-1),
+      });
+    }
+    
+
+    print('DiscussionPoints incremented successfully.');
+  } catch (error) {
+    print('Error incrementing discussionPoints: $error');
+    throw error;
+  }
+}
+
+
 
 

@@ -11,7 +11,8 @@ import 'package:infomentor/Tests/TeacherDesktopTest.dart';
 import 'package:infomentor/Tests/MobileTest.dart';
 import 'package:infomentor/Tests/TeacherMobileTest.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-import 'package:infomentor/widgets/CapitolDragWidget.dart';
+import 'package:infomentor/widgets/TeacherCapitolDragWidget.dart';
+import 'package:infomentor/widgets/StudentCapitolDragWidget.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:html' as html;
 
@@ -242,36 +243,7 @@ Widget build(BuildContext context) {
         return  Column(
             children: <Widget>[
               // Your FractionallySizedBox here (not modified for brevity)
-              FractionallySizedBox(
-                widthFactor: 1.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  child: !widget.currentUserData!.teacher ? Column(
-                    children: [
-                      SizedBox(height: 16),
-                      Text(
-                        results?[capitolsIds[0]].capitolsData!.name ?? '',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onPrimary),
-                      ),
-                      SizedBox(height: 16),
-                      Container(
-                        height: 10,
-                        child: LinearProgressIndicator(
-                          value: countTrueTests(
-                                      widget.currentUserData!.capitols[capitolsIds[0]].tests) /
-                                  widget.currentUserData!.capitols[capitolsIds[0]].tests.length,
-                          backgroundColor: AppColors.getColor('blue').lighter,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.getColor('green').main),
-                        ),
-                      ),
-                    ],
-                  ) : Container(),
-                ),
-              ),
-              MediaQuery.of(context).size.width < 1000 && widget.currentUserData!.teacher ?
+              MediaQuery.of(context).size.width < 1000 ?
                 Expanded(
                   child: PageView(
                     children: [
@@ -282,7 +254,7 @@ Widget build(BuildContext context) {
                             itemBuilder: (BuildContext context, int globalIndex) {
                               if (globalIndex == 0) {
                                 // This is the dummy item, you can control its height
-                                return SizedBox(height: 200.0); // Adjust the height as needed
+                                return SizedBox(height: 300.0); // Adjust the height as needed
                               }
                             int? capitolIndex;
                             int? testIndex;
@@ -372,7 +344,7 @@ Widget build(BuildContext context) {
                         ),
                         Container(
                           height: MediaQuery.of(context).size.height,
-                          child: CapitolDragWidget(currentUserData: widget.currentUserData, numbers: capitolsIds, refreshData: refreshList, percentages: percentages,),
+                          child: widget.currentUserData!.teacher ? TeacherCapitolDragWidget(currentUserData: widget.currentUserData, numbers: capitolsIds, refreshData: refreshList, percentages: percentages) : StudentCapitolDragWidget(currentUserData: widget.currentUserData, numbers: capitolsIds, refreshData: refreshList),
                         ),
                     ],
                   ),
@@ -386,7 +358,7 @@ Widget build(BuildContext context) {
                             itemBuilder: (BuildContext context, int globalIndex) {
                               if (globalIndex == 0) {
                                 // This is the dummy item, you can control its height
-                                return SizedBox(height: 200.0); // Adjust the height as needed
+                                return SizedBox(height: 300.0); // Adjust the height as needed
                               }
                             int? capitolIndex;
                             int? testIndex;
@@ -475,12 +447,12 @@ Widget build(BuildContext context) {
                           },
                         ),
                       ),
-                      if (widget.currentUserData!.teacher)
-                        Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: MediaQuery.of(context).size.width / 2,
-                          child: CapitolDragWidget(currentUserData: widget.currentUserData, numbers: capitolsIds, refreshData: refreshList, percentages: percentages),
-                        ),
+                      
+                      if(MediaQuery.of(context).size.width > 1000) Container(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: widget.currentUserData!.teacher ? TeacherCapitolDragWidget(currentUserData: widget.currentUserData, numbers: capitolsIds, refreshData: refreshList, percentages: percentages) : StudentCapitolDragWidget(currentUserData: widget.currentUserData, numbers: capitolsIds, refreshData: refreshList),
+                      ),
                     ],
                   ),
                 ),
@@ -662,27 +634,44 @@ void showPopupMenu(BuildContext context, int direction, RenderBox button) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    'Týždenná výzva',
-                    overflow: TextOverflow.ellipsis, // Add this
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'Týždenná výzva',
+                        overflow: TextOverflow.ellipsis, // Add this
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      Spacer(),
+                      if(userData!.teacher)SvgPicture.asset('assets/icons/correctIcon.svg', color: Colors.white,)
+                    ],
                   ),
+                  
                   SizedBox(height: 5),
                   Text(
                     userData?.capitols[int.parse(capitolsId)].tests[number].name ?? '',
                     overflow: TextOverflow.ellipsis, // Add this
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                    SizedBox(height: 12),
+                    if (userData!.teacher) Container(
+                    padding: EdgeInsets.only(top: 12, bottom: 12),
+                    child: Text(
+                      'Priemerná úspešnosť ${percentages[int.parse(capitolsId)][number]*100}%',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    ),
+                  ),
                   if (userData != null && !userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)Center(
                       child: 
-                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', onTap: () {
+                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: userData!.teacher ? 'ZOBRAZIŤ' : 'ZAČAŤ' , onTap: () {
                       onPressed(number);
                       Navigator.of(context).pop();
                     }),
                   ),
+
+                  
                     
                   if (userData != null && userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)
                   Container(
@@ -729,7 +718,15 @@ void showPopupMenu(BuildContext context, int direction, RenderBox button) {
                       ],
                     ),
                   ),
-
+                   if (userData != null && userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed) Text(
+                              "Test si môžeš znovu otvoriť po skončení kapitoly",
+                              style:  Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                   ),
                   if (userData != null && userData!.capitols[int.parse(capitolsId)].tests[number].completed &&  userData!.capitols[int.parse(capitolsId)].completed)
                     Center(
                       child: ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text:  'ZOBRAZIŤ', onTap: () {

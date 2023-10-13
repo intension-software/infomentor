@@ -17,7 +17,9 @@ class MaterialCardWidget extends StatefulWidget {
   final String association;
   final String link;
   final String video;
-
+  final List<String> favoriteMaterialIds;
+  UserData? userData;
+ 
   MaterialCardWidget({
     required this.materialId,
     required this.image,
@@ -28,6 +30,8 @@ class MaterialCardWidget extends StatefulWidget {
     required this.association,
     required this.link,
     required this.video,
+    required this.favoriteMaterialIds,
+    required this.userData
   });
 
   @override
@@ -36,7 +40,6 @@ class MaterialCardWidget extends StatefulWidget {
 
 class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   bool isHeartFilled = false;
-  UserData? userData;
   String? userId;
   
 
@@ -48,8 +51,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
       userId = currentUser.uid;
       fetchUser(userId!).then((user) {
         setState(() {
-          userData = user;
-          isHeartFilled = userData!.materials.contains(widget.materialId);
+          isHeartFilled = widget.favoriteMaterialIds.contains(widget.materialId);
         });
       });
     }
@@ -105,7 +107,7 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          widget.type,
+                          widget.association,
                           style: TextStyle(
                             color: AppColors.getColor('mono').white,
                             fontSize: 14,
@@ -309,20 +311,27 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
     }
   }
 
-  void toggleFavorite() {
+  void toggleFavorite() async {
+
+    try {
     final String materialId = widget.materialId;
 
     setState(() {
       if (isHeartFilled) {
-        userData!.materials.remove(materialId);
-      } else {
-        userData!.materials.add(materialId);
+        widget.userData!.materials.remove(materialId);
+      } else if (!widget.userData!.materials.contains(materialId)) {
+        widget.userData!.materials.add(materialId);
       }
 
       isHeartFilled = !isHeartFilled;
     });
+    saveUserDataToFirestore(widget.userData!);
+    } catch (e) {
+      print('Error saving materials data to Firestore: $e');
+      rethrow;
+    }
+    
 
-    saveUserDataToFirestore(userData!);
   }
 
  Future<void> saveUserDataToFirestore(UserData userData) async {

@@ -109,7 +109,7 @@ Widget build(BuildContext context) {
                   return Center(child: Text("Error: ${snapshot.error}"));
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text("No notifications available."));
+                  return Center(child: Text("Žiadne dostupné notifikácie"));
                 }
 
                 List<CompleteNotification> unseenNotifications = snapshot.data!.where((completeNotif) {
@@ -284,7 +284,7 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
 Future<MaterialData?> _fetchMaterialById(String classId, String materialId) async {
   try {
     ClassData classData = await fetchClass(classId);
-    List<MaterialData> materials = await fetchMaterials(classData);
+    List<MaterialData> materials = await fetchMaterials(classData.materials);
     for (MaterialData material in materials) {
 
       if (material.materialId == materialId) {

@@ -231,7 +231,7 @@ Widget build(BuildContext context) {
                     ),
                     Spacer(),
                     Container(
-                      width: 180,
+                      width: 300,
                       height: 40,
                       child: ReButton(
                         activeColor: AppColors.getColor('primary').light, 
@@ -241,7 +241,7 @@ Widget build(BuildContext context) {
                         hoverColor: AppColors.getColor('primary').lighter, 
                         textColor: AppColors.getColor('primary').main, 
                         iconColor: AppColors.getColor('mono').black, 
-                        text: 'Vybrať z knižnice',
+                        text: 'Vybrať z pripravených príspevkov',
                         onTap: () {
                             _library = true;
                             _onNavigationItemSelected(1);
@@ -1143,7 +1143,7 @@ Widget build(BuildContext context) {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        'Odpoveď na príspevok',
+                        'Odpoveď na komentár',
                         style: Theme.of(context)
                             .textTheme
                             .headlineMedium!

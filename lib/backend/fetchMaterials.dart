@@ -30,19 +30,19 @@ class MaterialData {
   }
 }
 
-Future<List<MaterialData>> fetchMaterials(ClassData schoolClass) async {
+Future<List<MaterialData>> fetchMaterials(List<String> materialIds) async {
   try {
     // Reference to the "materials" collection in Firestore
     CollectionReference materialsRef =
         FirebaseFirestore.instance.collection('materials');
 
     // Only proceed if there are material IDs to look up
-    if (schoolClass.materials.isEmpty) {
+    if (materialIds.isEmpty) {
       return [];
     }
 
     // Construct a query to fetch only the materials whose IDs match those in the schoolClass's materials list
-    Query materialsQuery = materialsRef.where(FieldPath.documentId, whereIn: schoolClass.materials);
+    Query materialsQuery = materialsRef.where(FieldPath.documentId, whereIn: materialIds);
 
     // Retrieve the materials documents
     QuerySnapshot snapshot = await materialsQuery.get();
