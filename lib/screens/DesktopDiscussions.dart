@@ -50,6 +50,15 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
   bool textFieldTwoIsFocused = false;
 
 
+  String sklon(int length) {
+    if (length == 1) {
+      return 'odpoveď';
+    } else if (length > 1 && length < 5 ) {
+      return 'odpovede';
+    }
+    return 'odpovedí';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -472,7 +481,7 @@ Widget build(BuildContext context) {
                                       ),
                                       SizedBox(width: 4.0),
                                       Text(
-                                        'odpovede',
+                                        sklon(post.comments.length),
                                         style: Theme.of(context)
                                           .textTheme
                                           .titleSmall!
@@ -1151,7 +1160,7 @@ Widget build(BuildContext context) {
             SizedBox(height: 30,),
             Expanded(
               child: SingleChildScrollView(
-                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!), commentIndex: _selectedCommentIndex, currentUserData: widget.currentUserData!, postId: _selectedPost!.id,comment: _selectedComment, post: _selectedPost,setEdit: (bool edit, int index, String value) {
+                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!), commentIndex: _selectedCommentIndex, currentUserData: widget.currentUserData!, postId: _selectedPost!.id,comment: _selectedComment,controller: answerController , post: _selectedPost,setEdit: (bool edit, int index, String value) {
                     setState(() {
                       _editAnswer = edit;
                       _editIndex = index;

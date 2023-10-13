@@ -35,6 +35,15 @@ class _CommentsState extends State<Comments> {
     return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
   }
+
+  String sklon(int length) {
+    if (length == 1) {
+      return 'odpoveď';
+    } else if (length > 1 && length < 5 ) {
+      return 'odpovede';
+    }
+    return 'odpovedí';
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<CommentsData>>(
@@ -116,7 +125,7 @@ class _CommentsState extends State<Comments> {
                           ),
                           SizedBox(width: 4.0),
                           Text(
-                            'odpovede',
+                            sklon(widget.post!.comments.length),
                             style: Theme.of(context)
                               .textTheme
                               .titleSmall!
@@ -134,9 +143,14 @@ class _CommentsState extends State<Comments> {
                   height: 400,
                   padding: EdgeInsets.all(12),
                   child: ListView.builder(
-                      itemCount: comments.length,
+                      itemCount: comments.length + 1,
                       itemBuilder: (context, index) {
+                        if (index == comments.length ) {
+                        return SizedBox(height: 40,);
+
+                        } else {
                         CommentsData comment = comments[index];
+
                       return MouseRegion(
                         cursor: SystemMouseCursors.click,
                           child: GestureDetector(
@@ -429,6 +443,7 @@ class _CommentsState extends State<Comments> {
                         )
                         )
                       );
+                        }
                     },
                   ),
                 )

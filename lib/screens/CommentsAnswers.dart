@@ -17,6 +17,7 @@ class CommentsAnswers extends StatefulWidget {
   final CommentsData? comment;
   final int? commentIndex;
   void Function(bool, int, String) setEdit;
+  TextEditingController controller;
 
   CommentsAnswers({
     Key? key,
@@ -26,7 +27,8 @@ class CommentsAnswers extends StatefulWidget {
     required this.setEdit,
     required this.currentUserData,
     required this.commentIndex,
-    required this.postId
+    required this.postId,
+    required this.controller
   }) : super(key: key);
 
   @override
@@ -154,16 +156,27 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                   height: 250,
                   padding: EdgeInsets.all(12),
                   child:ListView.builder(
-                    itemCount: answers.length,
+                    itemCount: answers.length + 1,
                     itemBuilder: (context, index) {
+                      
+                      if (index == answers.length) return SizedBox(height: 40,);
                       CommentsAnswersData answer = answers[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey)),
-                        ),
-                        padding: EdgeInsets.all(16.0),
-                        child: Column(
+
+                      return MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            widget.controller.text = '@${answer.user} ';
+                          });
+                        },
+                        child:Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey)),
+                            ),
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 4.0),
@@ -408,13 +421,15 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                             ),
                           ],
                         ),
+                          )
+                        )
                       );
                     },
                   ),
                 )
               ]
             )
-          );
+        );
         } else if (snapshot.hasError) {
           return Text('Error loading answers');
         } else {

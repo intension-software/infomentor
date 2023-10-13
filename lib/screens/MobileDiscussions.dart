@@ -55,6 +55,15 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
     fetchPosts();
   }
 
+    String sklon(int length) {
+    if (length == 1) {
+      return 'odpoveď';
+    } else if (length > 1 && length < 5 ) {
+      return 'odpovede';
+    }
+    return 'odpovedí';
+  }
+
   String formatTimestamp(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
     return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
@@ -400,7 +409,7 @@ Widget build(BuildContext context) {
                                       ),
                                       SizedBox(width: 4.0),
                                       Text(
-                                        'odpovede',
+                                        sklon(post.comments.length),
                                         style: Theme.of(context)
                                           .textTheme
                                           .titleSmall!
@@ -1014,7 +1023,7 @@ Widget build(BuildContext context) {
                           hintText: _editComment ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
-                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
+                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1022,7 +1031,7 @@ Widget build(BuildContext context) {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
+                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                           ),
                           filled: true,
                           fillColor: Colors.white,
@@ -1137,7 +1146,7 @@ Widget build(BuildContext context) {
             ),
             Expanded(
               child: SingleChildScrollView(
-                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!), commentIndex: _selectedCommentIndex, currentUserData: widget.currentUserData!,post: _selectedPost, comment: _selectedComment , postId: _selectedPost!.id, setEdit: (bool edit, int index, String value) {
+                child: CommentsAnswers(fetchAnswersStream: fetchAnswersStream(_selectedPost!.id, _selectedCommentIndex!), commentIndex: _selectedCommentIndex, currentUserData: widget.currentUserData!,post: _selectedPost, comment: _selectedComment , postId: _selectedPost!.id, controller: answerController,  setEdit: (bool edit, int index, String value) {
                     setState(() {
                       _editAnswer = edit;
                       _editIndex = index;
@@ -1188,7 +1197,7 @@ Widget build(BuildContext context) {
                           hintText: _editAnswer ? 'Upraviť odpoveď' : 'Zapoj sa do diskusie',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8), // Adjust the value for less rounded corners
-                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
+                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1196,7 +1205,7 @@ Widget build(BuildContext context) {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: AppColors.getColor('mono').grey), // Light grey border color
+                            borderSide: BorderSide(color: Colors.transparent), // Light grey border color
                           ),
                           filled: true,
                           fillColor: Colors.white,

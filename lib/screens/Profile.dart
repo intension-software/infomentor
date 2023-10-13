@@ -180,9 +180,6 @@ class _ProfileState extends State<Profile> {
           capitolOne = one.capitolsData!.points;
           capitolTwo = two.capitolsData!.points;
           percentage = ((currentUserData!.points / (capitolOne + capitolTwo)) * 100).round();
-          print(currentUserData!.points);
-          print((capitolOne + capitolTwo));
-          print((currentUserData!.points / (capitolOne + capitolTwo)));
         });
       }
     } catch (e) {
