@@ -12,7 +12,6 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final void Function() logOut;
   final FetchResult? capitol;
   final UserData? currentUserData;
-  final int? capitolLength;
   final Function(int) onNavigationItemSelected;
 
   const MobileAppBar({
@@ -21,7 +20,6 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.logOut,
     required this.capitol,
     required this.currentUserData,
-    required this.capitolLength,
   }) : super(key: key);
 
   @override
@@ -41,7 +39,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                     SizedBox(width: 8),
                     Spacer(),
                     Text(
-                        '${currentUserData!.points}/${capitolLength ?? 0}',
+                        '${currentUserData!.points}/135',
                         style: Theme.of(context).textTheme.labelMedium!.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),

@@ -16,7 +16,6 @@ class Learning extends StatefulWidget {
   final UserData? currentUserData;
 
 
-
   Learning({
     Key? key,
     required this.fetch,
@@ -63,6 +62,8 @@ class _LearningState extends State<Learning> {
       print('Error fetching user data: $e');
     }
   }
+
+
 
   @override
   void initState() {
@@ -154,10 +155,10 @@ class _LearningState extends State<Learning> {
                       defaultColor: AppColors.getColor('primary').main, 
                       disabledColor: AppColors.getColor('mono').lightGrey, 
                       focusedColor: AppColors.getColor('primary').light, 
-                      hoverColor: AppColors.getColor('mono').lighterGrey, 
+                      hoverColor: AppColors.getColor('primary').lighter, 
                       textColor: Theme.of(context).colorScheme.onPrimary, 
                       iconColor: AppColors.getColor('mono').black, 
-                      text: '+ PRIDAŤ OBSAH',  
+                      text: '+ PRIDAŤ OBSAH',
                       onTap: () {
                         _onNavigationItemSelected(1);
                         _selectedIndex = 1;

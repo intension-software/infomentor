@@ -31,8 +31,11 @@ class _ProfileState extends State<Profile> {
  int weeklyCapitol = 0;
   int capitolOne = 0;
   int capitolTwo = 0;
-  int criticalThinking = 0;
-  int argumentation = 0;
+  int capitolThree = 0;
+  int capitolFour = 0;
+  int capitolFive = 0;
+  int capitolSix = 0;
+  int capitolSeven = 0;
   bool _isDisposed = false;
   List<String> badges = [];
   List<UserData>? students;
@@ -173,15 +176,23 @@ class _ProfileState extends State<Profile> {
     try {
       FetchResult one = await fetchCapitols("0");
       FetchResult two = await fetchCapitols("1");
+      FetchResult three = await fetchCapitols("2");
+      FetchResult four = await fetchCapitols("3");
+      FetchResult five = await fetchCapitols("4");
+      FetchResult six = await fetchCapitols("5");
+      FetchResult seven = await fetchCapitols("6");
 
       if (mounted && !_isDisposed) {
         setState(() {
           weeklyCapitol = one.capitolsData!.tests[one.capitolsData!.weeklyChallenge].points;
-          criticalThinking = one.capitolsData!.points;
-          argumentation = two.capitolsData!.points;
           capitolOne = one.capitolsData!.points;
           capitolTwo = two.capitolsData!.points;
-          percentage = ((currentUserData!.points / (capitolOne + capitolTwo)) * 100).round();
+          capitolThree = three.capitolsData!.points;
+          capitolFour = four.capitolsData!.points;
+          capitolFive = five.capitolsData!.points;
+          capitolSix = six.capitolsData!.points;
+          capitolSeven = seven.capitolsData!.points;
+          percentage = ((currentUserData!.points / (capitolOne + capitolTwo + capitolThree + capitolFour + capitolFive + capitolSix + capitolSeven)) * 100).round();
         });
       }
     } catch (e) {
@@ -427,7 +438,7 @@ class _ProfileState extends State<Profile> {
                                                 Row(
                                                   children: [
                                                     Text(
-                                                      '${currentUserData!.points}/${capitolOne+capitolTwo}',
+                                                      '${currentUserData!.points}/${capitolOne + capitolTwo + capitolThree + capitolFour + capitolFive + capitolSix + capitolSeven}',
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .titleLarge!
@@ -593,7 +604,7 @@ class _ProfileState extends State<Profile> {
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        '${calculateTotalPointsForCapitol(0)}/${criticalThinking}',
+                                                        '${calculateTotalPointsForCapitol(0)}/${capitolOne}',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .titleLarge!
@@ -625,7 +636,7 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text('${calculateTotalPointsForCapitol(1)}/${argumentation}',
+                                                      Text('${calculateTotalPointsForCapitol(1)}/${capitolTwo}',
                                                         style: Theme.of(context)
                                                         .textTheme
                                                         .titleLarge!
@@ -635,6 +646,171 @@ class _ProfileState extends State<Profile> {
                                                       ),
                                                       SizedBox(width: 5,),
                                                       SvgPicture.asset('assets/icons/starYellowIcon.svg')
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Manipulácia',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      color: AppColors.getColor('mono').darkGrey,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${calculateTotalPointsForCapitol(2)}/${capitolThree}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleLarge!
+                                                            .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Práca s dátami:',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      color: AppColors.getColor('mono').darkGrey,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${calculateTotalPointsForCapitol(3)}/${capitolFour}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleLarge!
+                                                            .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Dôveryhodnosť Médií:',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      color: AppColors.getColor('mono').darkGrey,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${calculateTotalPointsForCapitol(4)}/${capitolFive}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleLarge!
+                                                            .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Mediálna Gramotnosť:',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      color: AppColors.getColor('mono').darkGrey,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${calculateTotalPointsForCapitol(5)}/${capitolSix}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleLarge!
+                                                            .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Sociálne Siete:',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      color: AppColors.getColor('mono').darkGrey,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${calculateTotalPointsForCapitol(6)}/${capitolSeven}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleLarge!
+                                                            .copyWith(
+                                                          color: AppColors.getColor('yellow').light,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
                                                     ],
                                                   )
                                                 ],

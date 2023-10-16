@@ -577,7 +577,7 @@ Widget build(BuildContext context) {
                                         ),
                                         SizedBox(width: 20,), // Add spacing between buttons
                                         Container(
-                                          width: 180,
+                                          width: 186,
                                           height: 48,
                                           child: ReButton(
                                             activeColor: AppColors.getColor('red').light, 
@@ -781,7 +781,7 @@ Widget build(BuildContext context) {
                                         ),
                                         SizedBox(width: 20,), // Add spacing between buttons
                                         Container(
-                                          width: 180,
+                                          width: 186,
                                           height: 48,
                                           child: ReButton(
                                             activeColor: AppColors.getColor('red').light, 
@@ -1025,14 +1025,14 @@ Widget build(BuildContext context) {
                     ),
                     SizedBox(width: 8),
                     Container(
-                      width: _editComment ? 145 : 130,
+                      width: _editComment ? 152 : 136,
                       height: 40,
                       child: ReButton(
                         activeColor: AppColors.getColor('mono').white, 
                         defaultColor: AppColors.getColor('primary').main, 
                         disabledColor: AppColors.getColor('mono').lightGrey, 
                         focusedColor: AppColors.getColor('primary').light, 
-                        hoverColor: AppColors.getColor('mono').lighterGrey, 
+                        hoverColor: AppColors.getColor('primary').lighter, 
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: _editComment ? 'Uložiť úpravy' : 'Odpovedať',
@@ -1238,14 +1238,14 @@ Widget build(BuildContext context) {
                   SizedBox(width: 8),
                   Container(
                     alignment: Alignment.bottomRight,
-                    width: _editAnswer ? 145 : 130,
+                    width: _editAnswer ? 152 : 136,
                     height: 40,
                     child: ReButton(
                       activeColor: AppColors.getColor('mono').white,
                       defaultColor: AppColors.getColor('primary').main,
                       disabledColor: AppColors.getColor('mono').lightGrey,
                       focusedColor: AppColors.getColor('primary').light,
-                      hoverColor: AppColors.getColor('mono').lighterGrey,
+                      hoverColor: AppColors.getColor('primary').lighter,
                       textColor: Theme.of(context).colorScheme.onPrimary,
                       iconColor: AppColors.getColor('mono').black,
                       text: _editAnswer ? 'Uložiť úpravy' : 'Odpovedať',

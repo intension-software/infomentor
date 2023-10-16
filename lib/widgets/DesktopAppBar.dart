@@ -14,7 +14,6 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final FetchResult? capitol;
   final UserData? currentUserData;
-  final int? capitolLength;
   final Function(int) onNavigationItemSelected;
   final VoidCallback? onUserDataChanged;
   int selectedIndex;
@@ -24,7 +23,6 @@ class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
     Key? key,
     required this.capitol,
     required this.currentUserData,
-    required this.capitolLength,
     required this.onNavigationItemSelected,
     required this.selectedIndex,
     this.onUserDataChanged,
@@ -68,7 +66,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if(!widget.currentUserData!.teacher) Text(
-                            '${widget.currentUserData!.points}/${widget.capitolLength ?? 0}',
+                            '${widget.currentUserData!.points}/135',
                             style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                   color: AppColors.getColor('yellow').light,
                                 ),

@@ -172,7 +172,7 @@ class _MobileTeacherFeedState extends State<MobileTeacherFeed> {
                                   width:  170,
                                   child:  ReButton(
                                     activeColor: AppColors.getColor('primary').light, 
-                                    defaultColor: AppColors.getColor('primary').light, 
+                                    defaultColor: AppColors.getColor('primary').lighter, 
                                     disabledColor: AppColors.getColor('mono').lightGrey, 
                                     focusedColor: AppColors.getColor('primary').light, 
                                     hoverColor: AppColors.getColor('primary').light, 

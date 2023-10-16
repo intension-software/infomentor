@@ -44,6 +44,23 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
   bool isHeartFilled = false;
   String? userId;
   
+  String getColor (String type) {
+    switch (type) {
+      case 'Video': {
+        return 'red';
+      }
+      case 'Projekt': {
+        return 'green';
+      }
+      case 'Podujatie': {
+        return 'primary';
+      }
+      case 'Textový materiál': {
+        return 'blue';
+      }
+    }
+    return 'primary';
+  }
 
   @override
   void initState() {
@@ -150,13 +167,13 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.getColor('red').lighter,
+                    color: AppColors.getColor(getColor(widget.type)).lighter,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     widget.type,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: AppColors.getColor('red').main,
+                      color: AppColors.getColor(getColor(widget.type)).main,
                     ),
                   ),
                 ),
@@ -281,13 +298,13 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppColors.getColor('red').lighter,
+                            color: AppColors.getColor(getColor(widget.type)).lighter,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             widget.type,
                             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: AppColors.getColor('red').main,
+                              color: AppColors.getColor(getColor(widget.type)).main,
                             ),
                           ),
                         ),

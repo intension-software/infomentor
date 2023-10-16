@@ -10,7 +10,18 @@ class CorrectData {
   });
 }
 
+class DivisionData {
+  String title;
+  String text;
+
+  DivisionData({
+    required this.title,
+    required this.text
+  });
+}
+
 class QuestionsData {
+  List<DivisionData>? division;
   List<String>? answers;
   List<String>? answersImage;
   List<String>? matchmaking;
@@ -25,6 +36,7 @@ class QuestionsData {
   
 
   QuestionsData({
+    this.division,
     this.answers,
     this.answersImage,
     this.matchmaking,
@@ -152,6 +164,9 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
 
               List<dynamic>? correct = 
                   questionData['correct'] as List<dynamic>?;
+              
+              List<dynamic>? division = 
+                  questionData['division'] as List<dynamic>?;
 
 
               List<CorrectData> correctDataList = [];
@@ -168,8 +183,22 @@ Future<FetchResult> fetchCapitols(String capitolsId) async {
                   }
               }
 
+              List<DivisionData> divisionDataList = [];
+
+              if (division != null) {
+
+                  for (var item in division) {
+                      DivisionData dData = DivisionData(
+                          title: item['title'] as String,
+                          text: item['text'] as String
+                      );
+                      divisionDataList.add(dData);
+                  }
+              }
+
               // Create a QuestionsData instance with the extracted values
               QuestionsData questionsData = QuestionsData(
+                division: divisionDataList,
                 answers: answers,
                 answersImage: answersImage,
                 matchmaking: matchmaking, // Add the extracted matchmaking data here

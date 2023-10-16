@@ -956,7 +956,7 @@ Future<void> addClass(String className, String school) async {
     // Create a ClassData instance with the provided name
     ClassData newClass = ClassData(
       name: className,
-      capitolOrder: [0,1],
+      capitolOrder: [0,1,2,3,4,5,6],
       materials: [],
       posts: [],
       school: school,

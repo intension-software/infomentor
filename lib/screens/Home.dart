@@ -191,7 +191,6 @@ class _HomeState extends State<Home> {
               child: MobileAppBar(
                 capitol: capitol,
                 currentUserData: currentUserData,
-                capitolLength: capitolLength,
                 logOut: logOut,
                 onNavigationItemSelected: _onNavigationItemSelected,
               ),
@@ -201,7 +200,6 @@ class _HomeState extends State<Home> {
           child: DesktopAppBar(
             capitol: capitol,
             currentUserData: currentUserData,
-            capitolLength: capitolLength,
             onNavigationItemSelected: _onNavigationItemSelected,
             onUserDataChanged: _onUserDataChanged,
             selectedIndex: _selectedIndex,

@@ -48,6 +48,7 @@ class _TeacherMobileTestState extends State<TeacherMobileTest> {
   bool screen = true;
   int questionIndex = 0;
   List<String> answers = [];
+  List<DivisionData> division = [];
   List<String> answersImage = [];
   List<String> matchmaking = [];
   List<String> matches = [];
@@ -80,6 +81,7 @@ class _TeacherMobileTestState extends State<TeacherMobileTest> {
 
       setState(() {
         answers = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answers ?? [];
+        division = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].division ?? [];
         answersImage = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answersImage ?? [];
         matchmaking = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].matchmaking ?? [];
         matches = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].matches ?? [];
@@ -109,6 +111,7 @@ class _TeacherMobileTestState extends State<TeacherMobileTest> {
 
 
         _loading = false;
+
 
       });
 
@@ -246,6 +249,12 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
     }
     return Stack(
       children: [
+        !screen  ? Positioned.fill(
+          child: SvgPicture.asset(
+            'assets/background.svg',
+            fit: BoxFit.cover,
+          ),
+        ) : Container(),
         screen ? Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
@@ -262,7 +271,11 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
         
       Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: 
+                (definition != '' || images.length > 0) ||
+            screen
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).colorScheme.background,
         elevation: 0,
         flexibleSpace: Container(
           padding: EdgeInsets.symmetric(horizontal: 50),
@@ -310,7 +323,10 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: AppColors.getColor('mono').black,
+            color: (
+              (definition != '' || images.length > 0)) || screen
+                ? AppColors.getColor('mono').white
+                : AppColors.getColor('mono').black,
           ),
           onPressed: () =>
               questionIndex > 0
@@ -322,10 +338,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
         ),
       ),
 
-
-
-
-      backgroundColor: screen ?  Colors.transparent : Theme.of(context).colorScheme.background,
+      backgroundColor: (definition != '' || images.length > 0) || screen ? Colors.transparent : Theme.of(context).colorScheme.background,
       body: !screen ? SingleChildScrollView(
          child: Container(
           width: double.infinity,
@@ -335,7 +348,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
             alignment: Alignment.topCenter, 
             child: Wrap(
             direction: Axis.horizontal,
-            crossAxisAlignment: WrapCrossAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.start,
             alignment: WrapAlignment.spaceEvenly,
 
             children: [
@@ -344,12 +357,13 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               padding: EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
+                  if(title != '')Container(
                     margin: EdgeInsets.all(8),
                     padding: EdgeInsets.all(4),
                     child: Text(
-                      title ?? '',
+                      title,
                       style: Theme.of(context)
                           .textTheme
                           .headlineMedium!
@@ -362,6 +376,54 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                   ),
                   Column(
                     children: [
+                       if (division != null && division!.isNotEmpty)
+                              ...division!.map((dvs) => Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: AppColors.getColor('mono').grey),
+                                      color: Theme.of(context).colorScheme.background,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.center,
+                                          constraints: BoxConstraints(maxWidth: 100, minHeight: 50),
+                                          padding: EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            border: Border(right: BorderSide(color: AppColors.getColor('mono').grey) ,),
+                                          ),
+                                          child: Text(
+                                            dvs.title,
+                                            style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium!
+                                                  .copyWith(
+                                                    color: Theme.of(context).colorScheme.onBackground,
+                                                  ),
+                                          ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.center,
+                                          constraints: BoxConstraints( minHeight: 50, maxWidth: MediaQuery.of(context).size.width - 150),
+                                          padding: EdgeInsets.all(16),
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            dvs.text,
+                                            style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge!
+                                                  .copyWith(
+                                                    color: Theme.of(context).colorScheme.onBackground,
+                                                  ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )).toList()
+                            else 
+                              Container(), 
                       if (images != null && images!.isNotEmpty)
                         ...images!.map((img) => Container(
                               margin: EdgeInsets.all(8),
@@ -408,6 +470,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                 margin: EdgeInsets.all(12),
                 padding: EdgeInsets.all(12),
               child:  Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
 
                         if ( usersCompleted) Container(
@@ -460,7 +523,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                               ],
                             )
                         ),
-                        SizedBox(height: 30,),
+                        if(question != '')SizedBox(height: 30,),
                         question != '' ? Container(
                                   padding: EdgeInsets.all(4),
                                   child: Text(
@@ -590,7 +653,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                             );
                           }
                          ),
-                      if(explanation!.length < 2)Container(
+                      if(explanation!.length < 2 && explanation!.length > 0)Container(
                         margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),

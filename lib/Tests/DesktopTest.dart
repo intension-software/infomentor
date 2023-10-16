@@ -47,13 +47,14 @@ class _DesktopTestState extends State<DesktopTest> {
   bool? isCorrect;
   bool screen = true;
   int questionIndex = 0;
+  List<DivisionData> division = [];
   List<String> answers = [];
   List<String> answersImage = [];
   List<String> matchmaking = [];
   List<String> matches = [];
   List<CorrectData>? correct;
   String definition = '';
-  List<String>? explanation;
+  List<String> explanation = [];
   List<String> images = [];
   String question = '';
   String subQuestion = '';
@@ -80,13 +81,14 @@ class _DesktopTestState extends State<DesktopTest> {
       if (_disposed) return; // Check if the widget has been disposed
 
       setState(() {
+        division = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].division ?? [];
         answers = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answers ?? [];
         answersImage = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answersImage ?? [];
         matchmaking = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].matchmaking ?? [];
         matches = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].matches ?? [];
         correct = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].correct;
         definition = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].definition ?? '';
-        explanation = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].explanation;
+        explanation = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].explanation ?? [];
         images = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].images ?? [];
         question = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].question ?? '';
         subQuestion = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].subQuestion ?? '';
@@ -108,7 +110,7 @@ class _DesktopTestState extends State<DesktopTest> {
             allCorrects = correct!.map((e) => String.fromCharCode(97 + e.correct) + ')').join(', ');
         }
 
-        if(title != '' && (definition == '' && images.length < 1)) checkTitle = true;
+        if(title != '' && (definition == '' && images.length < 1 && division.length < 1)) checkTitle = true;
 
         _loading = false;
 
@@ -179,7 +181,10 @@ class _DesktopTestState extends State<DesktopTest> {
         
       Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: 
+            screen
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).colorScheme.background,
         elevation: 0,
         flexibleSpace: Container(
           padding: EdgeInsets.symmetric(horizontal: 50),
@@ -227,7 +232,10 @@ class _DesktopTestState extends State<DesktopTest> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: AppColors.getColor('mono').black,
+            color: 
+              screen
+                ? AppColors.getColor('mono').white
+                : AppColors.getColor('mono').black,
           ),
           onPressed: () =>
               /*questionIndex > 0
@@ -260,7 +268,7 @@ class _DesktopTestState extends State<DesktopTest> {
               alignment: WrapAlignment.spaceEvenly,
 
               children: [
-              if (!checkTitle && (title != '' || definition != '' || images.length > 0)) Container(
+              if (!checkTitle && (title != '' || definition != '' || images.length > 0 || division.length > 0)) Container(
                 width: 670,
                 constraints: BoxConstraints(minHeight: 640),
                 margin:  EdgeInsets.only(bottom: 12, left: 12, right: 30, top: 50),
@@ -287,6 +295,55 @@ class _DesktopTestState extends State<DesktopTest> {
                       ),
                     Column(
                           children: [
+                            if (division != null && division!.isNotEmpty)
+                              ...division!.map((dvs) => Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: AppColors.getColor('mono').grey),
+                                      color: Theme.of(context).colorScheme.background,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.center,
+                                          width: 200,
+                                          height: 200,
+                                          padding: EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            border: Border(right: BorderSide(color: AppColors.getColor('mono').grey) ,),
+                                          ),
+                                          child: Text(
+                                            dvs.title,
+                                            style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium!
+                                                  .copyWith(
+                                                    color: Theme.of(context).colorScheme.onBackground,
+                                                  ),
+                                          ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.center,
+                                          width: 400,
+                                          height: 200,
+                                          padding: EdgeInsets.all(16),
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            dvs.text,
+                                            style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge!
+                                                  .copyWith(
+                                                    color: Theme.of(context).colorScheme.onBackground,
+                                                  ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )).toList()
+                            else 
+                              Container(), // Plac
                             if (images != null && images!.isNotEmpty)
                               ...images!.map((img) => Container(
                                     margin: EdgeInsets.all(8),
@@ -338,7 +395,6 @@ class _DesktopTestState extends State<DesktopTest> {
                       child:  Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 30,),
                            if(checkTitle)Container(
                             padding: EdgeInsets.all(4),
                             child: Text(
@@ -351,7 +407,7 @@ class _DesktopTestState extends State<DesktopTest> {
                                   ),
                             ),
                           ),
-                          SizedBox(height: 30,),
+                          if(question != '') SizedBox(height: 30,) ,
                           question != '' ? Container(
                               padding: EdgeInsets.all(4),
                               child: Text(
@@ -377,7 +433,6 @@ class _DesktopTestState extends State<DesktopTest> {
                               ),
                             ) : Container(),
                             if (!(title != '' || definition != '' || images.length > 0)) SizedBox(height: 20,),
-                          SizedBox(height: 30,),
                             ListView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -645,7 +700,7 @@ class _DesktopTestState extends State<DesktopTest> {
                                 child: Material(
                                   type: MaterialType.transparency,
                                   child: Container(
-                                    height: 48,
+                                    constraints: BoxConstraints(minHeight: 48),
                                     margin: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       border: _answer.any((e) => e.index == index)
@@ -759,7 +814,7 @@ class _DesktopTestState extends State<DesktopTest> {
                         return Container(); // Placeholder for empty answer fields or non-matching tiles
                       }
                     ),
-                        if(explanation!.length < 2 && pressed )Container(
+                        if(explanation!.length < 2 && pressed && explanation!.length > 0 )Container(
                           margin: EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),

@@ -47,6 +47,7 @@ class _MobileTestState extends State<MobileTest> {
   bool? isCorrect;
   bool screen = true;
   int questionIndex = 0;
+  List<DivisionData> division = [];
   List<String> answers = [];
   List<String> answersImage = [];
   List<String> matchmaking = [];
@@ -81,6 +82,7 @@ class _MobileTestState extends State<MobileTest> {
 
 
       setState(() {
+        division = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].division ?? [];
         answers = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answers ?? [];
         answersImage = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].answersImage ?? [];
         matchmaking = result.capitolsData?.tests[widget.testIndex].questions[questionIndex].matchmaking ?? [];
@@ -310,6 +312,54 @@ class _MobileTestState extends State<MobileTest> {
                   ),
                   Column(
                     children: [
+                      if (division != null && division!.isNotEmpty)
+                              ...division!.map((dvs) => Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: AppColors.getColor('mono').grey),
+                                      color: Theme.of(context).colorScheme.background,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.center,
+                                          constraints: BoxConstraints(maxWidth: 100, minHeight: 50),
+                                          padding: EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            border: Border(right: BorderSide(color: AppColors.getColor('mono').grey) ,),
+                                          ),
+                                          child: Text(
+                                            dvs.title,
+                                            style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium!
+                                                  .copyWith(
+                                                    color: Theme.of(context).colorScheme.onBackground,
+                                                  ),
+                                          ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.center,
+                                          constraints: BoxConstraints( minHeight: 50, maxWidth: MediaQuery.of(context).size.width - 150),
+                                          padding: EdgeInsets.all(16),
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            dvs.text,
+                                            style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge!
+                                                  .copyWith(
+                                                    color: Theme.of(context).colorScheme.onBackground,
+                                                  ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )).toList()
+                            else 
+                              Container(), 
                       if (images != null && images!.isNotEmpty)
                         ...images!.map((img) => Container(
                               margin: EdgeInsets.all(8),
@@ -354,6 +404,7 @@ class _MobileTestState extends State<MobileTest> {
               margin: EdgeInsets.all(12),
               padding: EdgeInsets.all(12),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 question != '' ? Container(
                     child: Text(
@@ -760,7 +811,7 @@ class _MobileTestState extends State<MobileTest> {
               return Container(); // Placeholder for empty answer fields or non-matching tiles
             }
           ),
-              if(explanation!.length < 2 && pressed )Container(
+              if(explanation!.length < 2 && pressed && explanation!.length > 0 )Container(
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),

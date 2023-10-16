@@ -183,7 +183,7 @@ Future<List<FetchResult>> fetchQuestionData() async {
       capitolsIds = currentUserClass.capitolOrder;
     
 
-    for (int order in [0,1]) {
+    for (int order in [0,1,2,3,4,5,6]) {
       localResults.add(await fetchCapitols(order.toString()));
     }
 
