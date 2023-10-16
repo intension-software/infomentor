@@ -134,13 +134,13 @@ class _ReButtonState extends State<ReButton> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (widget.leftIcon != null)
+            if (widget.leftIcon != null && widget.text != '')
               SvgPicture.asset(
                 widget.leftIcon ?? '',
                 color: widget.textColor,
               ), // Replace with your desired icon
-              SizedBox(width: 10,),
-            Text(
+              if (widget.text != '')SizedBox(width: 10,),
+            if (widget.text != '')Text(
               widget.text!,
               style: TextStyle(
                 color: widget.textColor,
@@ -148,8 +148,16 @@ class _ReButtonState extends State<ReButton> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(width: 10,),
-            if (widget.rightIcon != null)
+            if (widget.text == '' && widget.leftIcon != null)SvgPicture.asset(
+                widget.leftIcon ?? '',
+                color: widget.textColor,
+              ),
+            if (widget.text == '' && widget.rightIcon != null)SvgPicture.asset(
+                widget.rightIcon ?? '',
+                color: widget.textColor,
+              ),
+            if (widget.text != '')SizedBox(width: 10,),
+            if (widget.rightIcon != null && widget.text != '')
               SvgPicture.asset(
                 widget.rightIcon ?? '',
                 color: widget.textColor,
