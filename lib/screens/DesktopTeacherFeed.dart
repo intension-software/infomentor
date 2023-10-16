@@ -73,7 +73,7 @@ class _DesktopTeacherFeedState extends State<DesktopTeacherFeed> {
                       width: 836,
                       height: 329,
                       decoration: BoxDecoration(
-                        color: AppColors.getColor('primary').main,
+                        color: AppColors.getColor('primary').light,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       margin: EdgeInsets.all(16),
@@ -145,7 +145,7 @@ class _DesktopTeacherFeedState extends State<DesktopTeacherFeed> {
                                     width:  170,
                                     child:  ReButton(
                                       activeColor: AppColors.getColor('primary').light, 
-                                      defaultColor: AppColors.getColor('primary').light, 
+                                      defaultColor: Color(0xff989BDD), 
                                       disabledColor: AppColors.getColor('mono').lightGrey, 
                                       focusedColor: AppColors.getColor('primary').light, 
                                       hoverColor: AppColors.getColor('primary').light, 

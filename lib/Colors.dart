@@ -45,7 +45,7 @@ class AppColors {
     'primary': Shades(
       main: Color(0xff4B4FB3),
       light: Color(0xff5358C7),
-      lighter: Color(0xff989BDD),
+      lighter: Color(0xffDDDEF4),
     ),
     'blue': Shades(
       main: Color(0xff1660B8),
