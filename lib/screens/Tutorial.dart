@@ -66,251 +66,8 @@ class _TutorialState extends State<Tutorial> {
   Widget build(BuildContext context) {
     final PageController _pageController = PageController();
     List<Widget> _steps = [
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.all(16),
-          child: Text(
-            'Ako funguje appka Infomentor?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialChallenge.png', width: 250,),
-            SizedBox(height: 20),
-            Text(
-            'Týždenné výzvy',
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 20),
-            Container(
-            width: 280,
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child:Text(
-                textAlign: TextAlign.center,
-              'Pripravili sme pre teba krátke testy, ktoré preskúšajú tvoje kritické myslenie na praktických príkladoch.',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-              ),
-            ),
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.all(16),
-          child: Text(
-            'Ako funguje appka Infomentor?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialDiscussions.png', width: 250,),
-            SizedBox(height: 20),
-            Text(
-              textAlign: TextAlign.center,
-            'Diskusné fórum',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              width: 360,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'Vyjadri svoj názor na otázky o',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            Container(
-              width: 360,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'tom, čo sa aktuálne deje vo',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            Container(
-              width: 360,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'svete.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            )
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.all(16),
-          child: Text(
-            'Ako funguje appka Infomentor?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialLearning.png', width: 250,),
-            SizedBox(height: 20),
-            Text(
-              textAlign: TextAlign.center,
-            'Vzdelávanie',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 8),
-             Container(
-              width: 280,
-              padding: EdgeInsets.all(16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'Nájdeš tu tipy na vzdelávacie podujatia, projekty a materiály, ktoré ťa posunú ešte ďalej.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-             )
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Je moja aktivita v appke dôležitá?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialPoints.png', width: 300,),
-            SizedBox(height: 20),
-            Container(
-              width: 310,
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Výsledky tvojich testov a tvoja aktivita v diskusnom fóre je hodnotená bodmi, ktoré vždy vidíš v pravom hornom rohu.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              width: 310,
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Tvoj vyučujúci/a sa môže rozhodnúť brať tieto body do úvahy pri známkovaní.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            SizedBox(height: 20),
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      Column(
+      mainAxisAlignment: MediaQuery.of(context).size.width < 1000 ? MainAxisAlignment.start : MainAxisAlignment.center,
       children: [
          SizedBox(height: 20),
             Image.asset('assets/tutorial/tutorialMan.png', width: 250,),
@@ -330,24 +87,11 @@ class _TutorialState extends State<Tutorial> {
           ),
         ),
         SizedBox(height: 20),
-         Container(
-           padding: EdgeInsets.symmetric(horizontal: 16),
-          width: 350,
-          child: Text(
-            'Až 56%',
-            style: Theme.of(context)
-                .textTheme
-                .displayMedium!
-                .copyWith(
-                  color: AppColors.getColor('yellow').main,
-                ),
-            ),
-        ),
         Container(
            padding: EdgeInsets.symmetric(horizontal: 16),
           width: 350,
           child: Text(
-            'ľudí na Slovensku je náchylných veriť tvrdeniam, ktoré obsahujú klamstvá či konšpirácie (GLOBSEC).',
+            'S appkou Infomat si študenti a študentky každý týždeň cez krátke testy posilňujú kritické myslenie a v diskusnom fóre sa učia formulovať svoje názory.',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -385,6 +129,365 @@ class _TutorialState extends State<Tutorial> {
         ),
       ]
     ),
+      Column(
+        mainAxisAlignment: MediaQuery.of(context).size.width < 1000 ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 360,
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Ako budujeme kritické myslenie?',
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge!
+                  .copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+              Image.asset('assets/tutorial/tutorialTest.png', width: 250,),
+              SizedBox(height: 20),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                width: 350,
+                child: Text(
+                  textAlign: TextAlign.start,
+                  'Na začiatku každého týždňa dostaneš krátky test s priemerne 5 otázkami zameraných na odhalenie dezinformácií - napr. nájdi v článku argumentačnú chybu, nepravdivo odprezentované dáta alebo odhaľ falošný zdroj. Každý týždeň je možné vyplniť iba jeden test do deadline, následne test evidujeme ako nesplnený.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        
+                      ),
+                  ),
+                  
+              ),
+            ]
+            )
+          )
+        ]
+      ),
+      Column(
+        mainAxisAlignment: MediaQuery.of(context).size.width < 1000 ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 370,
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Čo nájdeš v aplikácii?',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge!
+                  .copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                textAlign: TextAlign.start,
+                'Domov',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                  textAlign: TextAlign.start,
+                  'Tu nájdeš aktuálne prebiehajúcu týždennú výzvu a tvoj doterajší progres a výsledky.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  ),
+              ),
+              SizedBox(height: 20),
+               Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child:Image.asset('assets/tutorial/tutorialFeed.png', width: 250,),
+               )
+            ]
+            )
+          )
+        ]
+      ),
+       Column(
+        mainAxisAlignment: MediaQuery.of(context).size.width < 1000 ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 370,
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Čo nájdeš v aplikácii?',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge!
+                  .copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                textAlign: TextAlign.start,
+                'Výzva',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                  textAlign: TextAlign.start,
+                  'Tu nájdeš plán všetkých testov, ktoré spájame podľa obsahu do väčších tematických celkov - kapitol. ',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  ),
+              ),
+              SizedBox(height: 20),
+               Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child:Image.asset('assets/tutorial/tutorialChallenges.png', width: 250,),
+               )
+            ]
+            )
+          )
+        ]
+      ),
+      Column(
+        mainAxisAlignment: MediaQuery.of(context).size.width < 1000 ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 370,
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Čo nájdeš v aplikácii?',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge!
+                  .copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                textAlign: TextAlign.start,
+                'Diskusia',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                  textAlign: TextAlign.start,
+                  'Do diskusného fóra môže iba učiteľ/ka pridať tézu (napr. o aktuálnom spoločenskom dianí) a ty na ňu môžeš reagovať v komentároch. Kvalitné komentáre môžete učiteľ/ka oceniť hviezdičkou za aktivitu.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  ),
+              ),
+              SizedBox(height: 20),
+               Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child:Image.asset('assets/tutorial/tutorialAward.png', width: 250,),
+               )
+            ]
+            )
+          )
+        ]
+      ),
+      Column(
+        mainAxisAlignment: MediaQuery.of(context).size.width < 1000 ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 370,
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Čo nájdeš v aplikácii?',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge!
+                  .copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                textAlign: TextAlign.start,
+                'Vzdelávanie',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                  textAlign: TextAlign.start,
+                  'Tu nájdeš vzdelávacie tipy na podujatia, videá, články a programy.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  ),
+              ),
+              SizedBox(height: 20),
+               Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child:Image.asset('assets/tutorial/tutorialLearning.png', width: 250,),
+               )
+            ]
+            )
+          )
+        ]
+      ),
+      Column(
+        mainAxisAlignment: MediaQuery.of(context).size.width < 1000 ? MainAxisAlignment.start : MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 370,
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Čo nájdeš v aplikácii?',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge!
+                  .copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                textAlign: TextAlign.start,
+                'Profil',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child: Text(
+                  textAlign: TextAlign.start,
+                  'Tu nájdeš tvoje zhrnuté výsledky. Jednu hviezdu dostaneš za každú správnu odpoveď v teste a za každý ocenený komentár. Tvoju aktivitu v appke môže učiteľ/ka započítať do tvojho hodnotenia na vysvedčení.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  ),
+              ),
+              SizedBox(height: 20),
+               Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child:Image.asset('assets/tutorial/tutorialProfile.png', width: 250,),
+               )
+            ]
+            )
+          )
+        ]
+      ),
   ];
 
 if (_loading) {
@@ -421,7 +524,7 @@ return Scaffold(
                     children: [
                       Container(
                         alignment: Alignment.bottomCenter,
-                        height: 500,
+                        height: 566,
                         child: PageView(
                           controller: _pageController,
                           onPageChanged: (int page) {
@@ -481,7 +584,7 @@ return Scaffold(
                     ],
                   ),
                 ),
-                SizedBox(height: 40),
+                 MediaQuery.of(context).size.width < 1000 ? SizedBox(height: 20) : SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
@@ -499,7 +602,7 @@ return Scaffold(
                     ),
                   ),
                 ),
-                SizedBox(height: 60),
+                MediaQuery.of(context).size.width < 1000 ? SizedBox(height: 30) : SizedBox(height: 60),
                 Center(
                   child: ReButton(
                     activeColor: AppColors.getColor('mono').white,
