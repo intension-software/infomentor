@@ -290,8 +290,10 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                   SizedBox(height: 28),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                  Wrap(
+                                    alignment: WrapAlignment.center,
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    runSpacing: 5,
                                     children: [
                                       Container(
                                         width: 190,
@@ -454,13 +456,13 @@ class _ProfileState extends State<Profile> {
                                     width: 160,
                                     height: 40,
                                     child: ReButton(
-                                      activeColor: AppColors.getColor('primary').light, 
-                                      defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                      activeColor: AppColors.getColor('red').light, 
+                                      defaultColor: AppColors.getColor('red').main, 
                                       disabledColor: AppColors.getColor('mono').lightGrey, 
-                                      focusedColor: AppColors.getColor('primary').light, 
-                                      hoverColor: AppColors.getColor('primary').lighter, 
-                                      textColor: AppColors.getColor('primary').main, 
-                                      iconColor: AppColors.getColor('mono').black, 
+                                      focusedColor: AppColors.getColor('red').light, 
+                                      hoverColor: AppColors.getColor('red').lighter, 
+                                      textColor: AppColors.getColor('mono').white, 
+                                      iconColor: AppColors.getColor('mono').white, 
                                       text: 'Odhlásiť sa',
                                       rightIcon: 'assets/icons/logoutIcon.svg',
                                       onTap: () {
@@ -1108,7 +1110,7 @@ class _ProfileState extends State<Profile> {
                                           if(isMobile)Center(
                                             child: Container(
                                               margin: EdgeInsets.all(12),
-                                              width: 191,
+                                              width: 200,
                                               height: 40,
                                               child: ReButton(
                                                 activeColor: AppColors.getColor('primary').light, 
