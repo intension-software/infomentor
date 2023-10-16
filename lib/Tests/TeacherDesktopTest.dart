@@ -719,48 +719,66 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
        ) : firstScreen ?
       Container(
         decoration: BoxDecoration(
-          color: AppColors.getColor('primary').light
-        ),
+                  color: AppColors.getColor('mono').white
+                ),
       child: Center(
 
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].name,
-              style:  Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * (1/2),
+              decoration: BoxDecoration(
+                  color: AppColors.getColor('primary').light
                 ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].name,
+                    style:  Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  ),
+                  SizedBox(height: 20),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                    CircularPercentIndicator(
+                          radius: 45.0,  // Adjust as needed
+                          lineWidth: 8.0,
+                          animation: true,
+                          percent: 0.05,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          progressColor: AppColors.getColor('yellow').light,
+                          backgroundColor: AppColors.getColor('mono').lighterGrey,
+                      ),
+                    SvgPicture.asset('assets/icons/starYellowIcon.svg', height: 30,),
+                  ],),
+                  SizedBox(height: 10),
+                  Text(introduction ?? '',
+                    style:  Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 20),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-              CircularPercentIndicator(
-                    radius: 45.0,  // Adjust as needed
-                    lineWidth: 8.0,
-                    animation: true,
-                    percent: 0.05,
-                    circularStrokeCap: CircularStrokeCap.round,
-                    progressColor: AppColors.getColor('yellow').light,
-                    backgroundColor: AppColors.getColor('mono').lighterGrey,
-                ),
-              SvgPicture.asset('assets/icons/starYellowIcon.svg', height: 30,),
-            ],),
-            SizedBox(height: 10),
-            Text(introduction ?? '',
-              style:  Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Theme.of(context).primaryColor))
+              ),
+              child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.cover, width:  MediaQuery.of(context).size.width,),
             ),
-            SizedBox(height: 20),
+            Spacer(),
             ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'POKRAČOVAŤ', onTap:
               () {
                 setState(() {
@@ -769,6 +787,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                 });
               }
             ),
+            SizedBox(height: 60),
           ],
         ))) :  Column(
           mainAxisAlignment: MainAxisAlignment.center,
