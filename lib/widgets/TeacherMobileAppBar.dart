@@ -14,6 +14,8 @@ class TeacherMobileAppBar extends StatelessWidget {
   final ValueChanged<int> onItemTapped;
   final void Function() logOut;
   final VoidCallback? onUserDataChanged;
+  final void Function() tutorial;
+
 
   const TeacherMobileAppBar({
     Key? key,
@@ -22,6 +24,7 @@ class TeacherMobileAppBar extends StatelessWidget {
     required this.selectedIndex,
     required this.onItemTapped,
     required this.onUserDataChanged,
+    required this.tutorial,
   }) : super(key: key);
 
   @override
@@ -29,6 +32,7 @@ class TeacherMobileAppBar extends StatelessWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: AppColors.getColor('primary').light,
+      
       leading: IconButton(
         icon: Icon(Icons.menu),
         onPressed: () {
@@ -41,9 +45,14 @@ class TeacherMobileAppBar extends StatelessWidget {
           height: 20,
           child: DropDown(currentUserData: currentUserData, onUserDataChanged: onUserDataChanged,),
         ),
-        
-        Spacer(), // Pushes the following widgets to the right
-       
+        SizedBox(width:90 ,),
+        IconButton(
+        icon: SvgPicture.asset('assets/icons/infoIcon.svg', color: Colors.white,),
+        onPressed: () {
+          tutorial();
+        },
+      ),
+      SizedBox(width: 10,)
       ],
     );
   }

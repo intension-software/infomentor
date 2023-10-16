@@ -16,8 +16,7 @@ class DesktopAdmin extends StatefulWidget {
   final Future<void> fetch;
   final UserData? currentUserData;
   final void Function() logOut;
-  final void Function() tutorial;
-  const DesktopAdmin({Key? key, required this.fetch, required this.currentUserData,  required this.tutorial, required this.logOut});
+  const DesktopAdmin({Key? key, required this.fetch, required this.currentUserData, required this.logOut});
 
   @override
   State<DesktopAdmin> createState() => _DesktopAdminState();
@@ -60,13 +59,35 @@ class _DesktopAdminState extends State<DesktopAdmin> {
   TextEditingController _editUserEmailController = TextEditingController();
   TextEditingController _editUserPasswordController = TextEditingController();
   TextEditingController _editClassNameController = TextEditingController();
+  TextEditingController _messageController = TextEditingController();
   bool _loading = true;
   ClassDataWithId? currentClass;
   UserDataWithId? currentUser;
   String? _selectedClass;
+  String _type = 'Nahlásenie problému';
 
   // Create a list to store class data
   List<ClassDataWithId> classDataList = [];
+
+  Future<void> sendMessage(String message, String type) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance; // Create an instance of FirebaseFirestore
+
+    await firestore.collection('mail').add(
+      {
+        'to': ['jozefsvagerkom5@gmail.com'],
+        'message': {
+          'subject': type,
+          'text': message
+        },
+      },
+    ).then(
+      (value) {
+        print('Queued email for delivery!');
+      },
+    );
+    
+    reShowToast( 'Správa odoslaná', false, context);
+  }
 
   Future<void> fetchSchoolData() async {
     try {
@@ -385,23 +406,161 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 160,
-                            height: 40,
-                            child: ReButton(
-                              activeColor: AppColors.getColor('primary').light, 
-                              defaultColor: AppColors.getColor('mono').lighterGrey, 
-                              disabledColor: AppColors.getColor('mono').lightGrey, 
-                              focusedColor: AppColors.getColor('primary').light, 
-                              hoverColor: AppColors.getColor('primary').lighter, 
-                              textColor: AppColors.getColor('primary').main, 
-                              iconColor: AppColors.getColor('mono').black, 
-                              text: 'Pomoc',
-                              rightIcon: 'assets/icons/infoIcon.svg',
-                              onTap: () {
-                                  widget.tutorial();
-                              }
-                            )
-                          ),
+                                width: 190,
+                                height: 40,
+                                child: ReButton(
+                                  activeColor: AppColors.getColor('primary').light, 
+                                  defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                  disabledColor: AppColors.getColor('mono').lightGrey, 
+                                  focusedColor: AppColors.getColor('primary').light, 
+                                  hoverColor: AppColors.getColor('primary').lighter, 
+                                  textColor: AppColors.getColor('primary').main, 
+                                  iconColor: AppColors.getColor('mono').black, 
+                                  text: 'Kontaktuje nás',
+                                  rightIcon: 'assets/icons/messageIcon.svg',
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setState) {
+                                            return AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                          content: Container(
+                                            width: 500,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min, // Ensure the dialog takes up minimum height
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Spacer(),
+                                                    MouseRegion(
+                                                      cursor: SystemMouseCursors.click,
+                                                      child: GestureDetector(
+                                                        child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
+                                                        onTap: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(height: 30,),
+                                                  Text(
+                                                    'Moja správa je',
+                                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  SizedBox(height: 10,),
+                                                  Container(
+                                                    padding: EdgeInsets.only(right: 8),
+                                                    height: 30,
+                                                    width: 200,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      color: _type == 'Nahlásenie problému' ? AppColors.getColor('primary').lighter : AppColors.getColor('mono').lighterGrey,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Radio(
+                                                          value: 'Nahlásenie problému',
+                                                            groupValue: _type,
+                                                            onChanged: (newValue) {
+                                                              setState(() {
+                                                                if (newValue != null) _type = newValue;
+                                                              });
+                                                            },
+                                                            activeColor: AppColors.getColor('primary').main,
+                                                          ),
+                                                        Text(
+                                                          'Nahlásenie problému',
+                                                          style: TextStyle(
+                                                            color:  _type == 'Nahlásenie problému' ? AppColors.getColor('primary').main : AppColors.getColor('mono').darkGrey,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10,),
+                                                  Container(
+                                                    padding: EdgeInsets.only(right: 8),
+                                                    height: 30,
+                                                    width: 100,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      color: _type == 'Otázka' ? AppColors.getColor('primary').lighter : AppColors.getColor('mono').lighterGrey,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                          Radio(
+                                                          value: 'Otázka',
+                                                            groupValue: _type,
+                                                            onChanged: (newValue) {
+                                                              setState(() {
+                                                                if (newValue != null) _type = newValue;
+                                                              });
+                                                            },
+                                                            activeColor: AppColors.getColor('primary').main,
+                                                          ),
+                                                        Text(
+                                                          'Otázka',
+                                                          style: TextStyle(
+                                                            color: _type == 'Otázka' ? AppColors.getColor('primary').main : AppColors.getColor('mono').darkGrey,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10,),
+                                                  Text(
+                                                    'Správa',
+                                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  SizedBox(height: 10,),
+                                                  reTextField(
+                                                    'Popíš svoj problém s aplikáciou alebo nám napíš otázku.',
+                                                    false,
+                                                    _messageController,
+                                                    AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                                  ),
+                                                SizedBox(height: 30,),
+                                                  Center(
+                                                    child: ReButton(
+                                                    activeColor: AppColors.getColor('mono').white, 
+                                                    defaultColor: AppColors.getColor('green').main, 
+                                                    disabledColor: AppColors.getColor('mono').lightGrey, 
+                                                    focusedColor: AppColors.getColor('green').light, 
+                                                    hoverColor: AppColors.getColor('green').light, 
+                                                    textColor: Theme.of(context).colorScheme.onPrimary, 
+                                                    iconColor: AppColors.getColor('mono').black, 
+                                                    text: 'ODOSLAŤ',
+                                                    onTap: () {
+                                                      if(_messageController.text != '') {
+                                                        sendMessage(_messageController.text, _type);
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                                
+                                                SizedBox(height: 30,),
+                                              ],
+                                            ),
+                                          )
+                                        );
+                                          }
+                                        );
+                                      },
+                                    );
+                                }
+                              )
+                            ),
+                                    
                           SizedBox(width: 5,),
                           Container(
                         width: 160,

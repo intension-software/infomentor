@@ -535,6 +535,7 @@ void reShowToast(String message, bool error, BuildContext context) {
           Text(message, style: TextStyle(color: Colors.black),),
           Spacer(),
           Text('Späť', style: TextStyle(color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main),),
+          SizedBox(width: 5,),
           SvgPicture.asset('assets/icons/xIcon.svg', color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main),
         ],
       ),

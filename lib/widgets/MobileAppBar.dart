@@ -13,6 +13,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final FetchResult? capitol;
   final UserData? currentUserData;
   final Function(int) onNavigationItemSelected;
+   final void Function() tutorial;
 
   const MobileAppBar({
     Key? key,
@@ -20,6 +21,7 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.logOut,
     required this.capitol,
     required this.currentUserData,
+    required this.tutorial
   }) : super(key: key);
 
   @override
@@ -52,6 +54,13 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
                       onPressed: () => 
                         onNavigationItemSelected(4),
                     ),
+                    SizedBox(width: 12),
+                     IconButton(
+                            icon: SvgPicture.asset('assets/icons/infoIcon.svg'),
+                            onPressed: () {
+                              tutorial();
+                            },
+                          ),
                     SizedBox(width: 12),
                     MouseRegion(
                       cursor: SystemMouseCursors.click,

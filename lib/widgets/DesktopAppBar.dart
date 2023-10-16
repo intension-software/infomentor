@@ -17,6 +17,7 @@ class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function(int) onNavigationItemSelected;
   final VoidCallback? onUserDataChanged;
   int selectedIndex;
+  final void Function() tutorial;
 
 
   DesktopAppBar({
@@ -26,6 +27,7 @@ class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.onNavigationItemSelected,
     required this.selectedIndex,
     this.onUserDataChanged,
+    required this.tutorial
   }) : super(key: key);
 
   @override
@@ -79,6 +81,13 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                             currentUserData: widget.currentUserData, // Pass your user data
                             onNavigationItemSelected: widget.onNavigationItemSelected,
                             selectedIndex: widget.selectedIndex,
+                          ),
+                          if(!widget.currentUserData!.teacher)SizedBox(width: 16),
+                          IconButton(
+                            icon: SvgPicture.asset('assets/icons/infoIcon.svg'),
+                            onPressed: () {
+                              widget.tutorial();
+                            },
                           ),
                           if(!widget.currentUserData!.teacher)SizedBox(width: 16),
                           if(!widget.currentUserData!.teacher)MouseRegion(

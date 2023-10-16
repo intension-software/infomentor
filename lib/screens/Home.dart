@@ -179,6 +179,11 @@ class _HomeState extends State<Home> {
           ? PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
               child: TeacherMobileAppBar(
+                tutorial: () {
+                  setState(() {
+                      _tutorial = true;
+                    });
+                },
                 onItemTapped: _onNavigationItemSelected,
                 selectedIndex: _selectedIndex,
                 currentUserData: currentUserData,
@@ -189,6 +194,11 @@ class _HomeState extends State<Home> {
           : PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
               child: MobileAppBar(
+                tutorial: () {
+                  setState(() {
+                      _tutorial = true;
+                    });
+                },
                 capitol: capitol,
                 currentUserData: currentUserData,
                 logOut: logOut,
@@ -198,6 +208,11 @@ class _HomeState extends State<Home> {
       : PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: DesktopAppBar(
+            tutorial: () {
+                  setState(() {
+                      _tutorial = true;
+                    });
+                },
             capitol: capitol,
             currentUserData: currentUserData,
             onNavigationItemSelected: _onNavigationItemSelected,
@@ -306,30 +321,18 @@ class _HomeState extends State<Home> {
           Learning(currentUserData: currentUserData, fetch: fetchUserData(),),
           if (currentUserData!.teacher) Results(),
           Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected),
-          if(!currentUserData!.teacher) Profile(tutorial: () {
-            setState(() {
-                _tutorial = true;
-              });
-          } ,logOut: () {
+          if(!currentUserData!.teacher) Profile(logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
               });
           },),
-          if (currentUserData!.teacher) isMobile ? MobileAdmin(currentUserData: currentUserData,tutorial: () {
-            setState(() {
-              _tutorial = true;
-            });
-          } , logOut: () {
+          if (currentUserData!.teacher) isMobile ? MobileAdmin(currentUserData: currentUserData, logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
               });
-          },) : DesktopAdmin(fetch: fetchUserData() , currentUserData: currentUserData,tutorial: () {
-            setState(() {
-              _tutorial = true;
-            });
-          } , logOut: () {
+          },) : DesktopAdmin(fetch: fetchUserData() , currentUserData: currentUserData , logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
