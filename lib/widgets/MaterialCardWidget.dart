@@ -77,7 +77,9 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
         },
         child: Container(
           margin: EdgeInsets.all(12),
-          height: 150,
+          constraints: BoxConstraints(
+            minHeight: 150
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
