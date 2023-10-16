@@ -230,12 +230,13 @@ class _DesktopTestState extends State<DesktopTest> {
             color: AppColors.getColor('mono').black,
           ),
           onPressed: () =>
-              questionIndex > 0
+              /*questionIndex > 0
                   ? setState(() {
                       questionIndex--;
                       fetchQuestionData(questionIndex);
                     })
-                  : widget.overlay(),
+                  : widget.overlay(), */
+              widget.overlay()
         ),
       ),
 

@@ -261,12 +261,13 @@ class _MobileTestState extends State<MobileTest> {
                 : AppColors.getColor('mono').black,
           ),
           onPressed: () =>
-              questionIndex > 0
+              /*questionIndex > 0
                   ? setState(() {
                       questionIndex--;
                       fetchQuestionData(questionIndex);
                     })
-                  : widget.overlay(),
+                  : widget.overlay(), */
+              widget.overlay()
         ),
       ),
 
