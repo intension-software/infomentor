@@ -150,7 +150,11 @@ class _TutorialState extends State<Tutorial> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-              Image.asset('assets/tutorial/tutorialTest.png', width: 250,),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                width: 350,
+                child:Image.asset('assets/tutorial/tutorialTest.png', width: 250,),
+               ),
               SizedBox(height: 20),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16),
