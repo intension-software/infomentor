@@ -10,6 +10,7 @@ import 'package:infomentor/screens/Admin.dart';
 import 'package:infomentor/screens/Notifications.dart';
 import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/screens/DesktopStudentFeed.dart';
+import 'package:infomentor/screens/Tutorial.dart';
 import 'package:infomentor/screens/MobileStudentFeed.dart';
 import 'package:infomentor/screens/DesktopTeacherFeed.dart';
 import 'package:infomentor/screens/MobileTeacherFeed.dart';
@@ -58,6 +59,7 @@ class _HomeState extends State<Home> {
   String? capitolColor;
   bool isMobile = false;
   bool isDesktop = false;
+  bool _tutorial = false;
 
   final userAgent = html.window.navigator.userAgent.toLowerCase();
 
@@ -160,6 +162,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if(_tutorial) return Tutorial(check: () {
+      setState(() {
+        _tutorial = false;
+      });
+    });
     if (_loadingUser || _loadingCapitols) {
         return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
     }
@@ -301,18 +308,30 @@ class _HomeState extends State<Home> {
           Learning(currentUserData: currentUserData, fetch: fetchUserData(),),
           if (currentUserData!.teacher) Results(),
           Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected),
-          if(!currentUserData!.teacher) Profile(logOut: () {
+          if(!currentUserData!.teacher) Profile(tutorial: () {
+            setState(() {
+                _tutorial = true;
+              });
+          } ,logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
               });
           },),
-          if (currentUserData!.teacher) isMobile ? MobileAdmin(currentUserData: currentUserData, logOut: () {
+          if (currentUserData!.teacher) isMobile ? MobileAdmin(currentUserData: currentUserData,tutorial: () {
+            setState(() {
+              _tutorial = true;
+            });
+          } , logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();
               });
-          },) : DesktopAdmin(fetch: fetchUserData() , currentUserData: currentUserData,logOut: () {
+          },) : DesktopAdmin(fetch: fetchUserData() , currentUserData: currentUserData,tutorial: () {
+            setState(() {
+              _tutorial = true;
+            });
+          } , logOut: () {
             FirebaseAuth.instance.signOut();
               setState(() {
                 fetchUserData();

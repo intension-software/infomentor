@@ -30,6 +30,9 @@ dependencies:
   excel: ^2.1.0
   mailer: ^6.0.1
   smtpd: ^0.2.0
+  image_picker_web: ^3.1.1
+  firebase_storage: ^11.2.8
+  uuid: ^4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -57,3 +60,4 @@ flutter:
     - assets/roadmap/
     - assets/bottomBackground.svg
     - assets/notifications/
+    - assets/learningCards/

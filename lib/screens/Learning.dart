@@ -144,7 +144,7 @@ class _LearningState extends State<Learning> {
                     ),
                   ),
                   SizedBox(width: 5),
-              if (widget.currentUserData!.teacher && isDesktop)Container(
+              if (widget.currentUserData!.teacher && !isMobile)Container(
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -183,6 +183,7 @@ class _LearningState extends State<Learning> {
                             return MaterialCardWidget(
                                 image: material.image,
                                 title: material.title,
+                                background: material.background,
                                 description: material.description,
                                 link: material.link,
                                 subject: material.subject,
@@ -224,6 +225,7 @@ class _LearningState extends State<Learning> {
                       onTap: () {
                         _onNavigationItemSelected(1);
                         _selectedIndex = 1;
+                        _add = true;
                       },
                     ) : null,
                   ),

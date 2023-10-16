@@ -6,6 +6,7 @@ class MaterialData {
   String association;
   String description;
   String image;
+  String background;
   String link;
   String subject;
   String title;
@@ -17,17 +18,13 @@ class MaterialData {
     required this.association,
     required this.description,
     required this.image,
+    required this.background,
     required this.link,
     required this.subject,
     required this.title,
     required this.type,
     required this.video,
-  }) {
-    if (image.isEmpty) {
-      // If the image is empty, replace it with a placeholder image
-      this.image = 'placeholder.png'; // Replace with the path to your placeholder image
-    }
-  }
+  });
 }
 
 Future<List<MaterialData>> fetchMaterials(List<String> materialIds) async {
@@ -55,6 +52,7 @@ Future<List<MaterialData>> fetchMaterials(List<String> materialIds) async {
       return MaterialData(
         materialId: materialId,
         image: data['image'] as String? ?? '',
+        background: data['background'] as String? ?? '',
         title: data['title'] as String? ?? '',
         description: data['description'] as String? ?? '',
         link: data['link'] as String? ?? '',

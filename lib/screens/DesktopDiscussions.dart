@@ -231,7 +231,7 @@ Widget build(BuildContext context) {
                     ),
                     Spacer(),
                     Container(
-                      width: 300,
+                      width: 320,
                       height: 40,
                       child: ReButton(
                         activeColor: AppColors.getColor('primary').light, 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/screens/Login.dart';
-import 'package:infomentor/screens/Tutorial.dart';
+import 'package:infomentor/screens/Home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -95,7 +96,7 @@ class MainApp extends StatelessWidget {
           } else {
             if (snapshot.hasData) {
               // User is logged in, navigate to the specified screen
-              return Tutorial();
+              return Home();
             } else {
               // User is not logged in, navigate to Login
               return Login();

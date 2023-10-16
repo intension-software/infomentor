@@ -139,6 +139,7 @@ class _ReButtonState extends State<ReButton> {
                 widget.leftIcon ?? '',
                 color: widget.textColor,
               ), // Replace with your desired icon
+              SizedBox(width: 10,),
             Text(
               widget.text!,
               style: TextStyle(

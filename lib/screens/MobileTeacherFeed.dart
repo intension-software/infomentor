@@ -85,7 +85,7 @@ class _MobileTeacherFeedState extends State<MobileTeacherFeed> {
                                     SvgPicture.asset('assets/icons/smallStarIcon.svg', color: AppColors.getColor('primary').lighter),
                                     SizedBox(width: 8,),
                                     Text(
-                                      "Týždenná výzva",
+                                      "Týždenná výzva #${widget.weeklyChallenge + 1}",
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium!

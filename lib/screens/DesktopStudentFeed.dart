@@ -96,10 +96,8 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
                               children: [
-                                SvgPicture.asset('assets/icons/smallStarIcon.svg', color: AppColors.getColor('primary').lighter),
-                                SizedBox(width: 8,),
                                 Text(
-                                  "Týždenná výzva",
+                                  "Týždenná výzva #${widget.weeklyChallenge + 1}",
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium!
@@ -124,11 +122,17 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 5,),
+                            Text(
+                                "Kapitola: ${widget.capitolTitle}",
+                                style: TextStyle(color: AppColors.getColor('primary').lighter,),
+                              ),
+                              SizedBox(height: 5,),
                             Text(
                                 "Čas na dokončenie: 1 týždeň",
                                 style: TextStyle(color: AppColors.getColor('primary').lighter,),
                               ),
-                            SizedBox(height: 16,),
+                            SizedBox(height: 20,),
                             ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAČAŤ', onTap:
                               () {
                                   widget.onNavigationItemSelected(1);
@@ -136,15 +140,15 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                             ),
                           ],
                         ) : Column(
+                          mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
                           crossAxisAlignment: CrossAxisAlignment.center, // Align items horizontally to center
                           children: [
-                            SizedBox(height: 50,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
                               children: [
                                 SvgPicture.asset('assets/icons/greenCheckIcon.svg'),
                                 Text(
-                                  "Týždenná výzva dokončená",
+                                  "Týždenná výzva splnená",
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium!
@@ -154,7 +158,7 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 40), // Add some spacing between the items
+                            SizedBox(height: 40),
                             Text(
                               "budúci týždeň ťa čaká",
                               style: Theme.of(context)
@@ -174,7 +178,10 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
-                            
+                            Text(
+                                "Kapitola: ${widget.capitolTitle}",
+                                style: TextStyle(color: AppColors.getColor('primary').lighter,),
+                              ),
                           ],
                         ),
                       ),
@@ -251,36 +258,28 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                           margin: EdgeInsets.all(16),
                           padding: EdgeInsets.all(16),
                           child: Column(children: [
-                            
-                              Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/badges/badgeArg.svg',
-                                width: 80,
-                                fit: BoxFit.contain,
-                              ),
                               SizedBox(width: 10),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                  widget.capitolTitle ?? '',
-                                  style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!.copyWith(
-                                          color: AppColors.getColor('mono').darkGrey,
-                                        ),
-                                ),
+                                    'Doterajšie výsledky',
+                                    style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!.copyWith(
+                                        color: AppColors.getColor('mono').black,
+                                      ),
+                                  ),
                                 SizedBox(height: 10),
                                 Row(
                                   children: [
                                   Container(
-                                    width:  300,
+                                    width:  630,
                                     height: 18,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: LinearProgressIndicator(
-                                        value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / widget.weeklyCapitolLength : 0.0,
+                                        value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / 10 : 0.0,
                                         backgroundColor: AppColors.getColor('blue').lighter,
                                         valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
                                       ),
@@ -288,27 +287,26 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                                   ),
                                   SizedBox(width: isMobile ? 5 : 10),
                                   Text(
-                                    "${widget.completedCount}/${widget.weeklyCapitolLength} výziev hotových",
+                                    "${widget.completedCount}/10 výziev hotových",
                                     style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .copyWith(
-                                                  color: AppColors.getColor('mono').grey,
-                                              ),
-                                      ),
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
+                                    ),
                                   ]
                                 ,) 
                                 ],
                               ),
-                            ],
-                          ),
+                            SizedBox(height: 20),
                             Container(
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: (widget.capitolData?.tests ?? []).where((test) => test.completed == true).map((test) {
                                     return Container(
                                       height: 56,
-                                      margin: EdgeInsets.all(2.0), // Add margin for spacing
+                                      margin: EdgeInsets.symmetric(vertical: 2),
                                       decoration: BoxDecoration(
                                         color: widget.capitolData?.tests[widget.weeklyChallenge] == test ?  AppColors.getColor(widget.capitolColor!).main : AppColors.getColor('mono').lighterGrey, // Grey background color
                                         borderRadius: BorderRadius.circular(10.0), // Rounded borders
@@ -355,7 +353,27 @@ class _DesktopStudentFeedState extends State<DesktopStudentFeed> {
                                       ),
                                     );
                                   }).toList(),
+                                  
                                 ),
+                              ),
+                            ),
+                            SizedBox(height: 10,),
+                            Container(
+                              width: 280,
+                              height: 40,
+                              child: ReButton(
+                                activeColor: AppColors.getColor('primary').light, 
+                                defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                disabledColor: AppColors.getColor('mono').lightGrey, 
+                                focusedColor: AppColors.getColor('primary').light, 
+                                hoverColor: AppColors.getColor('primary').lighter, 
+                                textColor: AppColors.getColor('primary').main, 
+                                iconColor: AppColors.getColor('mono').black,
+                                text: 'Zobraziť všetky výsledky',
+                                rightIcon: 'assets/icons/arrowRightIcon.svg',
+                                onTap: () {
+                                    widget.onNavigationItemSelected(1);
+                                }
                               ),
                             )
                         ],

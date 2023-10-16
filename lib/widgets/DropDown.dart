@@ -155,19 +155,6 @@ Widget build(BuildContext context) {
         );
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   Future<void> saveUserDataToFirestore(UserData userData) async {
     try {
       DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);

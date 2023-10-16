@@ -94,7 +94,7 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
                           SvgPicture.asset('assets/icons/smallStarIcon.svg', color: AppColors.getColor('primary').lighter),
                           SizedBox(width: 8,),
                           Text(
-                            "Týždenná výzva",
+                            "Týždenná výzva #${widget.weeklyChallenge + 1}",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium!
@@ -139,7 +139,7 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
                         children: [
                           SvgPicture.asset('assets/icons/greenCheckIcon.svg'),
                           Text(
-                            "Týždenná výzva dokončená",
+                            "Týždenná výzva splnená",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium!
@@ -249,25 +249,20 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
                     ),
                     margin: EdgeInsets.all(16),
                     padding: EdgeInsets.all(16),
-                    child: Column(children: [
-                      
-                        Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/badges/badgeArg.svg',
-                          width: 80,
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                            widget.capitolTitle ?? '',
+                            'Doterajšie výsledky',
                             style: Theme.of(context)
                                   .textTheme
                                   .headlineSmall!.copyWith(
-                                    color: AppColors.getColor('mono').darkGrey,
+                                    color: AppColors.getColor('mono').black,
                                   ),
                           ),
                           SizedBox(height: 10),
@@ -275,12 +270,12 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                              width:  200,
+                              width:  300,
                               height: 10,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: LinearProgressIndicator(
-                                  value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / widget.weeklyCapitolLength : 0.0,
+                                  value: (widget.weeklyCapitolLength != 0) ? widget.completedCount / 10 : 0.0,
                                   backgroundColor: AppColors.getColor('blue').lighter,
                                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.getColor('green').main),
                                 ),
@@ -288,27 +283,26 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
                             ),
                             SizedBox(height: 5,),
                             Text(
-                              "${widget.completedCount}/${widget.weeklyCapitolLength} výziev hotových",
+                              "${widget.completedCount}/10 výziev hotových",
                               style: Theme.of(context)
                                     .textTheme
                                     .labelSmall!
                                     .copyWith(
-                                            color: AppColors.getColor('mono').grey,
+                                            color: AppColors.getColor('mono').black,
                                         ),
                             ),
+                            SizedBox(height: 5,),
                             ],
                           )
                           ],
                         ),
-                      ],
-                    ),
                       Container(
                         child: SingleChildScrollView(
                           child: Column(
                             children: (widget.capitolData?.tests ?? []).where((test) => test.completed == true).map((test) {
                               return Container(
                                 height: 56,
-                                margin: EdgeInsets.all(2.0), // Add margin for spacing
+                                margin: EdgeInsets.symmetric(vertical: 2), // Add margin for spacing
                                 decoration: BoxDecoration(
                                   color: widget.capitolData?.tests[widget.weeklyChallenge] == test ?  AppColors.getColor(widget.capitolColor!).main : AppColors.getColor('mono').lighterGrey, // Grey background color
                                   borderRadius: BorderRadius.circular(10.0), // Rounded borders
@@ -357,7 +351,29 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
                             }).toList(),
                           ),
                         ),
+                      ),
+                      SizedBox(height: 10,),
+                      Center(
+                        child: Container(
+                        width: 280,
+                        height: 40,
+                        child: ReButton(
+                          activeColor: AppColors.getColor('primary').light, 
+                          defaultColor: AppColors.getColor('mono').lighterGrey, 
+                          disabledColor: AppColors.getColor('mono').lightGrey, 
+                          focusedColor: AppColors.getColor('primary').light, 
+                          hoverColor: AppColors.getColor('primary').lighter, 
+                          textColor: AppColors.getColor('primary').main, 
+                          iconColor: AppColors.getColor('mono').black,
+                          text: 'Zobraziť všetky výsledky',
+                          rightIcon: 'assets/icons/arrowRightIcon.svg',
+                          onTap: () {
+                              widget.onNavigationItemSelected(1);
+                          }
+                        ),
+                      ),
                       )
+                      
                   ],
                 )
               ),

@@ -80,93 +80,119 @@ class _DesktopTeacherFeedState extends State<DesktopTeacherFeed> {
                       padding: EdgeInsets.all(16),
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 40),
-                        child:  Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-
-                          children: [ 
-                            Column(
-                            mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
-                            crossAxisAlignment: CrossAxisAlignment.start, // Align items horizontally to center
-                            children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
-                              children: [
-                                SvgPicture.asset('assets/icons/smallStarIcon.svg', color: AppColors.getColor('primary').lighter),
-                                SizedBox(width: 8,),
-                                Text(
-                                  "Týždenná výzva",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!
-                                      .copyWith(
-                                    color: AppColors.getColor('primary').lighter,
-                                  ),
+                        child:  Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 30,),
+                            Text(
+                                'Hotové týždenné výzvy ',
+                                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                 ),
-                              ],
                             ),
-                              SizedBox(height: 16), // Add some spacing between the items
-                              Container(
-                                  width: 400, // Set your desired maximum width here
-                                  child: Text(
-                                    widget.weeklyTitle ?? '',
-                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                      color: Theme.of(context).colorScheme.onPrimary,
+                            SizedBox(height: 40,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+
+                              children: [
+                                
+                                Column(
+                                mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
+                                crossAxisAlignment: CrossAxisAlignment.start, // Align items horizontally to center
+                                children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center, // Align items horizontally to center
+                                  children: [
+                                    SvgPicture.asset('assets/icons/smallStarIcon.svg', color: AppColors.getColor('primary').lighter),
+                                    SizedBox(width: 8,),
+                                    Text(
+                                      "Týždenná výzva #${widget.weeklyChallenge + 1}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                        color: AppColors.getColor('primary').lighter,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                  SizedBox(height: 16), // Add some spacing between the items
+                                  Container(
+                                      width: 400, // Set your desired maximum width here
+                                      child: Text(
+                                        widget.weeklyTitle ?? '',
+                                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                        ),
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 5,),
+                                    Text(
+                                        "Kapitola: ${widget.capitolTitle}",
+                                        style: TextStyle(color: AppColors.getColor('primary').lighter,),
+                                    ),
+                                    SizedBox(height: 5,),
+                                    Text(
+                                        "Čas na dokončenie",
+                                        style: TextStyle(color: AppColors.getColor('primary').lighter,),
+                                      ),
+                                  SizedBox(height: 16), // Add some spacing between the items
+                                  Container(
+                                    height: 40,
+                                    width:  170,
+                                    child:  ReButton(
+                                      activeColor: AppColors.getColor('primary').light, 
+                                      defaultColor: AppColors.getColor('primary').light, 
+                                      disabledColor: AppColors.getColor('mono').lightGrey, 
+                                      focusedColor: AppColors.getColor('primary').light, 
+                                      hoverColor: AppColors.getColor('primary').light, 
+                                      textColor: AppColors.getColor('mono').white, 
+                                      iconColor: AppColors.getColor('mono').black, 
+                                      text: 'Zobraziť test',
+                                      rightIcon: 'assets/icons/arrowRightIcon.svg',
+                                      onTap: () {
+                                        widget.onNavigationItemSelected(1);
+                                      },
                                     ),
                                   ),
-                                ),
-                              SizedBox(height: 16), // Add some spacing between the items
-                              Container(
-                                height: 40,
-                                width:  170,
-                                child:  ReButton(
-                                  activeColor: AppColors.getColor('primary').light, 
-                                  defaultColor: AppColors.getColor('primary').light, 
-                                  disabledColor: AppColors.getColor('mono').lightGrey, 
-                                  focusedColor: AppColors.getColor('primary').light, 
-                                  hoverColor: AppColors.getColor('primary').light, 
-                                  textColor: AppColors.getColor('mono').white, 
-                                  iconColor: AppColors.getColor('mono').black, 
-                                  text: 'Zobraziť test',
-                                  rightIcon: 'assets/icons/arrowRightIcon.svg',
-                                  onTap: () {
-                                    widget.onNavigationItemSelected(1);
-                                  },
-                                ),
+                                  
+                                ],
                               ),
-                              
-                            ],
-                          ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
-                            crossAxisAlignment: CrossAxisAlignment.start, 
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                  color: AppColors.getColor('primary').light,
-                                  ),
-                                ),
-                                  Text('priemerné skóre',
-                                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)
-                                  ),
-                                  SizedBox(height: 20,),
-                                  Container(
-                                  width: 60,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                  color: AppColors.getColor('primary').light,
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center, // Align items vertically to center
+                                crossAxisAlignment: CrossAxisAlignment.start, 
+                                  children: [
+                                    Container(
+                                      width: 60,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                      color: AppColors.getColor('primary').light,
+                                      ),
+                                    ),
+                                      Text('priemerné skóre',
+                                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)
+                                      ),
+                                      SizedBox(height: 20,),
+                                      Container(
+                                      width: 60,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                      color: AppColors.getColor('primary').light,
 
-                                  ),
-                                ),
-                                  Text('študentov dokončilo',
-                                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)
-                                  )
-                              ],
-                            )
+                                      ),
+                                    ),
+                                      Text('študentov dokončilo',
+                                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)
+                                      )
+                                  ],
+                                )
+                              ]
+                            ),
                           ]
                         )
                       ),

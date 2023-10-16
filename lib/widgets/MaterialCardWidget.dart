@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class MaterialCardWidget extends StatefulWidget {
   final String materialId;
   final String image;
+  final String background;
   final String title;
   final String subject;
   final String type;
@@ -23,6 +24,7 @@ class MaterialCardWidget extends StatefulWidget {
   MaterialCardWidget({
     required this.materialId,
     required this.image,
+    required this.background,
     required this.title,
     required this.subject,
     required this.type,
@@ -78,43 +80,65 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
           height: 150,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: AppColors.getColor('primary').main
+            image: DecorationImage(
+              image: AssetImage(widget.background),
+              fit: BoxFit.cover, // BoxFit can be changed based on your needs
+            ),
           ),
-          child: Stack(
+          child: Wrap(
+            children: [
+              if(widget.image != '') Container(
+                width: 170,
+                height: 140,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                child: ClipRRect(
+                borderRadius: BorderRadius.circular(10), // Apply rounded corners
+                child: Image.network(Uri.encodeFull(widget.image)),
+                )
+              ),
+              Stack(
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
+                    width: widget.image != '' ? 680 : double.infinity,
+                    constraints: BoxConstraints(
+                      minHeight: 130,
+                    ),
                     padding: EdgeInsets.all(8),
                     margin: EdgeInsets.all(8),
-                    width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 20), // Adjust spacing from the top for the text
-                        Text(
-                          widget.title,
-                          style: TextStyle(
-                            color: AppColors.getColor('mono').white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    child: 
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 20), // Adjust spacing from the top for the text
+                            Text(
+                              widget.title,
+                              style: TextStyle(
+                                color: AppColors.getColor('mono').white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              widget.association,
+                              style: TextStyle(
+                                color: AppColors.getColor('mono').white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          widget.association,
-                          style: TextStyle(
-                            color: AppColors.getColor('mono').white,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -162,13 +186,14 @@ class _MaterialCardWidgetState extends State<MaterialCardWidget> {
                         },
                       ),
                     ),
-                    
                   ],
                 ),
               ),
             ],
           ),
+        ]
         ),
+        )
       )
     );
   }

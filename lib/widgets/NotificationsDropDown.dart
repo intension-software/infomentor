@@ -127,10 +127,33 @@ Widget build(BuildContext context) {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Padding( padding: EdgeInsets.all(8), child: Text('Žiadne dostupné notifikácie'));
+                        return Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                              Text(
+                                'Upozornenia',
+                                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  color:  AppColors.getColor('mono').black,
+                                ),
+                              ),
+                              SizedBox(height: 5,),
+                              Text('Žiadne dostupné upozornenia'),
+                            ]
+                          )
+                        );
                       } else {
                         return Column(
-                          children: [ 
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                'Upozornenia',
+                                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  color:  AppColors.getColor('mono').black,
+                                ),
+                              ),
+                              SizedBox(height: 5,),
                             Column(
                             children: snapshot.data!
                               .sublist(max(0, snapshot.data!.length - 3)) // Take the last three items

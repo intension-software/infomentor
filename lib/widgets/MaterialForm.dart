@@ -9,6 +9,10 @@ import 'package:flutter/foundation.dart';  // for kIsWeb
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker_web/image_picker_web.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+
 
 class OptionsData {
   String id;
@@ -51,11 +55,26 @@ class _MaterialFormState extends State<MaterialForm> {
 
 
   // Variables to hold state
-  String? _type;
+  String _type = '';
   String? _class;
-  String? _imagePath;
+  String? _imageUrl;
 
   List<OptionsData>? classes; // example list of classes
+
+    Uint8List? _imageBytes;
+
+  Future<void> _pickImage() async {
+    final imageBytes = await ImagePickerWeb.getImageAsBytes();
+    
+    if (imageBytes != null) {
+      setState(() {
+        _imageBytes = imageBytes;
+      });
+
+      // Upload the image to Firebase Storage and store the URL in Firestore
+    }
+  }
+
 
   Future<void> fetchOptions() async {
   try {
@@ -72,6 +91,60 @@ class _MaterialFormState extends State<MaterialForm> {
     } catch (e) {
       print('Error while fetching options: $e');
     }
+  }
+
+  String getPreview (String type) {
+    switch (type) {
+      case 'Video': {
+        return 'assets/learningCards/redPreview.png';
+      }
+      case 'Projekt': {
+        return 'assets/learningCards/greenPreview.png';
+      }
+      case 'Podujatie': {
+        return 'assets/learningCards/primaryPreview.png';
+      }
+      case 'Textový materiál': {
+        return 'assets/learningCards/bluePreview.png';
+      }
+    }
+    return 'assets/learningCards/primaryPreview.png';
+  }
+
+  String getBackground (String type) {
+    switch (type) {
+      case 'Video': {
+        return 'assets/learningCards/redBackground.png';
+      }
+      case 'Projekt': {
+        return 'assets/learningCards/greenBackground.png';
+      }
+      case 'Podujatie': {
+        return 'assets/learningCards/primaryBackground.png';
+      }
+      case 'Textový materiál': {
+        return 'assets/learningCards/blueBackground.png';
+      }
+    }
+    return 'assets/learningCards/primaryBackground.png';
+  }
+
+  String getColor (String type) {
+    switch (type) {
+      case 'Video': {
+        return 'red';
+      }
+      case 'Projekt': {
+        return 'green';
+      }
+      case 'Podujatie': {
+        return 'primary';
+      }
+      case 'Textový materiál': {
+        return 'blue';
+      }
+    }
+    return 'primary';
   }
 
 
@@ -107,38 +180,43 @@ class _MaterialFormState extends State<MaterialForm> {
             child: Form(
             key: _formKey,
             child: Container(
-      width: 900,
-      padding: EdgeInsets.all(12),
-      child:Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              width: 900,
+              padding: EdgeInsets.all(12),
+              child:Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                  DropdownButtonFormField<String>(
+                    value: _class,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _class = newValue!;
+                      });
+                    },
+                    items: classes?.map<DropdownMenuItem<String>>((OptionsData value) {
+                      return DropdownMenuItem<String>(
+                        value: value.id,
+                        child: Row(
+                          children: [
+                            Text(value.data.name),
+                            if (value.id == _class) Icon(Icons.check),
+                          ],
+                        ),
+                      );
+                    }).toList() ?? [],
+                    decoration: InputDecoration(labelText: 'Choose Class'),
+                  ),
                 SizedBox(height: 10),
-              DropdownButtonFormField<String>(
-                value: _class,
-                onChanged: (newValue) {
-                  setState(() {
-                    _class = newValue!;
-                  });
-                },
-                items: classes?.map<DropdownMenuItem<String>>((OptionsData value) {
-                  return DropdownMenuItem<String>(
-                    value: value.id,
-                    child: Row(
-                      children: [
-                        Text(value.data.name),
-                        if (value.id == _class) Icon(Icons.check),
-                      ],
-                    ),
-                  );
-                }).toList() ?? [],
-                decoration: InputDecoration(labelText: 'Choose Class'),
-              ),
-                SizedBox(height: 10),
-                Row(
+                Text('Typ obsahu'),
+                SizedBox(height: 15),
+                Wrap(
+                  spacing: 5,
+                  runSpacing: 5,
                   children: [
                     Container(
                       padding: EdgeInsets.only(right: 8),
                       height: 30,
+                      width: 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -150,15 +228,18 @@ class _MaterialFormState extends State<MaterialForm> {
                       ),
                       child: Row(
                         children: [
-                          Radio(
+                          Theme(
+                            data: ThemeData(unselectedWidgetColor: AppColors.getColor('red').main),  // Set the idle color here
+                            child:Radio(
                             value: 'Video',
-                            groupValue: _type,
-                            onChanged: (newValue) {
-                              setState(() {
-                                if (newValue != null) _type = newValue;
-                              });
-                            },
-                            activeColor: AppColors.getColor('red').main,
+                              groupValue: _type,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  if (newValue != null) _type = newValue;
+                                });
+                              },
+                              activeColor: AppColors.getColor('red').main,
+                            ),
                           ),
                           Text(
                             'Video',
@@ -169,90 +250,99 @@ class _MaterialFormState extends State<MaterialForm> {
                         ],
                       ),
                     ),
-                    SizedBox(width: 10), // Add some spacing between the radio buttons
                     Container(
                       height: 30,
+                      width: 120,
                       padding: EdgeInsets.only(right: 8),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: AppColors.getColor('red').lighter,
+                        color: AppColors.getColor('primary').lighter,
                         border: Border.all(
-                          color: _type == 'Podujatie' ? AppColors.getColor('red').main : AppColors.getColor('red').lighter,
+                          color: _type == 'Podujatie' ? AppColors.getColor('primary').main : AppColors.getColor('primary').lighter,
                           width: 2,
                         ),
                       ),
                       child: Row(
                         children: [
-                          Radio(
-                            value: 'Podujatie',
-                            groupValue: _type,
-                            onChanged: (newValue) {
-                              setState(() {
-                                if (newValue != null) _type = newValue;
-                              });
-                            },
-                            activeColor: AppColors.getColor('red').main,
+                          Theme(
+                            data: ThemeData(unselectedWidgetColor: AppColors.getColor('primary').main),  // Set the idle color here
+                            child:Radio(
+                              value: 'Podujatie',
+                              groupValue: _type,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  if (newValue != null) _type = newValue;
+                                });
+                              },
+                              activeColor: AppColors.getColor('primary').main,
+                            ),
                           ),
                           Text(
                             'Podujatie',
                             style: TextStyle(
-                              color: AppColors.getColor('red').main,
+                              color: AppColors.getColor('primary').main,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(width: 10), // Add some spacing between the radio buttons
                     Container(
                       height: 30,
+                      width: 100,
                       padding: EdgeInsets.only(right: 8),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: AppColors.getColor('red').lighter,
+                        color: AppColors.getColor('green').lighter,
                         border: Border.all(
-                          color: _type == 'Projekt' ? AppColors.getColor('red').main : AppColors.getColor('red').lighter,
+                          color: _type == 'Projekt' ? AppColors.getColor('green').main : AppColors.getColor('green').lighter,
                           width: 2,
                         ),
                       ),
                       child: Row(
                         children: [
-                          Radio(
-                            value: 'Projekt',
-                            groupValue: _type,
-                            onChanged: (newValue) {
-                              setState(() {
-                                if (newValue != null) _type = newValue;
-                              });
-                            },
-                            activeColor: AppColors.getColor('red').main,
+                          Theme(
+                            data: ThemeData(unselectedWidgetColor: AppColors.getColor('green').main),  // Set the idle color here
+                            child:Radio(
+                              value: 'Projekt',
+                              groupValue: _type,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  if (newValue != null) _type = newValue;
+                                });
+                              },
+                              activeColor: AppColors.getColor('green').main,
 
+                            ),
                           ),
                           Text(
                             'Projekt',
                             style: TextStyle(
-                              color: AppColors.getColor('red').main,
+                              color: AppColors.getColor('green').main,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(width: 10), // Add some spacing between the radio buttons
                     Container(
                       height: 30,
+                      width: 160,
                       padding: EdgeInsets.only(right: 8),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: AppColors.getColor('red').lighter,
+                        color: AppColors.getColor('blue').lighter,
                         border: Border.all(
-                          color: _type == 'Textový materiál' ? AppColors.getColor('red').main : AppColors.getColor('red').lighter,
+                          color: _type == 'Textový materiál' ? AppColors.getColor('blue').main : AppColors.getColor('blue').lighter,
                           width: 2,
                         ),
                       ),
                       child: Row(
                         children: [
+                          Theme(
+                            data: ThemeData(unselectedWidgetColor: AppColors.getColor('blue').main),  // Set the idle color here
+                            child:
                           Radio(
                             value: 'Textový materiál',
                             groupValue: _type,
@@ -261,12 +351,13 @@ class _MaterialFormState extends State<MaterialForm> {
                                 if (newValue != null) _type = newValue;
                               });
                             },
-                            activeColor: AppColors.getColor('red').main,
+                            activeColor: AppColors.getColor('blue').main,
+                          ),
                           ),
                           Text(
                             'Textový materiál',
                             style: TextStyle(
-                              color: AppColors.getColor('red').main,
+                              color: AppColors.getColor('blue').main,
                             ),
                           ),
                         ],
@@ -293,15 +384,34 @@ class _MaterialFormState extends State<MaterialForm> {
                 _buildTextField('Link', _linkController),
                 // Drop-down for class
                 SizedBox(height: 15),
+                Container(
+                  width: 200,
+                  height: 40,
+                  child: ReButton(
+                    activeColor: AppColors.getColor('primary').light, 
+                    defaultColor: AppColors.getColor('mono').lighterGrey, 
+                    disabledColor: AppColors.getColor('mono').lightGrey, 
+                    focusedColor: AppColors.getColor('primary').light, 
+                    hoverColor: AppColors.getColor('primary').lighter, 
+                    textColor: AppColors.getColor('primary').main, 
+                    iconColor: AppColors.getColor('mono').black, 
+                    text: 'Nahrať obrázok',
+                    leftIcon: 'assets/icons/plusIcon.svg',
+                    onTap: () {
+                        _pickImage();
+                    }
+                  )
+                ),
+                 SizedBox(height: 15),
                 Text(
-                    'Ukážka',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium!
-                        .copyWith(
-                          color: Theme.of(context).colorScheme.onBackground,
-                        ),
-                  ),
+                  'Ukážka',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                ),
                 Container(
                       width: 900,
                       padding: const EdgeInsets.all(16),
@@ -311,80 +421,129 @@ class _MaterialFormState extends State<MaterialForm> {
                         ),
                         borderRadius: BorderRadius.circular(10)
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(10),
-                              width: 900,
-                                height: 200,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                      child: 
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(10),
+                                width: 900,
+                                constraints: BoxConstraints(minHeight: 200),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                      image: AssetImage(getPreview(_type)),
+                                      fit: BoxFit.cover, // BoxFit can be changed based on your needs
+                                    ),
+                                  ),
+                                  child: Wrap(
                                   children: [
-                                    Text(
-                                      _associationController.text,
-                                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onPrimary,
+                                    if (_imageBytes != null)
+                                      Container(
+                                        constraints: BoxConstraints(
+                                          maxHeight: 200,
+                                          maxWidth: 300
+                                        ),
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        child: Stack(
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                             ClipRRect(
+                                              borderRadius: BorderRadius.circular(10), // Apply rounded corners
+                                              child: Image.memory(_imageBytes!, fit: BoxFit.cover),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.all(8),
+                                              child: MouseRegion(
+                                              cursor: SystemMouseCursors.click,
+                                              child: GestureDetector(
+                                                child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
+                                                onTap: () {
+                                                  setState(() {
+                                                    _imageBytes = null;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            ),
+                                             
+                                          ],
+                                        )
+                                        
                                       ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      _titleController.text,
-                                      style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onPrimary,
-                                      ),
-                                    ),
-                                    SizedBox(height: 20),
-                                  ],
-                                ),
-                          ),
-
-                          SizedBox(height: 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: AppColors.getColor('red').lighter,
-                              borderRadius: BorderRadius.circular(8),
+                                      Container(
+                                        height: MediaQuery.of(context).size.width > 1000 ? 190 : null,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              _associationController.text,
+                                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                                color: Theme.of(context).colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Text(
+                                              _titleController.text,
+                                              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                                color: Theme.of(context).colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            SizedBox(height: 20),
+                                          ],
+                                        ),
+                                      )
+                                  ]
+                                  )
                             ),
-                            child: Text(
-                              _type ?? '',
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                color: AppColors.getColor('red').main,
+
+                            SizedBox(height: 8),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.getColor(getColor(_type)).lighter,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _type == '' ? 'Typ obsahu' : _type,
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.getColor(getColor(_type)).main,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            _descriptionController.text,
-                            style: TextStyle(
-                              fontSize: 16,
+                            SizedBox(height: 8),
+                            Text(
+                              _descriptionController.text,
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          Container(
-                            width: 180,
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: AppColors.getColor('mono').lighterGrey
-                            ),
-                            child: Row(
-                              children: [
-                                SizedBox(width: 10,),
-                                SvgPicture.asset('assets/icons/linkIcon.svg'),
-                                Text('Navštíviť odkaz', style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                color: AppColors.getColor('primary').main,
-                              ),)
-                              ],
+                            SizedBox(height: 8),
+                            Container(
+                              width: 180,
+                              margin: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: AppColors.getColor('mono').lighterGrey
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 10,),
+                                  SvgPicture.asset('assets/icons/linkIcon.svg', color: AppColors.getColor('primary').main,),
+                                  SizedBox(width: 10,),
+                                  Text('Navštíviť odkaz', style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: AppColors.getColor('primary').main,
+                                ),)
+                                ],
+                              )
                             )
-                          )
-                        ],
-                      ),
+                          ],
+                        ),
                     ),
                 SizedBox(height: 10),
                 Center(
@@ -407,7 +566,8 @@ class _MaterialFormState extends State<MaterialForm> {
                             MaterialData data = MaterialData(
                               association: _associationController.text,
                               description: _descriptionController.text,
-                              image: _imagePath ?? 'placeholder.png',
+                              background: getBackground(_type),
+                              image: '',
                               link: _linkController.text,
                               subject: _subjectController.text,
                               title: _titleController.text,
@@ -455,11 +615,29 @@ Future<void> addMaterialToFirestore(MaterialData material) async {
     CollectionReference materialsRef =
         FirebaseFirestore.instance.collection('materials');
 
+      if(_imageBytes != null) {
+      CollectionReference materialsRef =
+        FirebaseFirestore.instance.collection('materials');
+
+      final storageRef = FirebaseStorage.instance.ref().child('images/${DateTime.now()}.jpg');
+      final uploadTask = storageRef.putData(_imageBytes!);
+      final TaskSnapshot snapshot = await uploadTask;
+
+      if (snapshot.state == TaskState.success) {
+          _imageUrl = await storageRef.getDownloadURL();
+
+          material.image = Uri.encodeFull(_imageUrl!);
+      
+      // Store the image URL in Firestore
+      }
+    }
+
     // Add the material data to Firestore and get the DocumentReference of the new document
     DocumentReference docRef = await materialsRef.add({
       'association': material.association,
       'description': material.description,
       'image': material.image,
+      'background': material.background,
       'link': material.link,
       'subject': material.subject,
       'title': material.title,

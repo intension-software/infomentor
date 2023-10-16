@@ -10,7 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 class Tutorial extends StatefulWidget {
-  const Tutorial({Key? key}) : super(key: key);
+  final void Function() check;
+
+  Tutorial({Key? key, required this.check});
 
   @override
   _TutorialState createState() => _TutorialState();
@@ -19,7 +21,6 @@ class Tutorial extends StatefulWidget {
 class _TutorialState extends State<Tutorial> {
   int _currentStep = 0;
   bool _showNavigationIcons = false;
-  bool _end = false;
   bool isMobile = false;
   bool isDesktop = false;
   UserData? currentUserData;
@@ -386,337 +387,9 @@ class _TutorialState extends State<Tutorial> {
     ),
   ];
 
-  List<Widget> _stepsTeacher = [
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.all(16),
-          child: Text(
-            'Ako funguje appka Infomentor?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialChallenge.png', width: 250,),
-            SizedBox(height: 20),
-            Text(
-            'Týždenné výzvy',
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              width: 260,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'Pripravili sme pre študentov a študentky krátke testy, ktoré preskúšajú ich kritické myslenie na praktických príkladoch.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            )
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Ako funguje appka Infomentor?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialTeacherDiscussions.png', width: 250,),
-            SizedBox(height: 20),
-            Text(
-              textAlign: TextAlign.center,
-            'Diskusné fórum',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              width: 360,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'Študenti a študentky sa naučia vyjadriť svoje názory, dobre diskusné príspevky môžete oceniť hviezdičkou.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            SizedBox(height: 10,),
-            Container(
-              width: 360,
-              padding: EdgeInsets.all(16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'Diskusiu začnete vybraním diskusnej tézy z našej knižnice alebo napísaním vlastnej tézy.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            )
-           
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.all(16),
-          child: Text(
-            'Ako funguje appka Infomentor?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialLearning.png', width: 250,),
-            SizedBox(height: 20),
-            Text(
-              textAlign: TextAlign.center,
-            'Vzdelávanie',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              width: 330,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'Nájdete tu tipy na vzdelávacie podujatia, projekty a materiály!',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              width: 300,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child:Text(
-                  textAlign: TextAlign.center,
-                'Taktiež aj vy môžete pridávať takéto tipy pre študentov a študentky.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            )
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 360,
-          padding: EdgeInsets.all(16),
-          child: Text(
-            'Ako sa hodnotí aktivita štundetov a Študnetiek v aplikácií?',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialTeacherPoints.png', width: 300,),
-            SizedBox(height: 20),
-            Container(
-              width: 350,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Testy a ich aktivity sú hodnotená bodmi, ktoré nájdete v sekcii “Výsledky”.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              width: 350,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Môžete sa rozhodnúť brať tieto body do úvahy pri známkovaní.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                ),
-            ),
-            SizedBox(height: 20),
-          ]
-          )
-        )
-      ]
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-         SizedBox(height: 20),
-            Image.asset('assets/tutorial/tutorialMan.png', width: 250,),
-            SizedBox(height: 20),
-          Container(
-          width: 360,
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-                      'Nauč sa myslieť kriticky',
-
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ),
-        SizedBox(height: 20),
-         Container(
-           padding: EdgeInsets.symmetric(horizontal: 16),
-          width: 350,
-          child: Text(
-            'Až 56%',
-            style: Theme.of(context)
-                .textTheme
-                .displayMedium!
-                .copyWith(
-                  color: AppColors.getColor('yellow').main,
-                ),
-            ),
-        ),
-        Container(
-           padding: EdgeInsets.symmetric(horizontal: 16),
-          width: 350,
-          child: Text(
-            'ľudí na Slovensku je náchylných veriť tvrdeniam, ktoré obsahujú klamstvá či konšpirácie (GLOBSEC).',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-        ),
-        SizedBox(height: 20),
-        Container(
-           padding: EdgeInsets.symmetric(horizontal: 16),
-          width: 350,
-          child: Text(
-            'Len 16%',
-            style: Theme.of(context)
-                .textTheme
-                .displayMedium!
-                .copyWith(
-                  color: AppColors.getColor('yellow').main,
-                ),
-            ),
-        ),
-        Container(
-           padding: EdgeInsets.symmetric(horizontal: 16),
-          width: 350,
-          child: Text(
-            'mladých ľudí si overuje informácie z médií vždy alebo takmer vždy (RmS).',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-        ),
-      ]
-    ),
-  ];
 if (_loading) {
     return Container(color: Theme.of(context).primaryColor,); // Show loading circle when data is being fetched
 }
-if (_end) {
-  return const Home();
-}
-
 return Scaffold(
   backgroundColor: Theme.of(context).primaryColor,
   body: SingleChildScrollView(
@@ -756,7 +429,7 @@ return Scaffold(
                               _currentStep = page;
                             });
                           },
-                          children: currentUserData!.teacher ? _stepsTeacher : _steps,
+                          children: _steps,
                         ),
                       ),
                       if (_showNavigationIcons)
@@ -799,9 +472,7 @@ return Scaffold(
                                     curve: Curves.easeInOut,
                                   );
                                 } else if (_currentStep == _steps.length - 1) {
-                                  setState(() {
-                                    _end = true;
-                                  });
+                                  widget.check();
                                 }
                               });
                             },
@@ -841,9 +512,7 @@ return Scaffold(
                     text: 'VSTÚPIŤ',
                     rightIcon: 'assets/icons/arrowRightIcon.svg',
                     onTap: () {
-                      setState(() {
-                        _end = true;
-                      });
+                      widget.check();
                     },
                   ),
                 ),
