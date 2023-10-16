@@ -626,7 +626,7 @@ Future<void> addMaterialToFirestore(MaterialData material) async {
       if (snapshot.state == TaskState.success) {
           _imageUrl = await storageRef.getDownloadURL();
 
-          material.image = Uri.encodeFull(_imageUrl!);
+          material.image = _imageUrl!;
       
       // Store the image URL in Firestore
       }
