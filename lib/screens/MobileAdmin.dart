@@ -366,11 +366,11 @@ class _MobileAdminState extends State<MobileAdmin> {
                       itemCount: classDataList.length + 1,
                       itemBuilder: (context, index) {
                         if (index == classDataList.length)return Center(
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                              child: Wrap(
+                                  alignment: WrapAlignment.center,
                                   children: [
                                     Container(
+                                      margin: EdgeInsets.only(top: 10),
                                         width: 190,
                                         height: 40,
                                         child: ReButton(
