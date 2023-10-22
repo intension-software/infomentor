@@ -544,9 +544,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                       if(_messageController.text != '') {
                                                         sendMessage(_messageController.text, _type);
                                                         Navigator.of(context).pop();
-                                                          setState() {
-                                                            _messageController.text != '';
-                                                          }
+                                                        _messageController.text = '';
                                                       }
                                                     },
                                                   ),
