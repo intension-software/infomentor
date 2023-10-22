@@ -433,6 +433,10 @@ class _ProfileState extends State<Profile> {
                                                               onTap: () {
                                                                 if(_messageController.text != '') {
                                                                   sendMessage(_messageController.text, _type);
+                                                                  Navigator.of(context).pop();
+                                                                  setState() {
+                                                                    _messageController.text != '';
+                                                                  }
                                                                 }
                                                               },
                                                             ),

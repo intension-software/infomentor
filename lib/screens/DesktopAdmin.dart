@@ -543,6 +543,10 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                                     onTap: () {
                                                       if(_messageController.text != '') {
                                                         sendMessage(_messageController.text, _type);
+                                                        Navigator.of(context).pop();
+                                                          setState() {
+                                                            _messageController.text != '';
+                                                          }
                                                       }
                                                     },
                                                   ),
