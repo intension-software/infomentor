@@ -15,6 +15,7 @@ class TeacherMobileAppBar extends StatelessWidget {
   final void Function() logOut;
   final VoidCallback? onUserDataChanged;
   final void Function() tutorial;
+  final void Function(int) onNavigationItemSelected;
 
 
   const TeacherMobileAppBar({
@@ -25,6 +26,7 @@ class TeacherMobileAppBar extends StatelessWidget {
     required this.onItemTapped,
     required this.onUserDataChanged,
     required this.tutorial,
+    required this.onNavigationItemSelected
   }) : super(key: key);
 
   @override
@@ -51,6 +53,12 @@ class TeacherMobileAppBar extends StatelessWidget {
         onPressed: () {
           tutorial();
         },
+      ),
+      SizedBox(width: 8),
+        IconButton(
+        icon: SvgPicture.asset('assets/icons/bellWhiteIcon.svg'),
+        onPressed: () => 
+          onNavigationItemSelected(5),
       ),
       SizedBox(width: 10,)
       ],

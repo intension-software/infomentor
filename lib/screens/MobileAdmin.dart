@@ -574,93 +574,92 @@ class _MobileAdminState extends State<MobileAdmin> {
                           Container(
                             margin: EdgeInsets.only(top: 10),
 
-                        width: 160,
-                        height: 40,
-                        child: ReButton(
-                          activeColor: AppColors.getColor('red').light, 
-                          defaultColor: AppColors.getColor('red').main, 
-                          disabledColor: AppColors.getColor('mono').lightGrey, 
-                          focusedColor: AppColors.getColor('red').light, 
-                          hoverColor: AppColors.getColor('red').lighter, 
-                          textColor: AppColors.getColor('mono').white, 
-                          iconColor: AppColors.getColor('mono').white, 
-                          text: 'Odhlásiť sa',
-                          rightIcon: 'assets/icons/logoutIcon.svg',
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  content: Container(
-                                    width: 328,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min, // Ensure the dialog takes up minimum height
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Spacer(),
-                                            MouseRegion(
-                                              cursor: SystemMouseCursors.click,
-                                              child: GestureDetector(
-                                                child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
-                                                onTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Odhlásiť sa',
-                                            textAlign: TextAlign.center,
-                                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                                  color: AppColors.getColor('mono').black,
-                                                ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 30,),
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Po odhlásení sa z aplikácie budeš musieť znovu zadať svoje používeteľské meno a heslo.',
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                        SizedBox(height: 30,),
-                                          ReButton(
-                                          activeColor: AppColors.getColor('mono').white, 
-                                          defaultColor: AppColors.getColor('red').main, 
-                                          disabledColor: AppColors.getColor('mono').lightGrey, 
-                                          focusedColor: AppColors.getColor('red').light, 
-                                          hoverColor: AppColors.getColor('red').light, 
-                                          textColor: Theme.of(context).colorScheme.onPrimary, 
-                                          iconColor: AppColors.getColor('mono').black, 
-                                          text: 'ODHLÁSIŤ SA',
-                                          onTap: () {
-                                            widget.logOut();
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        SizedBox(height: 30,),
-                                      ],
+                          width: 160,
+                          height: 40,
+                          child: ReButton(
+                            activeColor: AppColors.getColor('red').light, 
+                            defaultColor: AppColors.getColor('red').main, 
+                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                            focusedColor: AppColors.getColor('red').light, 
+                            hoverColor: AppColors.getColor('red').lighter, 
+                            textColor: AppColors.getColor('mono').white, 
+                            iconColor: AppColors.getColor('mono').white, 
+                            text: 'Odhlásiť sa',
+                            rightIcon: 'assets/icons/logoutIcon.svg',
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
                                     ),
-                                  )
-                                );
-                              },
-                            );
-                          }
-                        ),
-                      )
-                    ],
-                  ),
-                  
+                                    content: Container(
+                                      width: 328,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min, // Ensure the dialog takes up minimum height
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Spacer(),
+                                              MouseRegion(
+                                                cursor: SystemMouseCursors.click,
+                                                child: GestureDetector(
+                                                  child: SvgPicture.asset('assets/icons/xIcon.svg', height: 10,),
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Odhlásiť sa',
+                                              textAlign: TextAlign.center,
+                                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                                    color: AppColors.getColor('mono').black,
+                                                  ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 30,),
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Po odhlásení sa z aplikácie budeš musieť znovu zadať svoje používeteľské meno a heslo.',
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                          SizedBox(height: 30,),
+                                            ReButton(
+                                            activeColor: AppColors.getColor('mono').white, 
+                                            defaultColor: AppColors.getColor('red').main, 
+                                            disabledColor: AppColors.getColor('mono').lightGrey, 
+                                            focusedColor: AppColors.getColor('red').light, 
+                                            hoverColor: AppColors.getColor('red').light, 
+                                            textColor: Theme.of(context).colorScheme.onPrimary, 
+                                            iconColor: AppColors.getColor('mono').black, 
+                                            text: 'ODHLÁSIŤ SA',
+                                            onTap: () {
+                                              widget.logOut();
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          SizedBox(height: 30,),
+                                        ],
+                                      ),
+                                    )
+                                  );
+                                },
+                              );
+                            }
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(height: 20,),
                 ],

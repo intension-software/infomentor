@@ -189,6 +189,7 @@ class _HomeState extends State<Home> {
                 currentUserData: currentUserData,
                 onUserDataChanged: _onUserDataChanged,
                 logOut: logOut,
+                onNavigationItemSelected: _onNavigationItemSelected,
               ),
             )
           : PreferredSize(
@@ -256,14 +257,16 @@ class _HomeState extends State<Home> {
       ) : null,
       bottomNavigationBar:  (isMobile && !currentUserData!.teacher) ? MobileBottomNavigation(
         selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+        onItemTapped: _onNavigationItemSelected,
       ) : null,
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        children: [
-          !currentUserData!.teacher ? isMobile ? MobileStudentFeed(
+      body: !currentUserData!.teacher ? _buildStduentScreen(_selectedIndex) : _buildTeacherScreen(_selectedIndex),
+    );
+  }
+
+   Widget _buildStduentScreen(int index) {
+    switch (index) {
+      case 0:
+        return isMobile ? MobileStudentFeed(
             capitolColor: capitolColor,
             capitolData: currentUserData!.capitols[capitolsId],
             onNavigationItemSelected: _onNavigationItemSelected,
@@ -291,7 +294,39 @@ class _HomeState extends State<Home> {
             weeklyCapitolLength: weeklyCapitolLength,
             weeklyChallenge: weeklyChallenge,
             weeklyTitle: weeklyTitle,
-          ) : isMobile ? MobileTeacherFeed(
+          );
+      case 1:
+        return Challenges(
+          fetch: fetchUserData(),
+          currentUserData: currentUserData,
+        );
+      case 2:
+        return Discussions(
+          currentUserData: currentUserData,
+        );
+      case 3:
+        return Learning(
+          currentUserData: currentUserData,
+          fetch: fetchUserData(),
+        );
+      case 4:
+        return Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected);
+      case 5:
+        return Profile(logOut: () {
+          FirebaseAuth.instance.signOut();
+          setState(() {
+            fetchUserData();
+          });
+        });
+      default:
+        return Container(); // Handle other cases
+    }
+  }
+
+  Widget _buildTeacherScreen(int index) {
+    switch (index) {
+      case 0:
+        return isMobile ? MobileTeacherFeed(
             onNavigationItemSelected: _onNavigationItemSelected,
             capitol: capitol,
             capitolLength: capitolLength,
@@ -315,53 +350,52 @@ class _HomeState extends State<Home> {
             weeklyCapitolLength: weeklyCapitolLength,
             weeklyChallenge: weeklyChallenge,
             weeklyTitle: weeklyTitle,
-          ),
-          Challenges(fetch: fetchUserData(), currentUserData: currentUserData),
-          Discussions(currentUserData: currentUserData),
-          Learning(currentUserData: currentUserData, fetch: fetchUserData(),),
-          if (currentUserData!.teacher) Results(),
-          Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected),
-          if(!currentUserData!.teacher) Profile(logOut: () {
-            FirebaseAuth.instance.signOut();
-              setState(() {
-                fetchUserData();
-              });
-          },),
-          if (currentUserData!.teacher) isMobile ? MobileAdmin(currentUserData: currentUserData, logOut: () {
-            FirebaseAuth.instance.signOut();
-              setState(() {
-                fetchUserData();
-              });
-          },) : DesktopAdmin(fetch: fetchUserData() , currentUserData: currentUserData , logOut: () {
-            FirebaseAuth.instance.signOut();
-              setState(() {
-                fetchUserData();
-              });
-          }),
-        ],
-      ),
-    );
+          );
+      case 1:
+        return Challenges(
+          fetch: fetchUserData(),
+          currentUserData: currentUserData,
+        );
+      case 2:
+        return Discussions(
+          currentUserData: currentUserData,
+        );
+      case 3:
+        return Learning(
+          currentUserData: currentUserData,
+          fetch: fetchUserData(),
+        );
+      case 4:
+        return  Results(); // Handle other cases
+      case 5:
+        return Notifications(currentUserData: currentUserData, onNavigationItemSelected: _onNavigationItemSelected);
+      case 6:
+        return isMobile
+          ? MobileAdmin(
+              currentUserData: currentUserData,
+              logOut: () {
+                FirebaseAuth.instance.signOut();
+                setState(() {
+                  fetchUserData();
+                });
+              },
+            )
+          : DesktopAdmin(
+              fetch: fetchUserData(),
+              currentUserData: currentUserData,
+              logOut: () {
+                FirebaseAuth.instance.signOut();
+                setState(() {
+                  fetchUserData();
+                });
+              },
+            ); // Handle other cases
+      default:
+        return Container(); // Handle other cases
+    }
   }
 
    void _onNavigationItemSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-      _pageController.animateToPage(
-        index,
-        duration: Duration(milliseconds: 1),
-        curve: Curves.ease,
-      );
-    });
-  }
-  void _onItemTapped(int index) {
-    _pageController.animateToPage(
-      index,
-      duration: Duration(milliseconds: 1),
-      curve: Curves.ease,
-    );
-  }
-
-  void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -369,7 +403,6 @@ class _HomeState extends State<Home> {
 
   Widget buildNavItem(int index, String icon, String text, BuildContext context) {
     final bool isSelected = index == _selectedIndex;
-
     return Container(
       width: 260,
       height: 57,
@@ -397,7 +430,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
 }
 
 

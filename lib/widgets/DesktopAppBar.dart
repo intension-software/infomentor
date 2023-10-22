@@ -104,7 +104,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                           if(widget.currentUserData!.teacher)IconButton(
                             icon: SvgPicture.asset('assets/icons/adminIcon.svg'),
                             onPressed: () {
-                              widget.onNavigationItemSelected(7);
+                              widget.onNavigationItemSelected(6);
                               widget.selectedIndex = -1;
                             }
                           ),

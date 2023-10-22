@@ -44,6 +44,7 @@ class DesktopTeacherFeed extends StatefulWidget {
 class _DesktopTeacherFeedState extends State<DesktopTeacherFeed> {
   bool isMobile = false;
   bool isDesktop = false;
+  bool _loading = true;
 
   final userAgent = html.window.navigator.userAgent.toLowerCase();
 
@@ -55,17 +56,21 @@ class _DesktopTeacherFeedState extends State<DesktopTeacherFeed> {
     isDesktop = userAgent.contains('macintosh') ||
         userAgent.contains('windows') ||
         userAgent.contains('linux');
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+        return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
+    }
     return  Container(
-            width: 900,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Align(
                     alignment: Alignment.center,
