@@ -283,32 +283,34 @@ Widget build(BuildContext context) {
                     hoverColor: AppColors.getColor('green').light, 
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black,
-                    isDisabled: postController.text == '',
                     text: 'UVEREJNIŤ', 
                     onTap: () async {
-                      PostsData newPost = PostsData(
-                        comments: [],
-                        date: Timestamp.now(),
-                        user: widget.currentUserData!.name,
-                        pfp: widget.currentUserData!.image,
-                        userId: FirebaseAuth.instance.currentUser!.uid,
-                        value: postController.text,
-                        id: _posts.length.toString()
-                      );
+                      if (postController.text != '') {
+                        PostsData newPost = PostsData(
+                          comments: [],
+                          date: Timestamp.now(),
+                          user: widget.currentUserData!.name,
+                          pfp: widget.currentUserData!.image,
+                          userId: FirebaseAuth.instance.currentUser!.uid,
+                          value: postController.text,
+                          id: _posts.length.toString()
+                        );
 
-                      try {
-                        await addPost(widget.currentUserData!.schoolClass, newPost);
+                        try {
+                          await addPost(widget.currentUserData!.schoolClass, newPost);
 
-                        setState(() {
-                          _posts.add(newPost);
-                          _posts.sort((a, b) => b.date.compareTo(a.date));
-                        });
+                          setState(() {
+                            _posts.add(newPost);
+                            _posts.sort((a, b) => b.date.compareTo(a.date));
+                          });
 
-                        reShowToast('Príspevok odoslaný', false, context);
-                        postController.clear();
-                      } catch (e) {
-                        print('Error adding post: $e');
+                          reShowToast('Príspevok odoslaný', false, context);
+                          postController.clear();
+                        } catch (e) {
+                          print('Error adding post: $e');
+                        }
                       }
+                       
                     },
                   ),
               ],
@@ -1036,8 +1038,9 @@ Widget build(BuildContext context) {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: _editComment ? 'Uložiť úpravy' : 'Odpovedať',
-                        isDisabled: _editComment ? editCommentController.text == '' : commentController.text == '',
                         onTap: () async {
+                          if(_editComment ? editCommentController.text != '' : commentController.text != '') {
+
                           if (_editComment) {
                             int commentIndex = _editIndex!; // You need to set this to the appropriate index.
 
@@ -1101,6 +1104,7 @@ Widget build(BuildContext context) {
                             } catch (e) {
                               print('Error adding comment: $e');
                             }
+                          }
                           }
                         },
                       ),
@@ -1249,8 +1253,9 @@ Widget build(BuildContext context) {
                       textColor: Theme.of(context).colorScheme.onPrimary,
                       iconColor: AppColors.getColor('mono').black,
                       text: _editAnswer ? 'Uložiť úpravy' : 'Odpovedať',
-                      isDisabled: _editAnswer ? editAnswerController == '' : answerController.text == '',
                       onTap: () async {
+                        if(_editAnswer ? editAnswerController != '' : answerController.text != '') {
+
                         if (_editAnswer) {
                           int answerIndex = _editIndex!; // You need to set this to the appropriate index.
 
@@ -1316,6 +1321,8 @@ Widget build(BuildContext context) {
                             print('Error adding answer: $e');
                           }
                         }
+                        }
+
                       },
                     ),
                   )

@@ -132,7 +132,7 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                         ],
                       ),
                       SizedBox(height: 10.0),
-                      Text(widget.post!.value),
+                      Text(widget.comment!.value),
                       SizedBox(height: 10.0),
                       Row(
                         children: [

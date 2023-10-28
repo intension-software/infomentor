@@ -560,9 +560,9 @@ Widget build(BuildContext context) {
                     hoverColor: AppColors.getColor('green').light, 
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black,
-                    isDisabled: postController.text == '',
                     text: 'UVEREJNIŤ', 
                     onTap: () async {
+                      if(postController.text != '') {
                       PostsData newPost = PostsData(
                         comments: [],
                         date: Timestamp.now(),
@@ -585,6 +585,7 @@ Widget build(BuildContext context) {
                         postController.clear();
                       } catch (e) {
                         print('Error adding post: $e');
+                      }
                       }
                     },
                   ),
@@ -1040,7 +1041,7 @@ Widget build(BuildContext context) {
                     SizedBox(height: 8),
                     Container(
                       height: 40,
-                      width: 126,
+                      width: _editComment ? 152 : 136,
                       child:  ReButton(
                         activeColor: AppColors.getColor('mono').white, 
                         defaultColor: AppColors.getColor('primary').main, 
@@ -1050,8 +1051,8 @@ Widget build(BuildContext context) {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: _editComment ? 'Uložiť úpravy' : 'Odpovedať',
-                        isDisabled: _editComment ? editCommentController.text == '' : commentController.text == '', 
                         onTap: () async {
+                          if(_editComment ? editCommentController.text != '' : commentController.text != '') {
                           if (_editComment) {
                             int commentIndex = _editIndex!; // You need to set this to the appropriate index.
 
@@ -1115,6 +1116,7 @@ Widget build(BuildContext context) {
                             } catch (e) {
                               print('Error adding comment: $e');
                             }
+                          }
                           }
                         },
                       ),
@@ -1214,7 +1216,7 @@ Widget build(BuildContext context) {
                     SizedBox(height: 8),
                     Container(
                       height: 40,
-                      width: 126,
+                      width: _editAnswer ? 152 : 136,
                       child:  ReButton(
                     activeColor: AppColors.getColor('mono').white,
                     defaultColor: AppColors.getColor('primary').main,
@@ -1224,8 +1226,8 @@ Widget build(BuildContext context) {
                     textColor: Theme.of(context).colorScheme.onPrimary,
                     iconColor: AppColors.getColor('mono').black,
                     text: _editAnswer ? 'Uložiť úpravy' : 'Odpovedať',
-                    isDisabled: _editAnswer ? editAnswerController == '' : answerController.text == '',
                     onTap: () async {
+                      if(_editAnswer ? editAnswerController != '' : answerController.text != '') {
                       if (_editAnswer) {
                         int answerIndex = _editIndex!; // You need to set this to the appropriate index.
 
@@ -1291,6 +1293,8 @@ Widget build(BuildContext context) {
                           print('Error adding answer: $e');
                         }
                       }
+                    }
+
                     },
                   ),
                     ),
