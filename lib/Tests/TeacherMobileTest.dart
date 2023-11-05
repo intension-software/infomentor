@@ -329,12 +329,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                 : AppColors.getColor('mono').black,
           ),
           onPressed: () =>
-              questionIndex > 0
-                  ? setState(() {
-                      questionIndex--;
-                      fetchQuestionData(questionIndex);
-                    })
-                  : widget.overlay(),
+              widget.overlay(),
         ),
       ),
 
@@ -688,9 +683,68 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
                       ]
                       )
               ),
-               ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'ĎALEJ',onTap:
-          onNextButtonPressed,
-        ),
+               Container(
+                padding: EdgeInsets.all(8),
+                width: 900,
+                child:  Row(
+                  children: [
+                    Container(
+                      width: 53,
+                      height: 53,
+                      child:  ReButton(
+                        activeColor: AppColors.getColor('primary').light, 
+                        defaultColor: AppColors.getColor('mono').lighterGrey, 
+                        disabledColor: AppColors.getColor('mono').lightGrey, 
+                        focusedColor: AppColors.getColor('primary').light, 
+                        hoverColor: AppColors.getColor('primary').lighter, 
+                        textColor: AppColors.getColor('primary').main, 
+                        iconColor: AppColors.getColor('mono').black, 
+                        text: '', 
+                        leftIcon: 'assets/icons/arrowLeftIcon.svg',
+                        onTap: () {
+                          questionIndex > 0
+                        ? setState(() {
+                            questionIndex--;
+                            fetchQuestionData(questionIndex);
+                          })
+                        : widget.overlay();
+                        },
+                      ),
+                    ),
+                    Spacer(),
+                    Container(
+                      width: 53,
+                      height: 53,
+                      child:  ReButton(
+                        activeColor: AppColors.getColor('primary').light, 
+                        defaultColor: AppColors.getColor('mono').lighterGrey, 
+                        disabledColor: AppColors.getColor('mono').lightGrey, 
+                        focusedColor: AppColors.getColor('primary').light, 
+                        hoverColor: AppColors.getColor('primary').lighter, 
+                        textColor: AppColors.getColor('primary').main, 
+                        iconColor: AppColors.getColor('mono').black, 
+                        text: '', 
+                        rightIcon: 'assets/icons/arrowRightIcon.svg',
+                        onTap: () {
+                          if (questionIndex + 1 < (questionsPoint ?? 0)) {
+                            setState(() {
+                            questionIndex++;
+                            fetchQuestionData(questionIndex);
+                          });
+                          } else {
+                            setState(() {
+                              questionIndex = 0;
+                              _answer = [];
+                              pressed = false;
+                            });
+                            _showscreen();
+                          }
+                        },
+                      ),
+                    ),
+                  ]
+                )
+               )
           ],
         ),
           )

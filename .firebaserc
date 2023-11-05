@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "infomentor-d71f7"
+    "default": "infomentor-d71f7",
+    "infomentor": "infomentor-d71f7"
   },
   "targets": {
     "infomentor-311a7": {
