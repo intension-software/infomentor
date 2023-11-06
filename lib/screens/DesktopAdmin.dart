@@ -1677,7 +1677,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                           
                         ],
                       ),
-                      Text(
+                      if (_teacher)Text(
                         'Ak učiteľ, ktorého chcete pridať, už má účet v aplikácií, pridáte ho tu.',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: AppColors.getColor('mono').grey,
