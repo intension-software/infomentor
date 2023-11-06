@@ -373,7 +373,7 @@ class _CommentsState extends State<Comments> {
                             SizedBox(height: 10.0),
                             Text(comment.value),
                             SizedBox(height: 10.0),
-                            (comment.award || widget.currentUserData!.teacher) ? Row(
+                            ((comment.award || widget.currentUserData!.teacher)&& !comment.teacher) ? Row(
                               children: [
                                 Row(
                                   children: [

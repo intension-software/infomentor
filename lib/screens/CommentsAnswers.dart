@@ -378,7 +378,7 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                             ),
                             SizedBox(height: 10.0),
                             Text(answer.value),
-                            if(answer.award || widget.currentUserData!.teacher)Row(
+                            if((answer.award || widget.currentUserData!.teacher) && !answer.teacher)Row(
                               children: [
                                 Spacer(),
                                 InkWell(

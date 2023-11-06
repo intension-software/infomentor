@@ -115,9 +115,11 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
               List<CommentsData> commentsDataList = comments.map((commentItem) {
                 return CommentsData(
                   award: commentItem['award'] ?? false,
+                  teacher: commentItem['teacher'] ?? false,
                   answers: (commentItem['answers'] as List<dynamic>? ?? []).map<CommentsAnswersData>((answerItem) {
                     if (answerItem is Map<String, dynamic>) {
                       return CommentsAnswersData(
+                        teacher: answerItem['teacher'] ?? false,
                         award: answerItem['award'] ?? false,
                         date: answerItem['date'] ?? Timestamp.now(),
                         userId: answerItem['userId'],
@@ -129,6 +131,7 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
                       // Handle invalid answer data here
                       return CommentsAnswersData(
                         award: false,
+                        teacher: false,
                         userId: '',
                         pfp: '',
                         date: Timestamp.now(),
@@ -175,6 +178,7 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
               List<CommentsAnswersData> answersDataList = answers.map((answerItem) {
                 return CommentsAnswersData(
                   award: answerItem['award'],
+                  teacher: answerItem['teacher'],
                   date: answerItem['date'],
                   userId: answerItem['userId'],
                   pfp: answerItem['pfp'],
@@ -1091,6 +1095,7 @@ Widget build(BuildContext context) {
                             CommentsData newComment = CommentsData(
                               answers: [],  // Initialize answers list with an empty list
                               award: false,
+                              teacher: widget.currentUserData!.teacher ? true : false,
                               date: Timestamp.now(),
                               user: widget.currentUserData!.name,
                               pfp: widget.currentUserData!.image,
@@ -1266,6 +1271,7 @@ Widget build(BuildContext context) {
                       } else {
                         CommentsAnswersData newAnswer = CommentsAnswersData(
                           award: false,
+                          teacher: widget.currentUserData!.teacher ? true : false,
                           date: Timestamp.now(),
                           user: widget.currentUserData!.name,
                           pfp: widget.currentUserData!.image,

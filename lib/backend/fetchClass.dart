@@ -12,6 +12,7 @@ class CommentsAnswersData {
   String pfp;
   String value;
   bool award;
+  bool teacher;
   CommentsAnswersData({
     required this.userId,
     required this.pfp,
@@ -19,6 +20,7 @@ class CommentsAnswersData {
     required this.date,
     required this.user,
     required this.value,
+    required this.teacher
   });
 }
 
@@ -30,6 +32,7 @@ class CommentsData {
   String pfp;
   String value;
   bool award;
+  bool teacher;
   CommentsData({
     required this.award,
     required this.userId,
@@ -38,6 +41,7 @@ class CommentsData {
     required this.date,
     required this.user,
     required this.value,
+    required this.teacher
   });
 }
 
@@ -112,6 +116,7 @@ Future<ClassData> fetchClass(String classId) async {
             List<CommentsAnswersData> answersDataList = answers.map((answerItem) {
               return CommentsAnswersData(
                 award: answerItem['award'] as bool? ?? false,
+                teacher: answerItem['teacher'] as bool? ?? false,
                 date: answerItem['date'] as Timestamp? ?? Timestamp.now(),
                 pfp: answerItem['pfp'] as String? ?? '',
                 userId: answerItem['userId'] as String? ?? '',
@@ -121,6 +126,7 @@ Future<ClassData> fetchClass(String classId) async {
             }).toList();
 
             return CommentsData(
+              teacher: commentItem['teacher'] as bool? ?? false,
               award: commentItem['award'] as bool? ?? false,
               answers: answersDataList,
               pfp: commentItem['pfp'] as String? ?? '',
@@ -316,6 +322,7 @@ Future<void> addComment(String classId, String postId, CommentsData comment) asy
 
           comments.add({
             'award': false,
+            'teacher': comment.teacher,
             'date': comment.date,
             'user': comment.user,
             'userId': comment.userId,
@@ -389,6 +396,7 @@ Future<void> addAnswer(String classId, String postId, int commentIndex, Comments
               'pfp': answer.pfp,
               'value': answer.value,
               'award': answer.award,
+              'teacher': answer.teacher,
             });
 
             // Update the comments field within the post data

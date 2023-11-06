@@ -1006,7 +1006,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                           Align(
                                             alignment: Alignment.center,
                                             child:
-                                            Row(
+                                            Column(
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
                                                 Container(
@@ -1132,6 +1132,7 @@ class _MobileAdminState extends State<MobileAdmin> {
           child: Container(
             width: 900,
             height: 1080,
+            padding: EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1194,22 +1195,19 @@ class _MobileAdminState extends State<MobileAdmin> {
                   AppColors.getColor('mono').white, // assuming white is the default border color you want
                 ),
                 Spacer(),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                   
-                  ReButton(
-                    activeColor: AppColors.getColor('mono').white, 
-                    defaultColor: AppColors.getColor('green').main, 
-                    disabledColor: AppColors.getColor('mono').lightGrey, 
-                    focusedColor: AppColors.getColor('green').light, 
-                    hoverColor: AppColors.getColor('green').light, 
-                    textColor: Theme.of(context).colorScheme.onPrimary, 
-                    iconColor: AppColors.getColor('mono').black, 
-                    text: 'ULOŽIŤ', 
-                    isDisabled: _editClassNameController.text == '',
-                    onTap: () async {
+                Center(
+                child: ReButton(
+                  activeColor: AppColors.getColor('mono').white, 
+                  defaultColor: AppColors.getColor('green').main, 
+                  disabledColor: AppColors.getColor('mono').lightGrey, 
+                  focusedColor: AppColors.getColor('green').light, 
+                  hoverColor: AppColors.getColor('green').light, 
+                  textColor: Theme.of(context).colorScheme.onPrimary, 
+                  iconColor: AppColors.getColor('mono').black, 
+                  text: 'ULOŽIŤ', 
+                  isDisabled: _editClassNameController.text == '',
+                  onTap: () async {
+                    if (_editClassNameController.text != '') {
                       currentClass!.data.name = _editClassNameController.text;
                       editClass(currentClass!.id,
                       ClassData(
@@ -1230,11 +1228,13 @@ class _MobileAdminState extends State<MobileAdmin> {
                             comments: post.comments.map((comment) {
                               return CommentsData(
                                 award: comment.award,
+                                teacher: comment.teacher,
                                 userId: comment.userId,
                                 pfp: comment.pfp,
                                 answers: comment.answers.map((answer) {
                                   return CommentsAnswersData(
                                     award: answer.award,
+                                    teacher: answer.teacher,
                                     date: answer.date,
                                     pfp: answer.pfp,
                                     userId: answer.userId,
@@ -1250,29 +1250,15 @@ class _MobileAdminState extends State<MobileAdmin> {
                           );
                         }).toList(),
                       ));
+                      _classNameController.text = '';
+                      _onNavigationItemSelected(0);
                       reShowToast('Trieda úspešne upravená', false, context);
+                      }
+                      
                     },
                   ),
-                   ReButton(
-                      activeColor: AppColors.getColor('mono').white, 
-                      defaultColor: AppColors.getColor('mono').white, 
-                      disabledColor: AppColors.getColor('mono').lightGrey, 
-                      focusedColor: AppColors.getColor('mono').white, 
-                      hoverColor: AppColors.getColor('mono').white, 
-                      textColor: Theme.of(context).colorScheme.error, 
-                      iconColor: Theme.of(context).colorScheme.error,
-                      leftIcon: 'assets/icons/binIcon.svg',
-                      text: 'Vymazať triedu', 
-                      onTap: () {
-                          deleteClass(currentClass!.id, widget.currentUserData!.school);
-                          removeClassFromSchool(currentClass!.id, widget.currentUserData!.school);
-                          deleteUserFunction(currentClass!.data.students,currentUser!.data, context);
-                          deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context);
-                          reShowToast('Trieda úspešne vymazaná', false, context);
-                        }
-                    ),
-                  ]
-                  ),
+                ),
+                  
                 SizedBox(height: 30,),
               ],
             ),
@@ -1414,12 +1400,16 @@ class _MobileAdminState extends State<MobileAdmin> {
                         textColor: Theme.of(context).colorScheme.onPrimary, 
                         iconColor: AppColors.getColor('mono').black, 
                         text: 'ULOŽIŤ', 
-                        isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
-                            registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher, context, currentClass);
+                          if (_userNameController.text != '' && _userEmailController.text != '' && _userPasswordController.text != '' && _selectedClass != null) {
+                              registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher, context, currentClass);
+                              _userNameController.text = '';
+                              _userEmailController.text = '';
+                              _userPasswordController.text = '';
+                            }
                           }
                       ),
-                      Text(
+                      if (_teacher)Text(
                         'Ak učiteľ, ktorého chcete pridať, už má účet v aplikácií, pridáte ho tu.',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: AppColors.getColor('mono').grey,
@@ -1502,6 +1492,9 @@ class _MobileAdminState extends State<MobileAdmin> {
                           removeClassFromSchool(currentClass!.id, widget.currentUserData!.school);
                           deleteUserFunction(currentClass!.data.students,currentUser!.data, context);
                           deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context);
+                          _editClassNameController.text = '';
+                          _onNavigationItemSelected(1);
+                          _editClass = false;
                           reShowToast('Trieda úspešne vymazaná', false, context);
                         }
                     ),
@@ -1514,49 +1507,54 @@ class _MobileAdminState extends State<MobileAdmin> {
                     textColor: Theme.of(context).colorScheme.onPrimary, 
                     iconColor: AppColors.getColor('mono').black, 
                     text: 'ULOŽIŤ', 
-                    isDisabled: _editClassNameController.text == '',
                     onTap: () async {
-                      currentClass!.data.name = _editClassNameController.text;
-                      editClass(currentClass!.id,
-                      ClassData(
-                        name: _editClassNameController.text,
-                        school: currentClass!.data.school,
-                        students: List<String>.from(currentClass!.data.students),
-                        teachers: List<String>.from(currentClass!.data.teachers),
-                        materials: List<String>.from(currentClass!.data.materials),
-                        capitolOrder: List<int>.from(currentClass!.data.capitolOrder),
-                        posts: currentClass!.data.posts.map((post) {
-                          return PostsData(
-                            date: post.date,
-                            id: post.id,
-                            pfp: post.pfp,
-                            userId: post.userId,
-                            user: post.user,
-                            value: post.value,
-                            comments: post.comments.map((comment) {
-                              return CommentsData(
-                                award: comment.award,
-                                userId: comment.userId,
-                                pfp: comment.pfp,
-                                answers: comment.answers.map((answer) {
-                                  return CommentsAnswersData(
-                                    award: answer.award,
-                                    date: answer.date,
-                                    pfp: answer.pfp,
-                                    userId: answer.userId,
-                                    user: answer.user,
-                                    value: answer.value,
-                                  );
-                                }).toList(),
-                                date: comment.date,
-                                user: comment.user,
-                                value: comment.value,
-                              );
-                            }).toList(),
-                          );
-                        }).toList(),
-                      ));
-                      reShowToast('Trieda úspešne upravená', false, context);
+                      if (_editClassNameController.text != '') {
+                        currentClass!.data.name = _editClassNameController.text;
+                        editClass(currentClass!.id,
+                        ClassData(
+                          name: _editClassNameController.text,
+                          school: currentClass!.data.school,
+                          students: List<String>.from(currentClass!.data.students),
+                          teachers: List<String>.from(currentClass!.data.teachers),
+                          materials: List<String>.from(currentClass!.data.materials),
+                          capitolOrder: List<int>.from(currentClass!.data.capitolOrder),
+                          posts: currentClass!.data.posts.map((post) {
+                            return PostsData(
+                              date: post.date,
+                              id: post.id,
+                              pfp: post.pfp,
+                              userId: post.userId,
+                              user: post.user,
+                              value: post.value,
+                              comments: post.comments.map((comment) {
+                                return CommentsData(
+                                  award: comment.award,
+                                  teacher: comment.teacher,
+                                  userId: comment.userId,
+                                  pfp: comment.pfp,
+                                  answers: comment.answers.map((answer) {
+                                    return CommentsAnswersData(
+                                      award: answer.award,
+                                      teacher: answer.teacher,
+                                      date: answer.date,
+                                      pfp: answer.pfp,
+                                      userId: answer.userId,
+                                      user: answer.user,
+                                      value: answer.value,
+                                    );
+                                  }).toList(),
+                                  date: comment.date,
+                                  user: comment.user,
+                                  value: comment.value,
+                                );
+                              }).toList(),
+                            );
+                          }).toList(),
+                        ));
+                        _editClassNameController.text = '';
+                        reShowToast('Trieda úspešne upravená', false, context);
+                      }
+                      
                     },
                   ),
                   ]
@@ -1584,9 +1582,9 @@ class _MobileAdminState extends State<MobileAdmin> {
                         color: AppColors.getColor('mono').darkGrey,
                       ),
                       onPressed: () { 
-                        _onNavigationItemSelected(1);
+                        _onNavigationItemSelected(0);
                         _selectedClass = null;
-                        _addUser = false;
+                        _editUser = false;
                       },
                     ),
                     Text(
@@ -1597,7 +1595,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          _admin ? 'Upraviť srpávcu' : _teacher ? '${currentClass!.data.name} / Upraviť učiteľa' : '${currentClass!.data.name} / Upraviť žiaka',
+                          _admin ? 'Upraviť správcu' : _teacher ? '${currentClass!.data.name} / Upraviť učiteľa' : '${currentClass!.data.name} / Upraviť žiaka',
                           style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                 color: Theme.of(context).colorScheme.onBackground,
                               ),
@@ -1679,12 +1677,18 @@ class _MobileAdminState extends State<MobileAdmin> {
                             textColor: Theme.of(context).colorScheme.onPrimary, 
                             iconColor: AppColors.getColor('mono').black, 
                             text: 'ULOŽIŤ', 
-                            isDisabled: (_editUserNameController.text == '' || _editUserEmailController.text == '' ||_editUserPasswordController.text == ''),
                             onTap: () {
-                                currentUser!.data.name = _editUserNameController.text;
-                                currentUser!.data.email = _editUserEmailController.text;
+                                if (_editUserNameController.text != '' && _editUserEmailController.text != '' && _editUserPasswordController.text != '') {
+                                  currentUser!.data.name = _editUserNameController.text;
+                                  currentUser!.data.email = _editUserEmailController.text;
 
-                                saveUserDataToFirestore(currentUser!.data, currentUser!.id, _editUserEmailController.text, _editUserPasswordController.text,currentUser!.data, context );
+                                  saveUserDataToFirestore(currentUser!.data, currentUser!.id, _editUserEmailController.text, _editUserPasswordController.text,currentUser!.data, context );
+
+                                  _editUserNameController.text = '';
+                                  _editUserEmailController.text = '';
+                                  _editUserPasswordController.text = '';
+                                  
+                                }
                               }
                           ),
                           if(!_admin) ReButton(
@@ -1699,6 +1703,12 @@ class _MobileAdminState extends State<MobileAdmin> {
                             text: currentUser!.data.teacher ? 'Vymazať učiteľa' : 'Vymazať žiaka',
                             onTap: () {
                                 deleteUserFunction([currentUser!.id],currentUser!.data, context);
+                                _editUserNameController.text = '';
+                                _editUserEmailController.text = '';
+                                _editUserPasswordController.text = '';
+                                _onNavigationItemSelected(1);
+                                _selectedClass = null;
+                                _editUser = false;
                               }
                           ),
                         ],

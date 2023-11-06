@@ -140,13 +140,94 @@ class _DesktopAdminState extends State<DesktopAdmin> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 30,),
+                Container(
+                  width: 900,
+                  padding: EdgeInsets.all(30),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Theme.of(context).primaryColor
+                  ),
+                  child:  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        schoolName!,
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      Text(
+                        '${widget.currentUserData!.name}  (meno ucitela prihlaseneho v ucte)',
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      
+                    ],
+                  ),
+                ),
+               
+                SizedBox(height: 30,),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    child: admin != null ?Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(color: AppColors.getColor('mono').lightGrey),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    admin!.name,
+                                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          color: AppColors.getColor('mono').black,
+                                        ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Text(
+                                    'Správa účtu',
+                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                          color: AppColors.getColor('mono').grey,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              SvgPicture.asset('assets/icons/rightIcon.svg', color: AppColors.getColor('mono').grey, height: 12)
+                            ],
+                          ),
+                        ) : Container(),
+                    onTap:  () async {
+                      setState(() {
+                        currentUser = UserDataWithId(adminId!, admin!);
+                        _editUser = true;
+                        _teacher = true;
+                        _editClass = false;
+                        _admin = true;
+                        _editUserEmailController.text = admin!.email;
+                        _editUserNameController.text = admin!.name;
+                        _onNavigationItemSelected(1);
+                      });
+                    }
+                  ),
+                ),
+                SizedBox(height: 30,),
                 Row(
                   children: [
                     Text(
-                      schoolName!,
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        color: AppColors.getColor('mono').black,
-                      ),
+                      'Triedy',
+                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                            color: AppColors.getColor('mono').darkGrey,
+                          ),
                     ),
                     Spacer(),
                     Container(
@@ -271,70 +352,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         },
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 30,),
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    child: admin != null ?Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(color: AppColors.getColor('mono').lightGrey),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    admin!.name,
-                                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                          color: AppColors.getColor('mono').black,
-                                        ),
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Text(
-                                    'Správa účtu',
-                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                          color: AppColors.getColor('mono').grey,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              SvgPicture.asset('assets/icons/rightIcon.svg', color: AppColors.getColor('mono').grey, height: 12)
-                            ],
-                          ),
-                        ) : Container(),
-                    onTap:  () async {
-                      setState(() {
-                        currentUser = UserDataWithId(adminId!, admin!);
-                        _editUser = true;
-                        _teacher = true;
-                        _editClass = false;
-                        _admin = true;
-                        _editUserEmailController.text = admin!.email;
-                        _editUserNameController.text = admin!.name;
-                        _onNavigationItemSelected(1);
-                      });
-                    }
-                  ),
-                ),
-                SizedBox(height: 30,),
-                Row(
-                  children: [
-                    Text(
-                      'Triedy',
-                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                            color: AppColors.getColor('mono').darkGrey,
-                          ),
-                    ),
-                    Spacer(),
+                    SizedBox(width: 30,),
                     Container(
                       child:  ReButton(
                         activeColor: AppColors.getColor('primary').light, 
@@ -1197,6 +1215,9 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                             isDisabled: _classNameController.text == '',
                             onTap: () {
                               addClass(_classNameController.text, widget.currentUserData!.school);
+                              _classNameController.text = '';
+                              _addClass = false;
+                              _onNavigationItemSelected(0);
                               reShowToast('Trieda úspešne pridaná', false, context);
                             },
                           ),
@@ -1346,9 +1367,14 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                         isDisabled: (_userNameController.text == '' || _userEmailController.text == '' ||_userPasswordController.text == '' || _selectedClass == null),
                         onTap: () {
                             registerUser(widget.currentUserData!.school, _selectedClass!, _userNameController.text, _userEmailController.text, _userPasswordController.text, _teacher,context, currentClass);
+                            _userNameController.text = '';
+                            _userEmailController.text = '';
+                            _userPasswordController.text = '';
+                            _onNavigationItemSelected(0);
+                            _addUser = false;
                           }
                       ),
-                      Text(
+                      if (_teacher)Text(
                         'Ak učiteľ, ktorého chcete pridať, už má účet v aplikácií, pridáte ho tu.',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: AppColors.getColor('mono').grey,
@@ -1430,6 +1456,9 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                           removeClassFromSchool(currentClass!.id, widget.currentUserData!.school);
                           deleteUserFunction(currentClass!.data.students,currentUser!.data, context, currentClass);
                           deleteUserFunction(currentClass!.data.teachers,currentUser!.data, context, currentClass);
+                          _editClassNameController.text = '';
+                          _onNavigationItemSelected(1);
+                          _editClass = false;
                           reShowToast('Trieda úspešne vymazaná', false, context);
                         }
                     ),
@@ -1463,12 +1492,14 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                             value: post.value,
                             comments: post.comments.map((comment) {
                               return CommentsData(
+                                teacher: comment.teacher,
                                 award: comment.award,
                                 userId: comment.userId,
                                 pfp: comment.pfp,
                                 answers: comment.answers.map((answer) {
                                   return CommentsAnswersData(
                                     award: answer.award,
+                                    teacher: answer.teacher,
                                     date: answer.date,
                                     pfp: answer.pfp,
                                     userId: answer.userId,
@@ -1484,6 +1515,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                           );
                         }).toList(),
                       ));
+                      _editClassNameController.text = '';
                       reShowToast('Trieda úspešne upravená', false, context);
                     },
                   ),
@@ -1612,6 +1644,12 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                             text: currentUser!.data.teacher ? 'Vymazať učiteľa' : 'Vymazať žiaka', 
                             onTap: () {
                                 deleteUserFunction([currentUser!.id],currentUser!.data, context, currentClass);
+                                _editUserNameController.text = '';
+                                _editUserEmailController.text = '';
+                                _editUserPasswordController.text = '';
+                                _onNavigationItemSelected(1);
+                                _selectedClass = null;
+                                _editUser = false;
                               }
                           ),
                           ReButton(
@@ -1629,6 +1667,11 @@ class _DesktopAdminState extends State<DesktopAdmin> {
                                 currentUser!.data.email = _editUserEmailController.text;
 
                                 saveUserDataToFirestore(currentUser!.data, currentUser!.id, _editUserEmailController.text, _editUserPasswordController.text,currentUser!.data, context );
+
+                                _editUserNameController.text = '';
+                                _editUserEmailController.text = '';
+                                _editUserPasswordController.text = '';
+                                _selectedClass = null;
                               }
                           ),
                           

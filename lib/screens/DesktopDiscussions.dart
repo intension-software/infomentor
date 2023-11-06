@@ -115,11 +115,13 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
               List<dynamic> comments = post['comments'];
               List<CommentsData> commentsDataList = comments.map((commentItem) {
                 return CommentsData(
+                  teacher: commentItem['teacher'] ?? false,
                   award: commentItem['award'] ?? false,
                   answers: (commentItem['answers'] as List<dynamic>? ?? []).map<CommentsAnswersData>((answerItem) {
                     if (answerItem is Map<String, dynamic>) {
                       return CommentsAnswersData(
                         award: answerItem['award'] ?? false,
+                        teacher: answerItem['teacher'] ?? false,
                         date: answerItem['date'] ?? Timestamp.now(),
                         user: answerItem['user'] ?? '',
                         userId: answerItem['userId'],
@@ -130,6 +132,7 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
                       // Handle invalid answer data here
                       return CommentsAnswersData(
                         award: false,
+                        teacher: false,
                         date: Timestamp.now(),
                         user: '',
                         userId: '',
@@ -176,6 +179,7 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
               List<CommentsAnswersData> answersDataList = answers.map((answerItem) {
                 return CommentsAnswersData(
                   award: answerItem['award'],
+                  teacher: answerItem['teacher'],
                   date: answerItem['date'],
                   user: answerItem['user'],
                   userId: answerItem['userId'],
@@ -1079,6 +1083,7 @@ Widget build(BuildContext context) {
                             CommentsData newComment = CommentsData(
                               answers: [],  // Initialize answers list with an empty list
                               award: false,
+                              teacher:  widget.currentUserData!.teacher ? true : false,
                               date: Timestamp.now(),
                               user: widget.currentUserData!.name,
                               pfp: widget.currentUserData!.image,
@@ -1294,6 +1299,7 @@ Widget build(BuildContext context) {
                         } else {
                           CommentsAnswersData newAnswer = CommentsAnswersData(
                             award: false,
+                            teacher: widget.currentUserData!.teacher ? true : false,
                             date: Timestamp.now(),
                             user: widget.currentUserData!.name,
                             pfp: widget.currentUserData!.image,
