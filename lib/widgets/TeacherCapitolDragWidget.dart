@@ -68,6 +68,7 @@ class _TeacherCapitolDragWidgetState extends State<TeacherCapitolDragWidget> {
   @override
   void initState() {
     super.initState();
+
     fetchCurrentClass();
     fetchQuestionData();
   }
@@ -79,7 +80,8 @@ class _TeacherCapitolDragWidgetState extends State<TeacherCapitolDragWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+      child: Container(
       width: 200,
       padding: EdgeInsets.all(12),
       child: Column(
@@ -222,10 +224,14 @@ class _TeacherCapitolDragWidgetState extends State<TeacherCapitolDragWidget> {
           )
         ],
       ),
+      )
     );
   }
+
+    
  Future<List<int>?> reorderListOverlay(BuildContext context, ClassData currentClass) async {
   List<int> reorderedNumbers = List.from(widget.numbers); // Create a deep copy
+  List<int> normalOrder = [0,1,2,3,4,5,6];
 
   return await showDialog<List<int>>(
     context: context,
@@ -273,14 +279,13 @@ class _TeacherCapitolDragWidgetState extends State<TeacherCapitolDragWidget> {
                     setState(() {});
                   },
                   buildDefaultDragHandles: false, // Remove default drag handles
-                  children: reorderedNumbers.map((number) {
-                    CapitolsData? capitol = localResultsDrag[number].capitolsData;
-
+                  children: normalOrder.map((number) {
+                    CapitolsData? capitol = localResultsDrag[reorderedNumbers[number]].capitolsData;
                     if (capitol == null) {
                       return Container();
                     }
                     return Row(
-                      key: ValueKey(reorderedNumbers[number]),
+                      key: ValueKey(number),
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -308,7 +313,7 @@ class _TeacherCapitolDragWidgetState extends State<TeacherCapitolDragWidget> {
                           ),
                         ),
                         ReorderableDragStartListener(
-                          index: reorderedNumbers[number],
+                          index: number,
                           child: MouseRegion(
                             cursor: SystemMouseCursors.click,
                             child: SvgPicture.asset('assets/icons/dragIcon.svg'),

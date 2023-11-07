@@ -56,7 +56,6 @@ class _ChallengesState extends State<Challenges> {
   }
 
 Future<void> refreshList() async {
-  print('refreshList called');
   setState(() {
     _dataFuture = fetchQuestionData();
   });
@@ -217,11 +216,11 @@ Future<List<FetchResult>> fetchQuestionData() async {
   }
 
   int totalTests() {
-  int total = 0;
-  for (var result in results!) {
-    total += result.capitolsData!.tests.length;
-  }
-  return total;
+    int total = 0;
+    for (var result in results!) {
+      total += result.capitolsData!.tests.length;
+    }
+    return total;
 }
 
   @override
@@ -250,7 +249,7 @@ Widget build(BuildContext context) {
                       // First page - ListView
                      ListView.builder(
                             reverse: true,
-                            itemCount: totalTests() + 1, // Add 1 for the dummy item
+                            itemCount: totalTests(), // Add 1 for the dummy item
                             itemBuilder: (BuildContext context, int globalIndex) {
                               if (globalIndex == 0) {
                                 // This is the dummy item, you can control its height
@@ -276,8 +275,8 @@ Widget build(BuildContext context) {
                             if (capitolIndex == null || testIndex == null) return Container();  // Handle error
 
                             EdgeInsets padding = EdgeInsets.only(
-                              left: testIndex % 2 == 0 || testIndex == 0 ? 0.0 : 85.0,
-                              right: testIndex % 2 == 0 || testIndex == 0 ? 85.0 : 0.0,
+                              left: (testIndex + prevTestsSum) % 2 == 0 || (testIndex + prevTestsSum) == 0 ? 0.0 : 85.0,
+                              right: (testIndex + prevTestsSum) % 2 == 0 || (testIndex + prevTestsSum) == 0 ? 85.0 : 0.0,
                             );
                             return Column(
                               children: [
@@ -289,7 +288,7 @@ Widget build(BuildContext context) {
                                     children: [
                                       OverflowBox(
                                         maxHeight: double.infinity,
-                                        child: testIndex % 2 == 0 || testIndex == 0
+                                        child: (testIndex + prevTestsSum) % 2 == 0 || (testIndex + prevTestsSum) == 0
                                             ? (!widget.currentUserData!.teacher ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false) : !(percentages[capitolIndex][testIndex] == 1.0))
                                                 ? SvgPicture.asset('assets/roadmap/leftRoad.svg')
                                                 : SvgPicture.asset('assets/roadmap/leftRoadFilled.svg')
@@ -304,8 +303,8 @@ Widget build(BuildContext context) {
                                           height: 170,
                                           padding: EdgeInsets.only(
                                             bottom: 30,
-                                            right: testIndex % 2 == 0 ? 18 : 0,
-                                            left: testIndex % 2 == 0 ? 0 : 18,
+                                            right: (testIndex + prevTestsSum) % 2 == 0 ? 18 : 0,
+                                            left: (testIndex + prevTestsSum) % 2 == 0 ? 0 : 18,
                                           ),
                                           child: Stack(
                                             alignment: Alignment.center,
@@ -380,8 +379,8 @@ Widget build(BuildContext context) {
                             if (capitolIndex == null || testIndex == null) return Container();  // Handle error
 
                             EdgeInsets padding = EdgeInsets.only(
-                              left: testIndex % 2 == 0 || testIndex == 0 ? 0.0 : 85.0,
-                              right: testIndex % 2 == 0 || testIndex == 0 ? 85.0 : 0.0,
+                              left: (testIndex + prevTestsSum) % 2 == 0 || (testIndex + prevTestsSum) == 0 ? 0.0 : 85.0,
+                              right: (testIndex + prevTestsSum) % 2 == 0 || (testIndex + prevTestsSum) == 0 ? 85.0 : 0.0,
                             );
                             return Column(
                               children: [
@@ -393,7 +392,7 @@ Widget build(BuildContext context) {
                                     children: [
                                       OverflowBox(
                                         maxHeight: double.infinity,
-                                        child: testIndex % 2 == 0 || testIndex == 0
+                                        child: (testIndex + prevTestsSum) % 2 == 0 || (testIndex + prevTestsSum) == 0
                                             ? (!widget.currentUserData!.teacher ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false) : !(percentages[capitolIndex][testIndex] == 1.0))
                                                 ? SvgPicture.asset('assets/roadmap/leftRoad.svg')
                                                 : SvgPicture.asset('assets/roadmap/leftRoadFilled.svg')
@@ -408,8 +407,8 @@ Widget build(BuildContext context) {
                                           height: 170,
                                           padding: EdgeInsets.only(
                                             bottom: 30,
-                                            right: testIndex % 2 == 0 ? 18 : 0,
-                                            left: testIndex % 2 == 0 ? 0 : 18,
+                                            right: (testIndex + prevTestsSum) % 2 == 0 ? 18 : 0,
+                                            left: (testIndex + prevTestsSum) % 2 == 0 ? 0 : 18,
                                           ),
                                           child: Stack(
                                             alignment: Alignment.center,
