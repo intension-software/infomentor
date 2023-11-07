@@ -1098,7 +1098,6 @@ Widget build(BuildContext context) {
                                 newComment,
                               );
 
-
                               setState(() {
                                 // Assuming _selectedPost!.comments is of type List<CommentsData>
                                 _selectedPost!.comments.add(newComment);

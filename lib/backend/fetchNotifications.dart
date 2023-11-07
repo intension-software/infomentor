@@ -4,11 +4,13 @@ import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class
 class TypeData {
   String id;
   String commentIndex;
+  String answerIndex;
   String type;
 
   TypeData({
     required this.id,
     required this.commentIndex,
+    required this.answerIndex,
     required this.type,
   });
 }
@@ -53,6 +55,7 @@ Future<List<NotificationsData>> fetchNotifications(UserData userData) async {
       TypeData typeData = TypeData(
         id: typeDataMap['id'] ?? '',
         commentIndex: typeDataMap['commentIndex'] ?? '',
+        answerIndex: typeDataMap['answerIndex'] ?? '',
         type: typeDataMap['type'] ?? '',
       );
 
@@ -71,3 +74,51 @@ Future<List<NotificationsData>> fetchNotifications(UserData userData) async {
     throw Exception('Failed to fetch notifications');
   }
 }
+
+Future<void> sendNotification(List<String> userIds, String content, String title, TypeData type) async {
+  try {
+    final CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
+    CollectionReference notificationsRef = FirebaseFirestore.instance.collection('notifications');
+    
+    DocumentReference notificationDocRef = await notificationsRef.add({
+      'content': content,
+      'date': Timestamp.now(),
+      'title': title,
+      'type': {
+        'id': type.id,
+        'commentIndex': type.commentIndex,
+        'answerIndex': type.answerIndex,
+        'type': type.type,
+      },
+    });
+
+    String notificationId = notificationDocRef.id;
+
+    for (String userId in userIds) {
+      UserData userData = await fetchUser(userId);
+      
+      // Here we are casting each notification entry to <String, Object> to satisfy Firestore
+      List<Map<String, Object>> notificationsList = userData.notifications.map((notification) {
+        return {
+          'id': notification.id,
+          'seen': notification.seen,
+        } as Map<String, Object>; // Explicitly cast as <String, Object>
+      }).toList();
+
+      // Add the new notification also as <String, Object>
+      notificationsList.add({
+        'id': notificationId,
+        'seen': false,
+      } as Map<String, Object>);
+
+      // Update the user's notifications list in the database
+      await usersRef.doc(userId).update({
+        'notifications': notificationsList
+      });
+    }
+  } catch (e) {
+    print('Error sending notifications: $e');
+    throw Exception('Failed to send notifications');
+  }
+}
+

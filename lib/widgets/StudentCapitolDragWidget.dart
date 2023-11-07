@@ -189,7 +189,7 @@ class _StudentCapitolDragWidgetState extends State<StudentCapitolDragWidget> {
                           child: ListTile(
                             title: Text(
                               capitol.tests[subIndex].name,
-                              style: TextStyle(fontSize: 14, decoration: subIndex == 0 ? TextDecoration.underline : null, ),
+                              style: TextStyle(fontSize: 14, decoration: subIndex == 0 && index == 0 ? TextDecoration.underline : null, ),
                             ),
                             trailing: ((countTrueValues(widget.currentUserData!.capitols[widget.numbers[index]].tests[subIndex].questions) /
                                 widget.currentUserData!.capitols[widget.numbers[index]].tests[subIndex].questions.length)*100) != 0 ? Row(

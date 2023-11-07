@@ -1229,6 +1229,7 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
         'name': userData.name,
         'active': userData.active,
         'schoolClass': userData.schoolClass,
+        'notifications': userData.notifications,
         'image': userData.image,
         'surname': userData.surname,
         'points': userData.points,

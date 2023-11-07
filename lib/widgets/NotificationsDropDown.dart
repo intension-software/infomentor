@@ -14,6 +14,7 @@ class CompleteNotification {
   final NotificationsData notification;
   final PostsData? postData;
   final CommentsData? commentData;
+  final CommentsAnswersData? answerData;
   final MaterialData? materialData;
   final String avatar;
 
@@ -22,6 +23,7 @@ class CompleteNotification {
     required this.notification,
     this.postData,
     this.commentData,
+    this.answerData,
     this.materialData,
   });
 }
@@ -71,6 +73,16 @@ class _NotificationsDropDownState extends State<NotificationsDropDown> {
             completeNotifications.add(CompleteNotification(notification: notif, commentData: commentData, avatar: 'assets/avatars/DiscussionAvatar.svg'));
           }
           break;
+
+        case 'answer':
+          {
+            String postId = notif.type.id;
+            String commentIndex = notif.type.commentIndex;
+            String answerIndex = notif.type.answerIndex;
+            CommentsAnswersData? answerData = await _fetchAnswerById(userData.schoolClass, postId, commentIndex, answerIndex);
+            completeNotifications.add(CompleteNotification(notification: notif, answerData: answerData, avatar: 'assets/avatars/DiscussionAvatar.svg'));
+          }
+          break;
         case 'learning':
           {
             MaterialData? materialData = await _fetchMaterialById(userData.schoolClass, notif.type.id);
@@ -87,11 +99,11 @@ class _NotificationsDropDownState extends State<NotificationsDropDown> {
     return completeNotifications;
 }
 
-String formatTimestamp(Timestamp timestamp) {
-  DateTime date = timestamp.toDate();
-  return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+ String formatTimestamp(Timestamp timestamp) {
+    DateTime date = timestamp.toDate();
+    return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
-}
+  }
 
 @override
 Widget build(BuildContext context) {
@@ -143,7 +155,7 @@ Widget build(BuildContext context) {
                           )
                         );
                       } else {
-                        return Column(
+                        return Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -161,52 +173,34 @@ Widget build(BuildContext context) {
                                 return _buildNotificationItem(notification);
                               }).toList(),
                             ),
-                            Container(
-                              width: 180,
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                widget.onNavigationItemSelected(4);
-                                widget.selectedIndex = -1;
-                              },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'Zobraziť všetko',
-                                      style: TextStyle(
-                                        color: AppColors.getColor('primary').main,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Icon(Icons.arrow_forward, color: AppColors.getColor('primary').main), // Replace with your desired icon
-                                  ],
-                                ),
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.resolveWith((states) {
-                                    if (states.contains(MaterialState.disabled)) {
-                                      return AppColors.getColor('mono').lightGrey;
-                                    } else if (states.contains(MaterialState.pressed)) {
-                                      return AppColors.getColor('mono').white;
-                                    } else if (states.contains(MaterialState.hovered)) {
-                                      return AppColors.getColor('primary').lighter;
-                                    } else {
-                                      return AppColors.getColor('mono').lighterGrey;
-                                    }
-                                  }),
-                                  side: MaterialStateProperty.resolveWith((states) {
-                                    if (states.contains(MaterialState.pressed)) {
-                                      return BorderSide(color: AppColors.getColor('primary').light, width: 2);
-                                    } else {
-                                      return BorderSide.none;
-                                    }
-                                  }),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                            Center(
+                              child: Container(
+                                width: 200,
+                                height: 40,
+                                child: ReButton(
+                                  activeColor: AppColors.getColor('primary').light, 
+                                  defaultColor: AppColors.getColor('mono').lighterGrey, 
+                                  disabledColor: AppColors.getColor('mono').lightGrey, 
+                                  focusedColor: AppColors.getColor('primary').light, 
+                                  hoverColor: AppColors.getColor('primary').lighter, 
+                                  textColor: AppColors.getColor('primary').main, 
+                                  iconColor: AppColors.getColor('mono').black,
+                                  text: 'Zobraziť všetko',
+                                  rightIcon: 'assets/icons/arrowRightIcon.svg',
+                                    onTap: () {
+                                      if (widget.currentUserData!.teacher) {
+                                        widget.onNavigationItemSelected(5);
+                                      } else {
+                                        widget.onNavigationItemSelected(4);
+                                      }
+                                    widget.selectedIndex = -1;
+                                    Navigator.of(context).pop();
+                                  },
                                 ),
                               ),
-                            ),
+                            )
                           ]
-                        );
+                        ));
                       }
                     },
                   ),
@@ -219,7 +213,6 @@ Widget build(BuildContext context) {
     ),
   );
 }
-
 
 Widget _buildNotificationItem(CompleteNotification completeNotification) {
   return Container(
@@ -278,6 +271,22 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
       completeNotification.commentData!.user,
       completeNotification.commentData!.date,
       completeNotification.commentData!.value,
+    );
+  }
+
+  if (completeNotification.notification.type.type == 'answer' && completeNotification.answerData != null) {
+    return GestureDetector(
+      onTap: () {
+        widget.onNavigationItemSelected(2);
+      },
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: _getPostOrCommentContainer(
+          completeNotification.answerData!.user,
+          completeNotification.answerData!.date,
+          completeNotification.answerData!.value,
+        ),
+      ),
     );
   }
 
@@ -379,7 +388,7 @@ Widget _getPostOrCommentContainer(String user, Timestamp date, String value) {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
               ),
-              child: SvgPicture.asset('assets/profilePicture.svg'),
+              child: CircularAvatar(name: user, width: 16, fontSize: 16,),
             ),
             SizedBox(width: 10),
             Container(
@@ -446,6 +455,30 @@ Future<PostsData?> _fetchPostById(String classId, String postId) async {
     }
   }
 }
+
+
+  Future<CommentsAnswersData?> _fetchAnswerById(String classId, String postId, String commentIndex, String answerIndex) async {
+    try {
+      ClassData classData = await fetchClass(classId);
+      for (PostsData post in classData.posts) {
+        if (post.id == postId) {
+          for (int i = 0; i < post.comments.length; i++) {
+            int idc = int.parse(commentIndex);
+            if (i == idc) {
+              int ida = int.parse(answerIndex);
+              if (ida < post.comments[idc].answers.length) {
+                return post.comments[idc].answers[ida];
+              }
+            }
+          };
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching answer by ID: $e');
+      throw Exception('Failed to fetch answer');
+    }
+  }
 
 class MyCustomPopupMenuItem extends PopupMenuEntry<void> {
   final Widget child;

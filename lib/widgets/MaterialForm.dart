@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker_web/image_picker_web.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:infomentor/backend/fetchNotifications.dart';
 
 
 class OptionsData {
@@ -674,6 +675,13 @@ Future<void> updateClassToFirestore(String classId, String materialId) async {
     await classRef.update({
       'materials': FieldValue.arrayUnion([materialId])
     });
+
+    sendNotification(currentClass.students, 'Bol pridaný nový obsah.', 'Vzdelávanie', TypeData(
+      id: '',
+        commentIndex: '',
+        answerIndex: '',
+        type: 'learning'
+      ));
 
   } catch (e) {
     print('Error adding material to class: $e');

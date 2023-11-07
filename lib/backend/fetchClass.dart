@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchSchool.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/fetchNotifications.dart';
 
 class CommentsAnswersData {
   Timestamp date;
@@ -290,7 +291,7 @@ Future<void> removeClassFromSchool(String classId, String school) async {
 
 
 
-Future<void> addComment(String classId, String postId, CommentsData comment) async {
+Future<void> addComment(String classId, String postId, CommentsData comment, ) async {
   try {
     // Reference to the class document in Firestore
     DocumentReference classRef =
@@ -340,6 +341,12 @@ Future<void> addComment(String classId, String postId, CommentsData comment) asy
           // Update the class document in Firestore
           await classRef.update(classData);
 
+          sendNotification([comment.userId] , 'Na váš príspevok niekto odpovedal.', 'Diskusia', TypeData(
+          id: postId,
+            commentIndex: (posts[postIndex]['comments'].length-1).toString(),
+            answerIndex: '',
+            type: 'post'
+          ));
 
           return;
         } else {
@@ -366,30 +373,24 @@ Future<void> addAnswer(String classId, String postId, int commentIndex, Comments
     DocumentSnapshot classSnapshot = await classRef.get();
 
     if (classSnapshot.exists) {
-      // Extract the class data from the class document
       final classData = classSnapshot.data() as Map<String, dynamic>?;
 
       if (classData != null) {
-        // Extract the posts field from the class data
-        List<Map<String, dynamic>> posts = List<Map<String, dynamic>>.from(
-          classData['posts'] as List<dynamic>? ?? [],
-        );
+        List<Map<String, dynamic>> posts = List<Map<String, dynamic>>.from(classData['posts'] ?? []);
 
-        // Find the post with the matching postId
         int postIndex = posts.indexWhere((postItem) => postItem['id'] == postId);
 
         if (postIndex != -1) {
-          // Find the comment with the matching commentIndex
           List<dynamic> comments = posts[postIndex]['comments'];
 
           if (commentIndex >= 0 && commentIndex < comments.length) {
-            // Check if answers list exists within the comment and create it if not
+            // Initialize answers list if it doesn't exist
             if (comments[commentIndex]['answers'] == null) {
               comments[commentIndex]['answers'] = [];
             }
 
-            // Append the new answer to the existing list of answers
-            comments[commentIndex]['answers'].add({
+            // Add the answer
+            Map<String, dynamic> answerData = {
               'date': answer.date,
               'user': answer.user,
               'userId': answer.userId,
@@ -397,7 +398,11 @@ Future<void> addAnswer(String classId, String postId, int commentIndex, Comments
               'value': answer.value,
               'award': answer.award,
               'teacher': answer.teacher,
-            });
+            };
+            comments[commentIndex]['answers'].add(answerData);
+
+            // Get the index of the new answer
+            int newAnswerIndex = comments[commentIndex]['answers'].length - 1;
 
             // Update the comments field within the post data
             posts[postIndex]['comments'] = comments;
@@ -407,6 +412,19 @@ Future<void> addAnswer(String classId, String postId, int commentIndex, Comments
 
             // Update the class document in Firestore
             await classRef.update(classData);
+
+            // Send the notification with the correct answerIndex
+            sendNotification(
+              [answer.userId],
+              'Na váš komentár niekto odpovedal.',
+              'Diskusia',
+              TypeData(
+                id: postId,
+                commentIndex: commentIndex.toString(),
+                answerIndex: newAnswerIndex.toString(), // Correct index
+                type: 'answer'
+              )
+            );
 
             return;
           } else {
@@ -426,6 +444,7 @@ Future<void> addAnswer(String classId, String postId, int commentIndex, Comments
     throw Exception('Failed to add answer');
   }
 }
+
 
 
 
@@ -471,6 +490,15 @@ Future<void> addPost(String classId, PostsData post) async {
 
         // Update the class document in Firestore
         await classRef.update(classData);
+
+        List<String> studentIds = List<String>.from(classData['students'] as List<dynamic>);
+
+        sendNotification(studentIds , 'Nový príspevok od učiteľa', 'Diskusia', TypeData(
+          id: (posts.length - 1).toString(),
+          commentIndex: '',
+          answerIndex: '',
+          type: 'post'
+        ));
 
         return;
       } else {

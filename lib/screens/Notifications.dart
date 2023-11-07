@@ -6,11 +6,13 @@ import 'package:infomentor/backend/fetchMaterials.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/Colors.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
 
 class CompleteNotification {
   final NotificationsData notification;
   final PostsData? postData;
   final CommentsData? commentData;
+  final CommentsAnswersData? answerData;
   final MaterialData? materialData;
   final String avatar;
 
@@ -19,6 +21,7 @@ class CompleteNotification {
     required this.notification,
     this.postData,
     this.commentData,
+    this.answerData,
     this.materialData,
   });
 }
@@ -64,6 +67,15 @@ class _NotificationsState extends State<Notifications> {
             completeNotifications.add(CompleteNotification(notification: notif, commentData: commentData, avatar: 'assets/avatars/DiscussionAvatar.svg'));
           }
           break;
+        case 'answer':
+          {
+            String postId = notif.type.id;
+            String commentIndex = notif.type.commentIndex;
+            String answerIndex = notif.type.answerIndex;
+            CommentsAnswersData? answerData = await _fetchAnswerById(userData.schoolClass, postId, commentIndex, answerIndex);
+            completeNotifications.add(CompleteNotification(notification: notif, answerData: answerData, avatar: 'assets/avatars/DiscussionAvatar.svg'));
+          }
+          break;
         case 'learning':
           {
             MaterialData? materialData = await _fetchMaterialById(userData.schoolClass, notif.type.id);
@@ -79,16 +91,16 @@ class _NotificationsState extends State<Notifications> {
 
     return completeNotifications;
 }
+ String formatTimestamp(Timestamp timestamp) {
+    DateTime date = timestamp.toDate();
+    return "${date.day}.${date.month}.${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
-String formatTimestamp(Timestamp timestamp) {
-  DateTime date = timestamp.toDate();
-  return "${date.day}.${date.month}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
-
-}
+  }
 
 @override
 Widget build(BuildContext context) {
   return Container(
+    width: MediaQuery.of(context).size.width,
       color: Theme.of(context).colorScheme.background,
     child: SingleChildScrollView(
       child: Column(
@@ -112,19 +124,19 @@ Widget build(BuildContext context) {
                   return Center(child: Text("Žiadne dostupné notifikácie"));
                 }
 
-                List<CompleteNotification> unseenNotifications = snapshot.data!.where((completeNotif) {
-                  return widget.currentUserData!.notifications.any((userNotif) => !userNotif.seen);
-                }).toList();
+                // Assuming 'CompleteNotification' has a DateTime property called 'date'
+                List<CompleteNotification> sortedNotifications = snapshot.data!
+                  ..sort((a, b) => b.notification.date.compareTo(a.notification.date));  // This sorts the notifications by date in descending order
 
                 return Column(
-                  children: unseenNotifications.map((completeNotif) {
+                  children: sortedNotifications.map((completeNotif) {
                     return _buildNotificationItem(completeNotif);
                   }).toList(),
                 );
               }
               return Center(child: CircularProgressIndicator());
             },
-          ),
+          )
         ],
       ),
     )
@@ -203,6 +215,22 @@ Widget _getTypeContainer(CompleteNotification completeNotification) {
           completeNotification.commentData!.user,
           completeNotification.commentData!.date,
           completeNotification.commentData!.value,
+        ),
+      ),
+    );
+  }
+
+  if (completeNotification.notification.type.type == 'answer' && completeNotification.answerData != null) {
+    return GestureDetector(
+      onTap: () {
+        widget.onNavigationItemSelected(2);
+      },
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: _getPostOrCommentContainer(
+          completeNotification.answerData!.user,
+          completeNotification.answerData!.date,
+          completeNotification.answerData!.value,
         ),
       ),
     );
@@ -317,7 +345,7 @@ Widget _getPostOrCommentContainer(String user, Timestamp date, String value) {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
               ),
-              child: SvgPicture.asset('assets/profilePicture.svg'),
+              child: CircularAvatar(name: user, width: 16, fontSize: 16,),
             ),
             SizedBox(width: 10),
             Container(
@@ -381,6 +409,29 @@ Future<PostsData?> _fetchPostById(String classId, String postId) async {
     } catch (e) {
       print('Error fetching comment by ID: $e');
       throw Exception('Failed to fetch comment');
+    }
+  }
+
+  Future<CommentsAnswersData?> _fetchAnswerById(String classId, String postId, String commentIndex, String answerIndex) async {
+    try {
+      ClassData classData = await fetchClass(classId);
+      for (PostsData post in classData.posts) {
+        if (post.id == postId) {
+          for (int i = 0; i < post.comments.length; i++) {
+            int idc = int.parse(commentIndex);
+            if (i == idc) {
+              int ida = int.parse(answerIndex);
+              if (ida < post.comments[idc].answers.length) {
+                return post.comments[idc].answers[ida];
+              }
+            }
+          };
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching answer by ID: $e');
+      throw Exception('Failed to fetch answer');
     }
   }
 }
