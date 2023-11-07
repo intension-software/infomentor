@@ -29,6 +29,8 @@ class _StudentCapitolDragWidgetState extends State<StudentCapitolDragWidget> {
   CapitolsData? capitolsData;
   List<FetchResult> localResults = [];
   List<FetchResult> localResultsDrag = [];
+  bool _loadingCurrentClass = true;
+  bool _loadingQuestionData = true;
 
   int countTrueValues(List<UserQuestionsData> questionList) {
     int count = 0;
@@ -49,6 +51,7 @@ class _StudentCapitolDragWidgetState extends State<StudentCapitolDragWidget> {
         if (mounted) {
           setState(() {
             currentClassData = classData;
+            _loadingCurrentClass = false;
           });
         }
       } else {
@@ -68,6 +71,10 @@ class _StudentCapitolDragWidgetState extends State<StudentCapitolDragWidget> {
     for (int order = 0; order < widget.numbers.length; order++) {
       localResultsDrag.add(await fetchCapitols(order.toString()));
     }
+
+    setState(() {
+      _loadingQuestionData = false;
+    });
   } catch (e) {
     print('Error fetching question data: $e');
   }
@@ -89,6 +96,9 @@ class _StudentCapitolDragWidgetState extends State<StudentCapitolDragWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loadingCurrentClass || _loadingQuestionData) {
+        return Center(child: CircularProgressIndicator()); // Show loading circle when data is being fetched
+    }
     return Container(
       width: 200,
       padding: EdgeInsets.all(12),

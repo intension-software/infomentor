@@ -179,7 +179,7 @@ Future<List<FetchResult>> fetchQuestionData() async {
 
     computeCompletionPercentages(currentUserClass,userDataList);
 
-      capitolsIds = currentUserClass.capitolOrder;
+    capitolsIds = currentUserClass.capitolOrder;
     
 
     for (int order in [0,1,2,3,4,5,6]) {
