@@ -616,7 +616,7 @@ return Scaffold(
                     hoverColor: AppColors.getColor('mono').lighterGrey,
                     textColor: AppColors.getColor('mono').black,
                     iconColor: AppColors.getColor('mono').black,
-                    text: 'VSTÚPIŤ',
+                    text: 'DOMOV',
                     rightIcon: 'assets/icons/arrowRightIcon.svg',
                     onTap: () {
                       widget.check();
