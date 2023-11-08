@@ -599,6 +599,7 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                 ),
                                                 Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
                                                     Text(
                                                       '${currentUserData!.points}/${capitolOne + capitolTwo + capitolThree + capitolFour + capitolFive + capitolSix + capitolSeven}',
@@ -610,7 +611,12 @@ class _ProfileState extends State<Profile> {
                                                       ),
                                                     ),
                                                     SizedBox(width: 5,),
-                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     SizedBox(width: 5,),
                                                     Text(
                                                         '= ${percentage}%',
@@ -639,6 +645,7 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                 ),
                                                 Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
                                                     Text(currentUserData!.discussionPoints.toString(),
                                                       style: Theme.of(context)
@@ -649,7 +656,12 @@ class _ProfileState extends State<Profile> {
                                                       )
                                                     ),
                                                     SizedBox(width: 5,),
-                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                   ],
                                                 )
                                               ],
@@ -684,6 +696,7 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                 ),
                                                 Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
                                                     Text(
                                                       '${currentUserData!.capitols[0].tests[0].points}/${weeklyCapitol}',
@@ -695,7 +708,12 @@ class _ProfileState extends State<Profile> {
                                                       ),
                                                     ),
                                                     SizedBox(width: 5,),
-                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                   ],
                                                 )
                                               ],
@@ -717,6 +735,7 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                 ),
                                                 Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
                                                     Text(currentUserData!.weeklyDiscussionPoints.toString(),
                                                       style: Theme.of(context)
@@ -727,7 +746,12 @@ class _ProfileState extends State<Profile> {
                                                       )
                                                     ),
                                                     SizedBox(width: 5,),
-                                                    SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                    Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                   ],
                                                 )
                                               ],
@@ -765,6 +789,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(
                                                         '${calculateTotalPointsForCapitol(0)}/${capitolOne}',
@@ -776,7 +801,12 @@ class _ProfileState extends State<Profile> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                      Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     ],
                                                   )
                                                 ],
@@ -798,6 +828,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text('${calculateTotalPointsForCapitol(1)}/${capitolTwo}',
                                                         style: Theme.of(context)
@@ -830,6 +861,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(
                                                         '${calculateTotalPointsForCapitol(2)}/${capitolThree}',
@@ -841,7 +873,12 @@ class _ProfileState extends State<Profile> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                      Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     ],
                                                   )
                                                 ],
@@ -863,6 +900,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(
                                                         '${calculateTotalPointsForCapitol(3)}/${capitolFour}',
@@ -874,7 +912,12 @@ class _ProfileState extends State<Profile> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                      Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     ],
                                                   )
                                                 ],
@@ -896,6 +939,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(
                                                         '${calculateTotalPointsForCapitol(4)}/${capitolFive}',
@@ -907,7 +951,12 @@ class _ProfileState extends State<Profile> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                      Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     ],
                                                   )
                                                 ],
@@ -929,6 +978,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(
                                                         '${calculateTotalPointsForCapitol(5)}/${capitolSix}',
@@ -940,7 +990,12 @@ class _ProfileState extends State<Profile> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                      Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     ],
                                                   )
                                                 ],
@@ -962,6 +1017,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(
                                                         '${calculateTotalPointsForCapitol(6)}/${capitolSeven}',
@@ -973,7 +1029,12 @@ class _ProfileState extends State<Profile> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                      Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     ],
                                                   )
                                                 ],
@@ -1043,7 +1104,7 @@ class _ProfileState extends State<Profile> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: List.generate(students!.length, (index) {
-                                              if (index > 2 && isMobile) return SizedBox.shrink(); // we only want to display top 3
+                                              if (index > 2 && isMobile && index != studentIndex) return SizedBox.shrink(); // we only want to display top 3
                                               final bool isFirstItem = index == 0;
                                               final bool isLastItem = index == students!.length - 1;
 
@@ -1070,7 +1131,7 @@ class _ProfileState extends State<Profile> {
                                                         children: [
                                                           Row(
                                                             children: [
-                                                              if(index > 2)SizedBox(width: 5,),
+                                                              if(index > 2 || studentIndex == index)SizedBox(width: 5,),
                                                               index > 2 ? Text(
                                                               '${index + 1}',
                                                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onBackground),
@@ -1092,13 +1153,19 @@ class _ProfileState extends State<Profile> {
                                                             ],
                                                           ),
                                                           Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
                                                             children: [
                                                               Text(
                                                                 '${students![index].points}',
                                                                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.getColor('yellow').light),
                                                               ),
                                                               SizedBox(width: 5,),
-                                                              SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                              Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                             ],
                                                           ),
                                                         ],
@@ -1245,6 +1312,7 @@ class _ProfileState extends State<Profile> {
                                                     ],
                                                   ),
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Text(
                                                         '${students![index].points}',
@@ -1256,7 +1324,13 @@ class _ProfileState extends State<Profile> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                      
+                                                      Column(
+                                                        children: [
+                                                          SvgPicture.asset('assets/icons/starYellowIcon.svg'),
+                                                          SizedBox(height: 2,)
+                                                        ],
+                                                      ),
                                                     ],
                                                   ),
                                                 ],
