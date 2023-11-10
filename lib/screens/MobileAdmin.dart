@@ -48,6 +48,7 @@ class _MobileAdminState extends State<MobileAdmin> {
   bool _editUser = false;
   bool _teacher = false;
   bool _admin = false;
+  bool _csv = false;
   final PageController _pageController = PageController();
   int _selectedIndex = 0;
   TextEditingController _classNameController = TextEditingController();
@@ -688,7 +689,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Container(
-                                                width: 270,
+                                                width: 291,
                                                 height: 48,
                                                 child:  ReButton(
                                                   activeColor: AppColors.getColor('primary').light, 
@@ -698,12 +699,9 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                   hoverColor: AppColors.getColor('primary').lighter, 
                                                   textColor: AppColors.getColor('primary').main, 
                                                   iconColor: AppColors.getColor('mono').black, 
-                                                  text: 'PRIDAŤ MANUÁLNE',  
+                                                  text: 'PRIRADIŤ EXISTUJÚCI PROFILE',  
                                                   onTap: () async {
-                                                      Navigator.of(context).pop();
-                                                    _onNavigationItemSelected(2);
-                                                    _addUser = true;
-                                                    _teacher = true;
+                                                     
                                                   }
                                                 ),
                                               ),
@@ -719,8 +717,12 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                   hoverColor: AppColors.getColor('green').light, 
                                                   textColor: Theme.of(context).colorScheme.onPrimary, 
                                                   iconColor: AppColors.getColor('mono').black, 
-                                                  text: 'NAHRAŤ .CSV/.XLSX SÚBOR',
+                                                  text: 'VYTVORIŤ NOVÝ PROFIL',
                                                   onTap: () {
+                                                     Navigator.of(context).pop();
+                                                    _onNavigationItemSelected(2);
+                                                    _addUser = true;
+                                                    _teacher = true;
                                                     
                                                   },
                                                 ),
@@ -831,7 +833,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                       borderRadius: BorderRadius.circular(20.0),
                                     ),
                                     content: Container(
-                                      height: 250,
+                                      height: 300,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                       ),
@@ -904,7 +906,7 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                     }
                                                   ),
                                                 ),
-                                                SizedBox(width: 20,),
+                                                SizedBox(height: 20,),
                                                 Container(
                                                   width: 270,
                                                   height: 48,
@@ -918,6 +920,9 @@ class _MobileAdminState extends State<MobileAdmin> {
                                                     iconColor: AppColors.getColor('mono').black, 
                                                     text: 'NAHRAŤ .CSV/.XLSX SÚBOR',
                                                     onTap: () {
+                                                      Navigator.of(context).pop();
+                                                      _onNavigationItemSelected(2);
+                                                      _csv = true;
                                                     
                                                     },
                                                   ),
@@ -1080,7 +1085,6 @@ class _MobileAdminState extends State<MobileAdmin> {
                   textColor: Theme.of(context).colorScheme.onPrimary, 
                   iconColor: AppColors.getColor('mono').black, 
                   text: 'ULOŽIŤ', 
-                  isDisabled: _editClassNameController.text == '',
                   onTap: () async {
                     if (_editClassNameController.text != '') {
                       currentClass!.data.name = _editClassNameController.text;
@@ -1134,6 +1138,129 @@ class _MobileAdminState extends State<MobileAdmin> {
                   ),
                 ),
                   
+                SizedBox(height: 30,),
+              ],
+            ),
+          ),
+        ),
+        if(_csv) Align(
+          alignment: Alignment.center,
+          child: Container(
+            padding: EdgeInsets.all(8),
+            width: 900,
+            height: 1080,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: AppColors.getColor('mono').darkGrey,
+                      ),
+                      onPressed: () { 
+                        _onNavigationItemSelected(0);
+                        _selectedClass = null;
+                        _addUser = false;
+                      },
+                    ),
+                    Text(
+                      'Späť',
+                      style: TextStyle(color: AppColors.getColor('mono').darkGrey),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Pridať žiakov',
+                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                color: Theme.of(context).colorScheme.onBackground,
+                              ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 100,)
+                  ],
+                ),
+                SizedBox(height: 40,),
+                Text(
+                  'Importovať údaje žiakov',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        color: AppColors.getColor('mono').black,
+                      ),
+                ),
+                SizedBox(height: 10,),
+                Text(
+                  'Údaje nahrajte prostredníctvom .csv súboru. Aplikácia každému žiakovi vygeneruje a pošle prihlasovacie údaje.',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: AppColors.getColor('mono').grey,
+                    ),
+                ),
+                SizedBox(height: 30,),
+                Text(
+                  'Súbor musí byť formátovaný nasledovne: ',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '3 stĺplce pomenované ako:',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '“Meno Priezvisko”',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '“Email”',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '“Trieda”',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                SizedBox(height: 30,),
+                 Text(
+                  'Názvy tried v súbore sa musia zhodovať s názvami, ktoré ste zadali v aplikácii.',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                SizedBox(height: 30,),
+                Center(
+                  child: SvgPicture.asset('assets/import.svg'),
+                ),
+                Spacer(),
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 277,
+                    child: 
+                       ReButton(
+                        activeColor: AppColors.getColor('mono').white, 
+                        defaultColor: AppColors.getColor('green').main, 
+                        disabledColor: AppColors.getColor('mono').lightGrey, 
+                        focusedColor: AppColors.getColor('green').light, 
+                        hoverColor: AppColors.getColor('green').light, 
+                        textColor: Theme.of(context).colorScheme.onPrimary, 
+                        iconColor: AppColors.getColor('mono').black, 
+                        text: 'NAHRAŤ .CSV / .XLSX SÚBOR', 
+                        onTap: () {
+                           
+                          }
+                      ),
+                  )
+                 
+                ),
                 SizedBox(height: 30,),
               ],
             ),

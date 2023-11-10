@@ -48,6 +48,7 @@ flutter:
     - assets/placeholder.png
     - assets/profilePicture.svg
     - assets/logo.svg
+    - assets/import.svg
     - assets/logoFilled.svg
     - assets/background.svg
     - assets/lastScreenBackground.svg
