@@ -662,20 +662,15 @@ class _SchoolFormState extends State<SchoolForm> {
                           hoverColor: AppColors.getColor('green').main,
                           text: 'ĎALEJ',
                           onTap: () {
-                            if(!getList(0).isEmpty) setError(selectedYears[0] + 1, '');
-                            if(!getList(1).isEmpty) setError(selectedYears[1] + 1, '');
-                            if(!getList(2).isEmpty) setError(selectedYears[2] + 1, '');
-                            if(!getList(3).isEmpty) setError(selectedYears[3] + 1, '');
-                            if(!getList(4).isEmpty) setError(selectedYears[4] + 1, '');
+                            for(int i = 0; i < selectedYears.length; i++) {
+                              if(!getList(i).isEmpty) setError(selectedYears[i] + 1, '');
+                            }
                              if(checkLists(selectedYears)) {
                                 registerAdmin(_adminNameController.text, _adminEmailController.text, context);
                              };
-                            if(getList(0).isEmpty) setError(selectedYears[0] + 1, 'Pole je povinné');
-                            if(getList(0).isEmpty) setError(selectedYears[1] + 1, 'Pole je povinné');
-                            if(getList(0).isEmpty) setError(selectedYears[2] + 1, 'Pole je povinné');
-                            if(getList(0).isEmpty) setError(selectedYears[3] + 1, 'Pole je povinné');
-                            if(getList(0).isEmpty) setError(selectedYears[4] + 1, 'Pole je povinné');
-
+                             for(int i = 0; i < selectedYears.length; i++) {
+                              if(getList(i).isEmpty) setError(selectedYears[i] + 1, 'Pole je povinné');
+                            }
 
                           },
                         ),
