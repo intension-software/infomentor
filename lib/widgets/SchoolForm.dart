@@ -36,6 +36,7 @@ class _SchoolFormState extends State<SchoolForm> {
   String? resultMessage;
   bool isMobile = false;
   bool isDesktop = false;
+  String _schoolIdError = '';
   Color _schoolIdBorderColor = AppColors.getColor('mono').lightGrey;
   TextEditingController _schoolIdController = TextEditingController();
   TextEditingController _schoolNameController = TextEditingController();
@@ -783,6 +784,7 @@ class _SchoolFormState extends State<SchoolForm> {
                                 false,
                                 _schoolIdController,
                                 _schoolIdBorderColor,
+                                errorText: _schoolIdError
                               ),
                             ),
                             SizedBox(height: 40,),
@@ -807,8 +809,9 @@ class _SchoolFormState extends State<SchoolForm> {
                         hoverColor: AppColors.getColor('green').main,
                         text: 'VYTVORIŤ ÚČET',
                         onTap: () async {
+                          bool appExist = await doesSchoolExist(_schoolIdController.text);
                           bool exists = await numberExistsInAssetFile(_schoolIdController.text);
-                          if (exists) {
+                          if (exists && !appExist) {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -873,6 +876,10 @@ class _SchoolFormState extends State<SchoolForm> {
                                 );
                               },
                             );
+                          } else if (appExist) {
+                            setState(() {
+                              _schoolIdError = 'Daná škola už existuje';
+                            });
                           } else {
                             showDialog(
                               context: context,

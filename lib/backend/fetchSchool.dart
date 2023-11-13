@@ -112,3 +112,19 @@ Future<void> addSchool(String schoolId, String name, String admin, List<String> 
     throw Exception('Failed to add school');
   }
 }
+
+Future<bool> doesSchoolExist(String schoolId) async {
+  try {
+    // Fetch the school data using the provided school ID
+    await fetchSchool(schoolId);
+    // If fetchSchool is successful and doesn't throw an exception,
+    // it means the school exists
+    return true;
+  } catch (e) {
+    // If an exception is thrown, it means the school does not exist
+    // or there was an error in fetching the data
+    print('Error checking if school exists: $e');
+    return false;
+  }
+}
+
