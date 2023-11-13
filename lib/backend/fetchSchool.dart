@@ -105,6 +105,7 @@ Future<void> addSchool(String schoolId, String name, String admin, List<String> 
       'name': name,
       'admin': admin,
       'classes': classes,
+      'teachers': []
     });
   } catch (e) {
     print('Error adding school: $e');
