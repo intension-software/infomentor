@@ -141,7 +141,7 @@ class _AddUserState extends State<AddUser> {
               'Jožko Mrkvička',
               false,
               widget.userNameController,
-              AppColors.getColor('mono').white, // assuming white is the default border color you want
+              AppColors.getColor('mono').lightGrey, // assuming white is the default border color you want
               errorText: _nameErrorText
             ),
             SizedBox(height: 10,),
@@ -155,7 +155,7 @@ class _AddUserState extends State<AddUser> {
               'jozko.mrkvicka@gmail.com',
               false,
               widget.userEmailController,
-              AppColors.getColor('mono').white, // assuming white is the default border color you want
+              AppColors.getColor('mono').lightGrey, // assuming white is the default border color you want
               errorText: _emailErrorText
             ),
             SizedBox(height: 10,),
