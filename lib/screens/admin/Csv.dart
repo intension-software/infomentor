@@ -59,7 +59,6 @@ class _CsvState extends State<Csv> {
       child: Container(
         padding: EdgeInsets.all(8),
         width: 900,
-        height: 1080,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -93,58 +92,86 @@ class _CsvState extends State<Csv> {
                 SizedBox(width: 100,)
               ],
             ),
-            SizedBox(height: 40,),
-            Text(
-              'Importovať údaje žiakov',
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                    color: AppColors.getColor('mono').black,
-                  ),
-            ),
-            SizedBox(height: 10,),
-            Text(
-              'Údaje nahrajte prostredníctvom .csv súboru. Aplikácia každému žiakovi vygeneruje a pošle prihlasovacie údaje.',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: AppColors.getColor('mono').grey,
+            showTable && table != null
+          ? Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                SizedBox(height: 40,),
+                Text(
+                  'Súbor sa nahral',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        color: AppColors.getColor('mono').black,
+                      ),
                 ),
+                SizedBox(height: 10,),
+                Text(
+                  'Skontrolujte prosím správnosť údajov. Ak v údajoch nie sú chyby, stlačte “ULOŽIŤ”.',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: AppColors.getColor('mono').grey,
+                    ),
+                ),
+              ],
+            )
+            : Column(
+               mainAxisAlignment: MainAxisAlignment.start,
+               crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 40,),
+                Text(
+                  'Importovať údaje žiakov',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        color: AppColors.getColor('mono').black,
+                      ),
+                ),
+                SizedBox(height: 10,),
+                Text(
+                  'Údaje nahrajte prostredníctvom .csv súboru. Aplikácia každému žiakovi vygeneruje a pošle prihlasovacie údaje.',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: AppColors.getColor('mono').grey,
+                    ),
+                ),
+                SizedBox(height: 30,),
+                Text(
+                  'Súbor musí byť formátovaný nasledovne: ',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '3 stĺplce pomenované ako:',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '“Meno Priezvisko”',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '“Email”',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                Text(
+                  '“Trieda”',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+                SizedBox(height: 30,),
+                  Text(
+                  'Názvy tried v súbore sa musia zhodovať s názvami, ktoré ste zadali v aplikácii.',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.getColor('mono').grey,
+                      ),
+                ),
+              ],
             ),
-            SizedBox(height: 30,),
-            Text(
-              'Súbor musí byť formátovaný nasledovne: ',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('mono').grey,
-                  ),
-            ),
-            Text(
-              '3 stĺplce pomenované ako:',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('mono').grey,
-                  ),
-            ),
-            Text(
-              '“Meno Priezvisko”',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('mono').grey,
-                  ),
-            ),
-            Text(
-              '“Email”',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('mono').grey,
-                  ),
-            ),
-            Text(
-              '“Trieda”',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('mono').grey,
-                  ),
-            ),
-            SizedBox(height: 30,),
-              Text(
-              'Názvy tried v súbore sa musia zhodovať s názvami, ktoré ste zadali v aplikácii.',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.getColor('mono').grey,
-                  ),
-            ),
+            
             SizedBox(height: 50,),
             showTable && table != null
           ? Expanded( 
@@ -162,7 +189,7 @@ class _CsvState extends State<Csv> {
             ) : Center(
               child: Image.asset('assets/import.png', width: 700, height: 300,),
             ),
-            Spacer(),
+            SizedBox(height: 30,),
             Align(
               alignment: Alignment.center,
               child: showTable && table != null ? 
