@@ -3,8 +3,15 @@ import 'dart:js';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchSchool.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/backend/fetchNotifications.dart';
+
+class ClassDataWithId {
+  final String id;
+  final ClassData data;
+
+  ClassDataWithId(this.id, this.data);
+}
 
 class CommentsAnswersData {
   Timestamp date;
@@ -170,6 +177,19 @@ Future<ClassData> fetchClass(String classId) async {
   }
 }
 
+Future<List<ClassData>> fetchClasses(List<String> classIds) async {
+  List<ClassData> classes = [];
+  for (String id in classIds) {
+    try {
+      ClassData classData = await fetchClass(id);
+      classes.add(classData);
+    } catch (e) {
+      print('Error fetching class data for id $id: $e');
+    }
+  }
+  return classes;
+}
+
 Future<void> editClass(String classId, ClassData newClassData) async {
   try {
     // Reference to the class document in Firestore
@@ -224,7 +244,7 @@ Future<void> editClass(String classId, ClassData newClassData) async {
   }
 }
 
-Future<void> deleteClass(String classId, String school) async {
+Future<void> deleteClass(String classId, String school, void Function(String)? removeSchoolData) async {
   try {
     // Reference to the class document in Firestore
     DocumentReference classRef =
@@ -239,6 +259,8 @@ Future<void> deleteClass(String classId, String school) async {
 
       // Remove the class from the school's classes list
       await removeClassFromSchool(classId, school);
+
+      if (removeSchoolData != null) removeSchoolData(classId);
 
       print('Class deleted successfully with ID: $classId');
     } else {
@@ -981,7 +1003,7 @@ Future<void> toggleAnswerAward(String classId, String postId, int commentIndex, 
   }
 }
 
-Future<void> addClass(String className, String school) async {
+Future<void> addClass(String className, String school, void Function(ClassDataWithId)? addSchoolData, String? adminId) async {
   try {
     // Reference to the Firestore collection where classes are stored
     CollectionReference classCollection = FirebaseFirestore.instance.collection('classes');
@@ -1016,7 +1038,9 @@ Future<void> addClass(String className, String school) async {
 
     addClassToSchool(newClassRef.id, school);
 
-
+    if(adminId != null) updateClasses(adminId, newClassRef.id);
+    
+    if (addSchoolData != null) addSchoolData(ClassDataWithId(newClassRef.id, newClass));
     print('Class added successfully with ID: ${newClassRef.id}');
   } catch (e) {
     print('Error adding class: $e');

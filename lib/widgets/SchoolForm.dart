@@ -4,13 +4,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/backend/fetchSchool.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:math';
+import 'package:infomentor/backend/auth.dart';
+import 'package:infomentor/backend/userModel.dart';
 
 
 
@@ -34,17 +36,20 @@ class _SchoolFormState extends State<SchoolForm> {
   String? resultMessage;
   bool isMobile = false;
   bool isDesktop = false;
-  Color _schoolIdBorderColor = Colors.white;
+  Color _schoolIdBorderColor = AppColors.getColor('mono').lightGrey;
   TextEditingController _schoolIdController = TextEditingController();
   TextEditingController _schoolNameController = TextEditingController();
+  String _schoolNameError = '';
   TextEditingController _adminNameController = TextEditingController();
+  String _adminNameError = '';
   TextEditingController _adminEmailController = TextEditingController();
+  String _adminEmailError = '';
   TextEditingController _codeController = TextEditingController();
   int _selectedIndex = 0;
   int _selectedIndexClasses = 0;
   bool check = false;
   String? generatedCode;
-  List<int> selectedNumbers = [-1,-1,-1,-1,-1,-1,-1,-1,-1];
+  List<int> selectedNumbers = [-1,-1,-1,-1,-1];
   List<int> selectedYears = [];
   bool _class = false;
 
@@ -53,20 +58,19 @@ class _SchoolFormState extends State<SchoolForm> {
   TextEditingController _three = TextEditingController();
   TextEditingController _four = TextEditingController();
   TextEditingController _five = TextEditingController();
-  TextEditingController _six = TextEditingController();
-  TextEditingController _seven = TextEditingController();
-  TextEditingController _eight = TextEditingController();
-  TextEditingController _nine = TextEditingController();
+
+  String _oneError = '';
+  String _twoError = '';
+  String _threeError = '';
+  String _fourError = '';
+  String _fiveError = '';
+
 
   List<String> one = [];
   List<String> two = [];
   List<String> three = [];
   List<String> four = [];
   List<String> five = [];
-  List<String> six = [];
-  List<String> seven = [];
-  List<String> eight = [];
-  List<String> nine = [];
 
   List<String> combinedList = [];
 
@@ -77,12 +81,42 @@ class _SchoolFormState extends State<SchoolForm> {
       case 3: return _three;
       case 4: return _four;
       case 5: return _five;
-      case 6: return _six;
-      case 7: return _seven;
-      case 8: return _eight;
-      case 9: return _nine;
     }
     return _one;
+  }
+
+  void setError(int index, String message) {
+  switch (index) {
+    case 1:
+      _oneError = message;
+      break;
+    case 2:
+      _twoError = message;
+      break;
+    case 3:
+      _threeError = message;
+      break;
+    case 4:
+      _fourError = message;
+      break;
+    case 5:
+      _fiveError = message;
+      break;
+    default:
+      _oneError = message;
+  }
+}
+
+
+  String getError(int index) {
+    switch (index) {
+      case 1: return _oneError;
+      case 2: return _twoError;
+      case 3: return _threeError;
+      case 4: return _fourError;
+      case 5: return _fiveError;
+    }
+    return _oneError;
   }
 
   List<String> getList(int index) {
@@ -92,10 +126,6 @@ class _SchoolFormState extends State<SchoolForm> {
       case 3: return three;
       case 4: return four;
       case 5: return five;
-      case 6: return six;
-      case 7: return seven;
-      case 8: return eight;
-      case 9: return nine;
     }
     return one;
   }
@@ -138,10 +168,6 @@ class _SchoolFormState extends State<SchoolForm> {
     
     print('done');
   }
-
-
-
-   
 
   Future<bool> numberExistsInAssetFile(String number) async {
     // Read the text file from assets
@@ -216,7 +242,8 @@ class _SchoolFormState extends State<SchoolForm> {
                                   'Názov školy',
                                   false,
                                   _schoolNameController,
-                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                  AppColors.getColor('mono').lightGrey, // assuming white is the default border color you want
+                                  errorText: _schoolNameError
                                 ),
                                 SizedBox(height: 10,),
                                 Text(
@@ -229,7 +256,8 @@ class _SchoolFormState extends State<SchoolForm> {
                                   'Meno správcu / správkyne',
                                   false,
                                   _adminNameController,
-                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                  AppColors.getColor('mono').lightGrey, // assuming white is the default border color you want
+                                  errorText: _adminNameError
                                 ),
                                 SizedBox(height: 10,),
                                 Text(
@@ -242,7 +270,8 @@ class _SchoolFormState extends State<SchoolForm> {
                                   'Email správcu / správkyne',
                                   false,
                                   _adminEmailController,
-                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                  AppColors.getColor('mono').lightGrey,
+                                  errorText: _adminEmailError
                                 ),
                                 Text(
                                   'Na tento email vám bude zaslaný verifikačný kód',
@@ -261,13 +290,27 @@ class _SchoolFormState extends State<SchoolForm> {
                         focusedColor: AppColors.getColor('primary').lighter,
                         hoverColor: AppColors.getColor('green').main,
                         text: 'ĎALEJ',
-                        onTap: () {
-                          if (_schoolNameController.text != '' && _adminEmailController.text != '' && _adminNameController.text != '') {
+                        onTap: () async {
+                          bool isUsed = await isEmailAlreadyUsed(_adminEmailController.text);
+                          if(_schoolNameController.text != '') _schoolNameError = '';
+                          if(_adminEmailController.text != '') _adminEmailError = '';
+                          if(_adminNameController.text != '') _adminNameError = '';
+                          if(!isUsed) _adminEmailError = '';
+                          if (_schoolNameController.text != '' && _adminEmailController.text != '' && _adminNameController.text != '' && !isUsed) {
                             _onNavigationItemSelected(_selectedIndex + 1);
+                            
                             setState(() {
                               generatedCode = generateRandomInt().toString();
                             });
                             sendVerificationCode(_adminEmailController.text, generatedCode!);
+                          } else {
+
+                            setState(() {
+                              if(_schoolNameController.text == '') _schoolNameError = 'Názov školy je poviné pole';
+                              if(_adminEmailController.text == '') _adminEmailError = 'E-mail je poviné pole';
+                              if(_adminNameController.text == '') _adminNameError = 'Meno správcu je poviné pole';
+                              if(isUsed) _adminEmailError = 'Účet s daným E-mailom už existuje';
+                            });
                           }
                         },
                       ),
@@ -334,7 +377,7 @@ class _SchoolFormState extends State<SchoolForm> {
                                   'Zadajte 6-miestny kód',
                                   false,
                                   _codeController,
-                                  AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                  AppColors.getColor('mono').lightGrey, // assuming white is the default border color you want
                                 ),
                               ],
                             ),
@@ -407,14 +450,6 @@ class _SchoolFormState extends State<SchoolForm> {
                                         ),
                                   ),
                                   SizedBox(height: 10,),
-                                  _buildClassesCheckbox(5),
-                                  SizedBox(height: 10,),
-                                  _buildClassesCheckbox(6),
-                                  SizedBox(height: 10,),
-                                  _buildClassesCheckbox(7),
-                                  SizedBox(height: 10,),
-                                  _buildClassesCheckbox(8),
-                                  SizedBox(height: 10,),
                                   _buildClassesCheckbox(0),
                                   SizedBox(height: 10,),
                                   _buildClassesCheckbox(1),
@@ -469,7 +504,8 @@ class _SchoolFormState extends State<SchoolForm> {
                                 color: AppColors.getColor('mono').darkGrey,
                               ),
                               onPressed: () {
-                                _onNavigationItemSelected(_selectedIndex - 1); 
+                                _onNavigationItemSelected(_selectedIndex - 1);
+                                selectedYears = []; 
                               },
                             ),
                             Spacer(),
@@ -526,11 +562,12 @@ class _SchoolFormState extends State<SchoolForm> {
                                               'Názov triedy - napr. ${selectedYears[index] + 1}.A',
                                               false,
                                               getController(selectedYears[index] + 1),
-                                              AppColors.getColor('mono').white, // assuming white is the default border color you want
+                                              AppColors.getColor('mono').lightGrey, // assuming white is the default border color you want
+                                              errorText: getError(selectedYears[index] + 1)
                                             ),
                                            SizedBox(height: 10,),
                                             Container(
-                                              width: 304,
+                                              width: 314,
                                               height: 50,
                                               child: ReButton(
                                                 activeColor: AppColors.getColor('primary').light, 
@@ -545,9 +582,11 @@ class _SchoolFormState extends State<SchoolForm> {
                                                 onTap: () {
                                                   setState(() {
                                                     if(!getList(selectedYears[index] + 1).contains(getController(selectedYears[index] + 1).text) && getController(selectedYears[index] + 1).text != '') {
+                                                      setError(selectedYears[index] + 1, '');
                                                       getList(selectedYears[index] + 1).add(getController(selectedYears[index] + 1).text);
                                                       combinedList.add(getController(selectedYears[index] + 1).text);
-                                                      print(combinedList);
+                                                    } else {
+                                                      setError(selectedYears[index] + 1, 'Pole je prázdne');
                                                     }
                                                   });
                                                 }
@@ -622,10 +661,21 @@ class _SchoolFormState extends State<SchoolForm> {
                           hoverColor: AppColors.getColor('green').main,
                           text: 'ĎALEJ',
                           onTap: () {
+                            if(!getList(0).isEmpty) setError(selectedYears[0] + 1, '');
+                            if(!getList(1).isEmpty) setError(selectedYears[1] + 1, '');
+                            if(!getList(2).isEmpty) setError(selectedYears[2] + 1, '');
+                            if(!getList(3).isEmpty) setError(selectedYears[3] + 1, '');
+                            if(!getList(4).isEmpty) setError(selectedYears[4] + 1, '');
                              if(checkLists(selectedYears)) {
-                                registerUser(_adminNameController.text, _adminEmailController.text, context);
-
+                                registerAdmin(_adminNameController.text, _adminEmailController.text, context);
                              };
+                            if(getList(0).isEmpty) setError(selectedYears[0] + 1, 'Pole je povinné');
+                            if(getList(0).isEmpty) setError(selectedYears[1] + 1, 'Pole je povinné');
+                            if(getList(0).isEmpty) setError(selectedYears[2] + 1, 'Pole je povinné');
+                            if(getList(0).isEmpty) setError(selectedYears[3] + 1, 'Pole je povinné');
+                            if(getList(0).isEmpty) setError(selectedYears[4] + 1, 'Pole je povinné');
+
+
                           },
                         ),
                         
@@ -676,17 +726,21 @@ class _SchoolFormState extends State<SchoolForm> {
                           ),
                         )
                       ),
-                      ReButton(
-                        activeColor: AppColors.getColor('green').main,
-                        defaultColor: AppColors.getColor('green').light,
-                        disabledColor: AppColors.getColor('mono').lightGrey,
-                        focusedColor: AppColors.getColor('primary').lighter,
-                        hoverColor: AppColors.getColor('green').main,
-                        text: 'POKRAČOVAŤ DO APLIKÁCIE',
-                        onTap: () {
-                          widget.isSchool();
-                        }
+                      Container(
+                        width: 300,
+                        child: ReButton(
+                          activeColor: AppColors.getColor('green').main,
+                          defaultColor: AppColors.getColor('green').light,
+                          disabledColor: AppColors.getColor('mono').lightGrey,
+                          focusedColor: AppColors.getColor('primary').lighter,
+                          hoverColor: AppColors.getColor('green').main,
+                          text: 'POKRAČOVAŤ DO APLIKÁCIE',
+                          onTap: () {
+                            widget.isSchool();
+                          }
+                        ),
                       ),
+                      
                       SizedBox(height: 60),
                     ],
                 ),
@@ -899,7 +953,7 @@ class _SchoolFormState extends State<SchoolForm> {
       child: CheckboxListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(
-          index < 5 ? '${index + 1}. ročník SŠ' : '${index + 1}. ročník ZŠ',
+          '${index + 1}. ročník SŠ',
           style: TextStyle(
             color: Colors.black, // Purple when checked
           ),
@@ -989,7 +1043,7 @@ class _SchoolFormState extends State<SchoolForm> {
     return password;
   }
 
-   Future<void> registerUser(String name, String email, BuildContext context) async {
+   Future<void> registerAdmin(String name, String email, BuildContext context) async {
       try {
         final functions = FirebaseFunctions.instance;
 
@@ -1001,200 +1055,26 @@ class _SchoolFormState extends State<SchoolForm> {
 
 
         // updateClassToFirestore(data.schoolClass, result.data['uid']);
-        UserData data = UserData(
-          admin: false,
-          discussionPoints: 0,
-          weeklyDiscussionPoints: 0,
-          id: '',
-          email: email,
-          name: name,
-          school: _schoolIdController.text,
-          active: false,
-          classes: [
-          ],
-          schoolClass: '',
-          image: 'assets/profilePicture.svg',
-          surname: '',
-          teacher: true,
-          points: 0,
-          capitols: [
-            UserCapitolsData(
-              completed: false,
-              id: '1',
-              image: '',
-              name: 'Kritické Myslenie',
-              tests: [
-                UserCapitolsTestData(
-                  completed: false,
-                  name: 'Úvod do kritického myslenia',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false, false, false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false, false, false, false, false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: 'Kognitívne skreslenia',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
-                  ],
-                ),
-              ],
-            ),
-            UserCapitolsData(
-              completed: false,
-              id: '1',
-              image: '',
-              name: 'Argumentácia',
-              tests: [
-                UserCapitolsTestData(
-                  completed: false,
-                  name: 'Analýza a Tvrdenie',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: '1.1 Časti debatného argumentu',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: 'Čo je argument (úvod do argumentu)',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false, false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: 'Dôkaz',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false, false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: '1.1  Silné a slabé argumenty',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: '1.2  Silné a slabé argumenty',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: '1. Závery (výroková logika I.)',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                  ],
-                ),
-                UserCapitolsTestData(
-                  completed: false,
-                  name: '1. Predpoklady (výroková logika II.)',
-                  points: 0,
-                  questions: [
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                    UserQuestionsData(answer: [], completed: false, correct: [false]),
-                  ],
-                ),
-              ],
-            ),
-            
-          ],
-          materials: [],
-          notifications: [],
-          badges: [
-            'assets/badges/badgeArgDis.svg',
-            'assets/badges/badgeManDis.svg',
-            'assets/badges/badgeCritDis.svg',
-            'assets/badges/badgeDataDis.svg',
-            'assets/badges/badgeGramDis.svg',
-            'assets/badges/badgeMediaDis.svg',
-            'assets/badges/badgeSocialDis.svg',
-          ]
-        );
-        
+
         // Set the user's ID from Firebase
-        data.id = result.data['uid'];
+        userData.id = result.data['uid'];
 
         // Once the user is created in Firebase Auth, add their data to Firestore
-        await FirebaseFirestore.instance.collection('users').doc(data.id).set({
-          'admin': data.admin,
-          'email': data.email,
-          'name': data.name,
-          'discussionPoints': data.discussionPoints,
-          'weeklyDiscussionPoints': data.weeklyDiscussionPoints,
-          'active': data.active,
-          'classes': data.classes,
-          'school': data.school,
-          'schoolClass': data.schoolClass,
-          'image': data.image,
-          'surname': data.surname,
-          'teacher': data.teacher,
-          'points': data.points,
-          'capitols': data.capitols.map((capitol) => {
+        await FirebaseFirestore.instance.collection('users').doc(userData.id).set({
+          'admin': userData.admin,
+          'email': email,
+          'name': name,
+          'discussionPoints': userData.discussionPoints,
+          'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
+          'active': userData.active,
+          'classes': userData.classes,
+          'school': userData.school,
+          'schoolClass': _schoolIdController.text,
+          'image': userData.image,
+          'surname': userData.surname,
+          'teacher': true,
+          'points': userData.points,
+          'capitols': userData.capitols.map((capitol) => {
             'id': capitol.id,
             'name': capitol.name,
             'image': capitol.image,
@@ -1210,9 +1090,9 @@ class _SchoolFormState extends State<SchoolForm> {
               }).toList(),
             }).toList(),
           }).toList(),
-          'notifications': data.notifications,
-          'materials': data.materials,
-          'badges': data.badges,
+          'notifications': userData.notifications,
+          'materials': userData.materials,
+          'badges': userData.badges,
         });
 
         FirebaseFirestore firestore = FirebaseFirestore.instance; // Create an instance of FirebaseFirestore
@@ -1229,12 +1109,12 @@ class _SchoolFormState extends State<SchoolForm> {
               print('Queued email for delivery!');
             },
           );
-          addSchool(_schoolIdController.text,_schoolNameController.text, data.id , []);
+          addSchool(_schoolIdController.text,_schoolNameController.text, userData.id , []);
 
 
 
           for (String name in combinedList) {
-            addClass(name, _schoolIdController.text);
+            addClass(name, _schoolIdController.text, null, userData.id);
           }
         _onNavigationItemSelected(_selectedIndex + 1);
         

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:infomentor/backend/fetchClass.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/screens/Comments.dart';
 import 'package:infomentor/screens/CommentsAnswers.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/screens/DesktopDiscussions.dart';
 import 'package:infomentor/screens/MobileDiscussions.dart';
 

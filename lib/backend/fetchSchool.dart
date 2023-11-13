@@ -4,11 +4,13 @@ class SchoolData {
   String name;
   String admin;
   List<String> classes;
+  List<String> teachers;
 
   SchoolData({
     required this.name,
     required this.admin,
     required this.classes,
+    required this.teachers,
   });
 }
 
@@ -27,11 +29,13 @@ Future<SchoolData> fetchSchool(String schoolId) async {
 
       if (data != null) {
         final classes = data['classes'] as List<dynamic>;
+        final teachers = data['teachers'] as List<dynamic>;
 
         return SchoolData(
           name: data['name'] as String? ?? '',
           admin: data['admin'] as String? ?? '',
           classes: classes.map((classId) => classId as String).toList(),
+          teachers: teachers.map((teacherId) => teacherId as String).toList(),
         );
       } else {
         throw Exception('Retrieved document data is null.');
@@ -58,6 +62,29 @@ Future<void> addClassToSchool(String newClass, String schoolId) async {
       // Update the classes field in Firestore
       await schoolRef.update({
         'classes': FieldValue.arrayUnion([newClass]),
+      });
+    } else {
+      throw Exception('School document does not exist.');
+    }
+  } catch (e) {
+    print('Error adding class: $e');
+    throw Exception('Failed to add class');
+  }
+}
+
+Future<void> addTeacherToSchool(String newTeacher, String schoolId) async {
+  try {
+    // Reference to the school document in Firestore
+    DocumentReference schoolRef =
+        FirebaseFirestore.instance.collection('schools').doc(schoolId);
+
+    // Retrieve the school document
+    DocumentSnapshot schoolSnapshot = await schoolRef.get();
+
+    if (schoolSnapshot.exists) {
+      // Update the teachers field in Firestore
+      await schoolRef.update({
+        'teachers': FieldValue.arrayUnion([newTeacher]),
       });
     } else {
       throw Exception('School document does not exist.');

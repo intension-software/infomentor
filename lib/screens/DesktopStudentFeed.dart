@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'dart:html' as html;

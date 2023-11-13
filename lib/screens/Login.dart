@@ -190,7 +190,6 @@ class _LoginState extends State<Login> {
                                 .displayLarge!
                                 .copyWith(
                                   color: Theme.of(context).colorScheme.onPrimary,
-                                  
                                 ),
                           ),
                           Container(

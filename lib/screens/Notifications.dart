@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/backend/fetchNotifications.dart';
 import 'package:infomentor/backend/fetchMaterials.dart';

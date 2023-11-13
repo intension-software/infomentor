@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:infomentor/widgets/UserForm.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

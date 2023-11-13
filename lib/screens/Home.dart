@@ -15,9 +15,9 @@ import 'package:infomentor/screens/MobileStudentFeed.dart';
 import 'package:infomentor/screens/DesktopTeacherFeed.dart';
 import 'package:infomentor/screens/MobileTeacherFeed.dart';
 import 'package:infomentor/screens/Discussions.dart';
-import 'package:infomentor/screens/DesktopAdmin.dart';
-import 'package:infomentor/screens/MobileAdmin.dart';
-import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/screens/admin/DesktopAdmin.dart';
+import 'package:infomentor/screens/admin/MobileAdmin.dart';
+import 'package:infomentor/backend/userController.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/widgets/MobileAppBar.dart';
@@ -372,6 +372,7 @@ class _HomeState extends State<Home> {
       case 6:
         return isMobile
           ? MobileAdmin(
+              fetch: fetchUserData(),
               currentUserData: currentUserData,
               logOut: () {
                 FirebaseAuth.instance.signOut();

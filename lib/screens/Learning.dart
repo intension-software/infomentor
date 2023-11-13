@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infomentor/widgets/MaterialCardWidget.dart';
 import 'package:infomentor/widgets/MaterialForm.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/backend/fetchMaterials.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:infomentor/Colors.dart';

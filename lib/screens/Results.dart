@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/userController.dart'; // Import the UserData class and fetchUser function
 import 'package:infomentor/screens/Login.dart';
 import 'package:infomentor/backend/fetchClass.dart';
 import 'package:flutter_svg/flutter_svg.dart';

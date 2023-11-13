@@ -1,5 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:infomentor/backend/fetchSchool.dart';
+import 'package:infomentor/backend/userModel.dart';
+import 'package:infomentor/backend/fetchClass.dart';
+import 'package:infomentor/backend/convert.dart';
+import 'package:infomentor/widgets/ReWidgets.dart';
+import 'package:flutter/widgets.dart';
+
+class UserDataWithId {
+  final String id;
+  final UserData data;
+
+  UserDataWithId(this.id, this.data);
+}
 
 class UserNotificationsData {
   String id;
@@ -272,6 +286,25 @@ Future<UserData> fetchUser(String userId) async {
   }
 }
 
+Future<void> updateClasses(String userId, String classId) async {
+  try {
+    // Get a reference to the user's document in Firestore
+    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Update the classes array by adding the new classId
+    await userRef.update({
+      'classes': FieldValue.arrayUnion([classId]),
+      'schoolClass': classId
+    });
+
+    print('Class ID $classId added to user $userId successfully.');
+  } catch (error) {
+    print('Error updating classes: $error');
+    throw error;
+  }
+}
+
+
 Future<void> deleteUser(String userId) async {
   try {
     // Next, delete the user document from Firestore
@@ -285,6 +318,185 @@ Future<void> deleteUser(String userId) async {
     throw error;
   }
 }
+
+Future<void> registerUser(String schoolId, String classId, String name, String email, String password, bool teacher, BuildContext context, ClassDataWithId? currentClass) async {
+  String? userId;
+  try {
+    final functions = FirebaseFunctions.instance;
+    final result = await functions.httpsCallable('createAccount').call({
+      'email': email,
+      'password': password,
+    });
+
+    userId = result.data['uid'];
+
+    // Set the user's ID from Firebase
+    userData.id = userId!;
+
+    await FirebaseFirestore.instance.runTransaction((Transaction transaction) async {
+      DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+      DocumentReference classRef = FirebaseFirestore.instance.collection('classes').doc(classId);
+
+      // Set user data
+      transaction.set(userRef, {
+        'id': userId,
+        'badges': userData.badges,
+        'admin': userData.admin,
+        'discussionPoints': userData.discussionPoints,
+        'weeklyDiscussionPoints': userData.weeklyDiscussionPoints,
+        'teacher': teacher,
+        'email': email, // Update the email in Firestore to the new email
+        'name': name,
+        'active': userData.active,
+        'classes': [classId],
+        'notifications': userData.notifications,
+        'materials': userData.materials,
+        'school': schoolId,
+        'schoolClass': classId,
+        'image': userData.image,
+        'surname': userData.surname,
+        'points': userData.points,
+        'capitols': userData.capitols.map((userCapitolsData) {
+          return {
+            'id': userCapitolsData.id,
+            'name': userCapitolsData.name,
+            'image': userCapitolsData.image,
+            'completed': userCapitolsData.completed,
+            'tests': userCapitolsData.tests.map((userCapitolsTestData) {
+              return {
+                'name': userCapitolsTestData.name,
+                'completed': userCapitolsTestData.completed,
+                'points': userCapitolsTestData.points,
+                'questions': userCapitolsTestData.questions.map((userQuestionsData) {
+                  return {
+                    'answer': userQuestionsData.answer.map((userAnswerData) {
+                      return {
+                        'answer': userAnswerData.answer,
+                        'index': userAnswerData.index,
+                      };
+                    }).toList(),
+                    'completed': userQuestionsData.completed,
+                    'correct': userQuestionsData.correct,
+                  };
+                }).toList(),
+              };
+            }).toList(),
+          };
+        }).toList(),
+      });
+
+      // Update class data
+      Map<String, dynamic> updateData = teacher
+        ? {'teachers': FieldValue.arrayUnion([userId])}
+        : {'students': FieldValue.arrayUnion([userId])};
+
+      transaction.update(classRef, updateData);
+
+      if(teacher) {
+        currentClass!.data.teachers.add(userId!);
+        addTeacherToSchool(userId, schoolId);
+      } else {
+         currentClass!.data.students.add(userId!);
+      }
+    });
+
+    // Success toast
+    reShowToast(teacher ? 'Učiteľ úspešne pridaný' : 'Žiak úspešne pridaný', false, context);
+  } catch (e) {
+    // Error handling
+    reShowToast(teacher ? 'Učiteľa sa nepodarilo pridať' : 'Žiaka sa nepodarilo pridať', true, context);
+  }
+}
+
+Future<void> registerMultipleUsers(
+    List<ConvertTable> users, // List of Table objects
+    String schoolId,
+    bool teacher,
+    BuildContext context
+) async {
+    try {
+        final functions = FirebaseFunctions.instance;
+        final firestore = FirebaseFirestore.instance;
+
+        await firestore.runTransaction((Transaction transaction) async {
+            for (var user in users) {
+                // Create an account for each user
+                final result = await functions.httpsCallable('createAccount').call({
+                    'email': user.email,
+                    'password': 'test1234',
+                });
+
+                String userId = result.data['uid'];
+
+                // Prepare user and class document references
+                DocumentReference userRef = firestore.collection('users').doc(userId);
+                DocumentReference classRef = firestore.collection('classes').doc(user.classId);
+
+                 // Set user data
+                  transaction.set(userRef, {
+                    'badges': [],
+                    'admin': false,
+                    'discussionPoints': 0,
+                    'weeklyDiscussionPoints': 0,
+                    'teacher': teacher,
+                    'email': user.email, // Update the email in Firestore to the new email
+                    'name': user.name,
+                    'active': userData.active,
+                    'classes': [user.classId],
+                    'notifications': [],
+                    'materials': [],
+                    'school': schoolId,
+                    'schoolClass': user.classId,
+                    'image': '',
+                    'surname': '',
+                    'points': 0,
+                    'capitols': userData.capitols.map((userCapitolsData) {
+                      return {
+                        'id': userCapitolsData.id,
+                        'name': userCapitolsData.name,
+                        'image': userCapitolsData.image,
+                        'completed': userCapitolsData.completed,
+                        'tests': userCapitolsData.tests.map((userCapitolsTestData) {
+                          return {
+                            'name': userCapitolsTestData.name,
+                            'completed': userCapitolsTestData.completed,
+                            'points': userCapitolsTestData.points,
+                            'questions': userCapitolsTestData.questions.map((userQuestionsData) {
+                              return {
+                                'answer': userQuestionsData.answer.map((userAnswerData) {
+                                  return {
+                                    'answer': userAnswerData.answer,
+                                    'index': userAnswerData.index,
+                                  };
+                                }).toList(),
+                                'completed': userQuestionsData.completed,
+                                'correct': userQuestionsData.correct,
+                              };
+                            }).toList(),
+                          };
+                        }).toList(),
+                      };
+                    }).toList(),
+                  });
+
+                // Update class data
+                Map<String, dynamic> updateData = teacher
+                    ? {'teachers': FieldValue.arrayUnion([userId])}
+                    : {'students': FieldValue.arrayUnion([userId])};
+
+                transaction.update(classRef, updateData);
+            }
+        });
+
+        // Success toast
+        reShowToast('Všetci žiaci úspešne registrovaní', false, context);
+    } catch (e) {
+        // Error handling
+        reShowToast('Failed to register users', true, context);
+    }
+}
+
+
 
 Future<void> incrementDiscussionPoints(String userId, int incrementAmount, bool check) async {
   try {
@@ -309,6 +521,57 @@ Future<void> incrementDiscussionPoints(String userId, int incrementAmount, bool 
     throw error;
   }
 }
+
+Future<void> deleteUserFunction(List<String> userIds, UserData currentUser, BuildContext context, ClassDataWithId? currentClass) async {
+  try {
+
+    
+    for (String userId in userIds) {
+      // Find the class document that contains the userId
+      final classQuery = await FirebaseFirestore.instance
+          .collection('classes')
+          .where('students', arrayContains: userId)
+          .get();
+
+      // Check if the userId is also in the 'teachers' array
+      final teacherQuery = await FirebaseFirestore.instance
+          .collection('classes')
+          .where('teachers', arrayContains: userId)
+          .get();
+
+      // Combine the class and teacher queries to ensure we remove the userId from both arrays
+      final combinedQuery = classQuery.docs + teacherQuery.docs;
+
+      for (final classDoc in combinedQuery) {
+        // Remove the userId from the 'students' and 'teachers' arrays in the class document
+        await classDoc.reference.update({
+          'students': FieldValue.arrayRemove([userId]),
+          'teachers': FieldValue.arrayRemove([userId]),
+        });
+      }
+
+        currentClass!.data.teachers.removeWhere((id) => id == userId);
+        currentClass!.data.students.removeWhere((id) => id == userId);
+
+      // Call deleteUser(userId) to delete the user document
+      await deleteUser(userId);
+    }
+
+    // Step 3: Call the deleteAccount cloud function
+    // Replace 'your-cloud-function-url' with the actual URL of your deleteAccount function
+    final deleteAccountCallable =
+        FirebaseFunctions.instance.httpsCallable('deleteAccount');
+    await deleteAccountCallable(userIds);
+
+    
+
+  } catch (error) {
+    reShowToast(currentUser.teacher ? 'Učiteľa sa nepodarilo vymazať' : 'Žiaka sa nepodarilo vymazať', true, context);
+    throw error;
+  }
+}
+
+
 
 
 

@@ -11,19 +11,11 @@ Container reTextField(
   String text,
   bool isPasswordType,
   TextEditingController controller,
-  Color? borderColor,
-  {bool? visibility, Function()? toggle}
+  Color borderColor,
+  {bool? visibility, Function()? toggle, String? errorText}
 ) {
   return Container(
-    decoration: BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: AppColors.getColor('mono').black.withOpacity(0.1),
-          spreadRadius: 0.5,
-          blurRadius: 5,
-        ),
-      ],
-    ),
+    
     child: TextField(
       controller: controller,
       obscureText: visibility ?? false,
@@ -35,19 +27,20 @@ Container reTextField(
         floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: text,
         hintText: '',
+        errorText: errorText == '' ? null : errorText,
         filled: true,
         fillColor: AppColors.getColor('mono').white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide(
-            color: borderColor ?? AppColors.getColor('mono').white,
+            color: borderColor,
             width: 2.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide(
-            color: borderColor ?? AppColors.getColor('mono').white,
+            color: borderColor,
             width: 2.0,
           ),
         ),
@@ -520,8 +513,7 @@ void reShowToast(String message, bool error, BuildContext context) {
   showToastWidget(
     Container(
       margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(16),
-      width: 280,
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
@@ -530,14 +522,35 @@ void reShowToast(String message, bool error, BuildContext context) {
         ),
         color: error ? AppColors.getColor('red').lighter : AppColors.getColor('green').lighter
       ),
-      child: Row(
-        children: [
-          Text(message, style: TextStyle(color: Colors.black),),
-          Spacer(),
-          Text('Späť', style: TextStyle(color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main),),
-          SizedBox(width: 5,),
-          SvgPicture.asset('assets/icons/xIcon.svg', color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main),
-        ],
+      child: IntrinsicWidth(
+        stepWidth: 280,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                message,
+                style: TextStyle(color: Colors.black),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  'Späť',
+                  style: TextStyle(
+                    color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main
+                  ),
+                ),
+                SizedBox(width: 5),
+                SvgPicture.asset(
+                  'assets/icons/xIcon.svg',
+                  color: error ? AppColors.getColor('red').main : AppColors.getColor('green').main
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
     context: context,
@@ -546,6 +559,7 @@ void reShowToast(String message, bool error, BuildContext context) {
     position: StyledToastPosition(align: Alignment.bottomRight)
   );
 }
+
 
 class CircularAvatar extends StatelessWidget {
   final String name;

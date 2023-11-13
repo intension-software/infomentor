@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:infomentor/backend/fetchUser.dart'; // Import the UserData class and fetchUser function
+import 'package:infomentor/backend/userController.dart'; // Import the UserData class and fetchUser function
 
 class TypeData {
   String id;

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:infomentor/screens/Profile.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/widgets/DropDown.dart';
 
 class TeacherMobileAppBar extends StatelessWidget {

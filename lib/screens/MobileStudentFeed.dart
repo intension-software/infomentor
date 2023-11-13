@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infomentor/Colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:infomentor/backend/fetchCapitols.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'dart:html' as html;
@@ -179,7 +179,7 @@ class _MobileStudentFeedState extends State<MobileStudentFeed> {
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Theme.of(context).primaryColor))
               ),
-              child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.cover, width:  MediaQuery.of(context).size.width,),
+              child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.fill, width:  MediaQuery.of(context).size.width,),
             ),
             !widget.weeklyBool ? Container(
               height: 320,

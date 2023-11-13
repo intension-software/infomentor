@@ -5,7 +5,7 @@ import 'package:infomentor/screens/Home.dart';
 import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/Colors.dart';
 import 'dart:html' as html;
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 

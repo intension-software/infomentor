@@ -4,12 +4,12 @@ import 'package:infomentor/widgets/ReWidgets.dart';
 import 'package:infomentor/backend/fetchMaterials.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:infomentor/Colors.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'dart:typed_data';  // for Uint8List
 import 'package:flutter/foundation.dart';  // for kIsWeb
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:infomentor/backend/fetchClass.dart';
-import 'package:infomentor/backend/fetchUser.dart';
+import 'package:infomentor/backend/userController.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class OptionsData {
