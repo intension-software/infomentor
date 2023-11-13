@@ -627,6 +627,7 @@ class _DesktopAdminState extends State<DesktopAdmin> {
         );
       case 5:
         return AddClass(
+          classes: classes!,
           currentUserData: widget.currentUserData,
           onNavigationItemSelected: _onNavigationItemSelected,
           teacher: _teacher,
@@ -636,7 +637,9 @@ class _DesktopAdminState extends State<DesktopAdmin> {
           }
         );
       case 6:
-        return UpdateClass(currentUserData: widget.currentUserData, 
+        return UpdateClass(
+        classes: classes!,
+        currentUserData: widget.currentUserData, 
         onNavigationItemSelected: _onNavigationItemSelected, 
         selectedClass: _selectedClass, 
         teacher: _teacher, 

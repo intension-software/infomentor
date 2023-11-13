@@ -13,6 +13,7 @@ class UpdateClass extends StatefulWidget {
   ClassDataWithId? currentClass;
   UserDataWithId? currentUser;
   void Function(String) removeSchoolData;
+  List<String> classes;
   
   
 
@@ -25,7 +26,8 @@ class UpdateClass extends StatefulWidget {
       required this.editClassNameController, 
       required this.currentClass,
       required this.currentUser,
-      required this.removeSchoolData
+      required this.removeSchoolData,
+      required this.classes
     }
   );
 
@@ -34,6 +36,7 @@ class UpdateClass extends StatefulWidget {
 }
 
 class _UpdateClassState extends State<UpdateClass> {
+  String _textError = '';
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -80,6 +83,7 @@ class _UpdateClassState extends State<UpdateClass> {
               false,
               widget.editClassNameController,
               AppColors.getColor('mono').lightGrey, // assuming white is the default border color you want
+              errorText:  _textError
             ),
             Spacer(),
             Align(
@@ -115,7 +119,8 @@ class _UpdateClassState extends State<UpdateClass> {
                 iconColor: AppColors.getColor('mono').black, 
                 text: 'ULOŽIŤ', 
                 onTap: () async {
-                  if(widget.editClassNameController.text != '') {
+                  bool exists = await doesClassNameExist(widget.editClassNameController.text, widget.classes);
+                  if(widget.editClassNameController.text != '' && !exists) {
                     widget.currentClass!.data.name = widget.editClassNameController.text;
                   editClass(widget.currentClass!.id,
                   ClassData(
@@ -160,6 +165,9 @@ class _UpdateClassState extends State<UpdateClass> {
                   ));
                   widget.editClassNameController.text = '';
                   reShowToast('Trieda úspešne upravená', false, context);
+                  } else {
+                    if(widget.editClassNameController.text == '') _textError = 'Pole je povinné';
+                    if(exists) _textError = 'Meno už existuje';
                   }
                   
                 },

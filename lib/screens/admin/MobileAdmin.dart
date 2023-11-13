@@ -641,6 +641,7 @@ class _MobileAdminState extends State<MobileAdmin> {
         );
       case 5:
         return AddClass(
+          classes: classes!,
           currentUserData: widget.currentUserData,
           onNavigationItemSelected: _onNavigationItemSelected,
           teacher: _teacher,
@@ -650,7 +651,9 @@ class _MobileAdminState extends State<MobileAdmin> {
           }
         );
       case 6:
-        return UpdateClass(currentUserData: widget.currentUserData, 
+        return UpdateClass(
+        classes: classes!,  
+        currentUserData: widget.currentUserData, 
         onNavigationItemSelected: _onNavigationItemSelected, 
         selectedClass: _selectedClass, 
         teacher: _teacher, 

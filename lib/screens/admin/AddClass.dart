@@ -10,6 +10,7 @@ class AddClass extends StatefulWidget {
   bool teacher;
   TextEditingController classNameController;
   void Function(ClassDataWithId) addSchoolData;
+  List<String> classes;
   
 
   AddClass(
@@ -18,7 +19,8 @@ class AddClass extends StatefulWidget {
       required this.onNavigationItemSelected,
       required this.teacher,
       required this.classNameController,
-      required this.addSchoolData
+      required this.addSchoolData,
+      required this.classes
     }
   );
 
@@ -106,7 +108,7 @@ class _AddClassState extends State<AddClass> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                       ReButton(
-                        activeColor: AppColors.getColor('mono').white, 
+                        activeColor: AppColors.getColor('mono').white,
                         defaultColor: AppColors.getColor('green').main, 
                         disabledColor: AppColors.getColor('mono').lightGrey, 
                         focusedColor: AppColors.getColor('green').light, 
@@ -115,8 +117,9 @@ class _AddClassState extends State<AddClass> {
                         iconColor: AppColors.getColor('mono').black, 
                         text: 'ULOŽIŤ', 
                         isDisabled: widget.classNameController.text == '',
-                        onTap: () {
-                          if(widget.classNameController.text != '') {
+                        onTap: () async {
+                          bool exists = await doesClassNameExist(widget.classNameController.text, widget.classes);
+                          if(widget.classNameController.text != '' && !exists) {
                             setState(() {
                               _errorText = '';
                             });
@@ -126,7 +129,8 @@ class _AddClassState extends State<AddClass> {
                           reShowToast('Trieda úspešne pridaná', false, context);
                           } else {
                             setState(() {
-                              _errorText = 'Pole je povinné';
+                              if(exists) _errorText = 'Meno už existuje';
+                              if(widget.classNameController.text == '') _errorText = 'Pole je povinné';
                             });
                           }
                           

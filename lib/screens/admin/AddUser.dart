@@ -202,7 +202,7 @@ class _AddUserState extends State<AddUser> {
                       if(widget.userNameController.text == '') _nameErrorText = 'Pole je povinné';
                         if(widget.userEmailController.text == '') _emailErrorText = 'Pole je povinné';
                         if(widget.userPasswordController.text == '') _passwordErrorText = 'Pole je povinné';
-                        if(!isUsed) _emailErrorText = 'Účet s daným E-mailom už existuje';
+                        if(isUsed) _emailErrorText = 'Účet s daným E-mailom už existuje';
                         if(!validEmail) _emailErrorText = 'Nesprávny formát E-mailu';
                       }
                   ),

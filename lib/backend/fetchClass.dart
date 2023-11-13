@@ -1048,6 +1048,23 @@ Future<void> addClass(String className, String school, void Function(ClassDataWi
   }
 }
 
+Future<bool> doesClassNameExist(String className, List<String> classIds) async {
+  for (String classId in classIds) {
+    try {
+      ClassData classData = await fetchClass(classId);
+      if (classData.name == className) {
+        return true;
+      }
+    } catch (e) {
+      print('Error fetching class data for ID $classId: $e');
+      // Optionally, you can decide how to handle this error.
+      // For now, it will continue to the next class ID.
+    }
+  }
+  return false;
+}
+
+
 
 
 
