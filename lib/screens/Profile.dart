@@ -63,7 +63,7 @@ class _ProfileState extends State<Profile> {
 
     await firestore.collection('mail').add(
       {
-        'to': ['jozefsvagerkom5@gmail.com'],
+        'to': ['support@info-mat.sk'],
         'message': {
           'subject': type,
           'text': message
