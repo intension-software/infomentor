@@ -81,7 +81,7 @@ class _MobileAdminState extends State<MobileAdmin> {
 
     await firestore.collection('mail').add(
       {
-        'to': ['jozefsvagerkom5@gmail.com'],
+        'to': ['support@info-mat.sk'],
         'message': {
           'subject': type,
           'text': message
