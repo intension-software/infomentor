@@ -662,14 +662,14 @@ void showPopupMenu(BuildContext context, int direction, RenderBox button) {
                     ),
                     ),
                   ),
-                  if (userData != null && !userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)Center(
+                  Center(
                       child: 
-                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZOBRAZIŤ' , onTap: () {
+                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor(color!).lighter, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor(color!).light, hoverColor: AppColors.getColor(color!).main, textColor: AppColors.getColor('mono').white, iconColor: AppColors.getColor('mono').white, text: 'ZAČAŤ' , onTap: () {
                       onPressed(number);
                       Navigator.of(context).pop();
                     }),
                   ),
-                  if (userData != null && userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)
+                  /* if (userData != null && userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed)
                   Container(
                     width: 400,
                     height: 130,
@@ -713,7 +713,7 @@ void showPopupMenu(BuildContext context, int direction, RenderBox button) {
                         ),
                       ],
                     ),
-                  ),
+                  ),*/
                    if (userData != null && userData!.capitols[int.parse(capitolsId)].tests[number].completed && !userData!.capitols[int.parse(capitolsId)].completed) Text(
                               "Test si môžeš znovu otvoriť po skončení kapitoly",
                               style:  Theme.of(context)

@@ -67,86 +67,96 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                       color: Colors.white,
                       border: Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey)),
                     ),
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 108,
-                        width: double.infinity,
-                        padding: EdgeInsets.all(12),
-                         decoration: BoxDecoration(
-                            color: AppColors.getColor('primary').lighter,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.post!.user,
-                                style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(
-                                    color: Theme.of(context).colorScheme.onBackground,
-                                  ),
-                              ),
-                              SizedBox(height: 10,),
-                              Text(
-                                widget.post!.value,
-                              ),
-                            
-                            ],
-                          ),
-                      ),
-                      SizedBox(height: 20.0),
-                      Row(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            margin: EdgeInsets.only(right: 16.0),
-                            child: CircularAvatar(name: widget.comment!.user, width: 16, fontSize: 16,)
+                            
+                            height: 108,
+                            width: double.infinity,
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                                color: AppColors.getColor('primary').lighter,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.post!.user,
+                                    style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground,
+                                      ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Text(
+                                    widget.post!.value,
+                                  ),
+                                
+                                ],
+                              ),
                           ),
-                          Column(
+                          SizedBox(height: 20.0),
+                          
+                          Container(
+                            padding: EdgeInsets.only(right: 16, left: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                widget.comment!.user,
-                                style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(
-                                    color: Theme.of(context).colorScheme.onBackground,
+                              Container(
+                                margin: EdgeInsets.only(right: 16.0),
+                                child: CircularAvatar(name: widget.comment!.user, width: 16, fontSize: 16,)
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.comment!.user,
+                                    style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground,
+                                      ),
                                   ),
+                                  Text(
+                                    formatTimestamp(widget.comment!.date),
+                                    style: TextStyle(
+                                      color: AppColors.getColor('mono').grey,
+                                    ),
+                                  ),
+                                
+                                ],
                               ),
-                              Text(
-                                formatTimestamp(widget.comment!.date),
-                                style: TextStyle(
-                                  color: AppColors.getColor('mono').grey,
-                                ),
-                              ),
-                            
                             ],
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 10.0),
-                      Text(widget.comment!.value),
-                      SizedBox(height: 10.0),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/icons/commentIcon.svg'),
-                          Text('Odpovedať',
-                            style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(
-                              color: AppColors.getColor('mono').darkGrey,
-                            ),
+                          SizedBox(height: 10.0),
+                          Text(widget.comment!.value),
+                          SizedBox(height: 10.0),
+                          Row(
+                            children: [
+                              SvgPicture.asset('assets/icons/commentIcon.svg'),
+                              Text('Odpovedať',
+                                style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(
+                                  color: AppColors.getColor('mono').darkGrey,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                   ),
@@ -173,7 +183,7 @@ class _CommentsAnswersState extends State<CommentsAnswers> {
                               color: Colors.white,
                               border: Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey)),
                             ),
-                            padding: EdgeInsets.only(right: 32, left: 32, top: 16, bottom: 16),
+                            padding: EdgeInsets.only(right: 48, left: 48, top: 16, bottom: 16),
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

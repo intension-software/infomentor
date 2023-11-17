@@ -165,7 +165,7 @@ class _CommentsState extends State<Comments> {
                             color: Colors.white,
                             border: Border(bottom: BorderSide(color: AppColors.getColor('mono').lightGrey)),
                           ),
-                        padding: EdgeInsets.all(16.0),
+                        padding: EdgeInsets.only(right: 32, left: 32, top: 16, bottom: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
