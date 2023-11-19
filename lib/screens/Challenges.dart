@@ -322,7 +322,6 @@ Widget build(BuildContext context) {
                                                     )
                                                   : Container(),
                                               StarButton(
-                                                color: results?[capitolIndex].capitolsData!.color,
                                                 number: testIndex,
                                                 userData: widget.currentUserData,
                                                 onPressed: (int number) => toggleOverlayVisibility(number, capitolIndex ?? 0),
@@ -420,13 +419,12 @@ Widget build(BuildContext context) {
                                                       decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
                                                         color: (!widget.currentUserData!.teacher ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false) : !(percentages[capitolIndex][testIndex] == 1.0))
-                                                            ? AppColors.getColor(results?[capitolIndex].capitolsData!.color ?? '').lighter
+                                                            ? AppColors.getColor( 'blue').lighter
                                                             : AppColors.getColor('yellow').lighter,
                                                       ),
                                                     )
                                                   : Container(),
                                               StarButton(
-                                                color: results?[capitolIndex].capitolsData!.color,
                                                 number: testIndex,
                                                 userData: widget.currentUserData,
                                                 onPressed: (int number) => toggleOverlayVisibility(number, capitolIndex ?? 0),
@@ -470,7 +468,6 @@ class StarButton extends StatelessWidget {
   final List<List<double>> percentages;
   final int number;
   final UserData? userData;
-  final String? color;
   final void Function(int) onPressed;
   final String capitolsId;
   final void Function(int) visibleContainerIndex;
@@ -479,7 +476,6 @@ class StarButton extends StatelessWidget {
     required this.percentages,
     required this.number,
     required this.onPressed,
-    required this.color,
     required this.capitolsId,
     this.userData,
     required this.visibleContainerIndex
@@ -621,7 +617,7 @@ void showPopupMenu(BuildContext context, int direction, RenderBox button) {
     position: position,
     constraints: BoxConstraints(maxWidth: 400, minWidth: 0),
 
-    color: AppColors.getColor(color!).light,
+    color: AppColors.getColor(userData!.capitols[int.parse(capitolsId)].tests[number].completed ? 'yellow' : 'blue').light,
     shape: TooltipShape(context: context, direction: direction % 2 == 0 ? 0 : 1),
     items: <PopupMenuEntry<int>>[
       PopupMenuItem<int>(
@@ -664,7 +660,7 @@ void showPopupMenu(BuildContext context, int direction, RenderBox button) {
                   ),
                   Center(
                       child: 
-                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor(color!).lighter, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor(color!).light, hoverColor: AppColors.getColor(color!).main, textColor: AppColors.getColor('mono').white, iconColor: AppColors.getColor('mono').white, text: 'ZAČAŤ' , onTap: () {
+                      ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor(userData!.capitols[int.parse(capitolsId)].tests[number].completed ? 'yellow' : 'blue').lighter, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor(userData!.capitols[int.parse(capitolsId)].tests[number].completed ? 'yellow' : 'blue').light, hoverColor: AppColors.getColor(userData!.capitols[int.parse(capitolsId)].tests[number].completed ? 'yellow' : 'blue').main, textColor: AppColors.getColor('mono').white, iconColor: AppColors.getColor('mono').white, text: 'ZAČAŤ' , onTap: () {
                       onPressed(number);
                       Navigator.of(context).pop();
                     }),

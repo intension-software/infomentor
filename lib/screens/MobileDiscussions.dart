@@ -116,6 +116,7 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
                 return CommentsData(
                   award: commentItem['award'] ?? false,
                   teacher: commentItem['teacher'] ?? false,
+                  edited: commentItem['edited'] ?? false,
                   answers: (commentItem['answers'] as List<dynamic>? ?? []).map<CommentsAnswersData>((answerItem) {
                     if (answerItem is Map<String, dynamic>) {
                       return CommentsAnswersData(
@@ -123,6 +124,7 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
                         award: answerItem['award'] ?? false,
                         date: answerItem['date'] ?? Timestamp.now(),
                         userId: answerItem['userId'],
+                        edited: answerItem['edited'] ?? false,
                         pfp: answerItem['pfp'],
                         user: answerItem['user'] ?? '',
                         value: answerItem['value'] ?? '',
@@ -132,6 +134,7 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
                       return CommentsAnswersData(
                         award: false,
                         teacher: false,
+                        edited: false,
                         userId: '',
                         pfp: '',
                         date: Timestamp.now(),
@@ -179,6 +182,7 @@ class _MobileDiscussionsState extends State<MobileDiscussions> {
                 return CommentsAnswersData(
                   award: answerItem['award'],
                   teacher: answerItem['teacher'],
+                  edited: answerItem['edited'],
                   date: answerItem['date'],
                   userId: answerItem['userId'],
                   pfp: answerItem['pfp'],
@@ -297,7 +301,7 @@ Widget build(BuildContext context) {
                                           ),
                                         ),
                                         Text(
-                                          formatTimestamp(post.date),
+                                          post.edited ? '${formatTimestamp(post.date)} (upravené)' : formatTimestamp(post.date),
                                           style: TextStyle(
                                             color: AppColors.getColor('mono').grey,
                                           ),
@@ -573,6 +577,7 @@ Widget build(BuildContext context) {
                         userId: FirebaseAuth.instance.currentUser!.uid,
                         user: widget.currentUserData!.name,
                         pfp: widget.currentUserData!.image,
+                        edited: false,
                         value: postController.text,
                         id: _posts.length.toString()
                       );
@@ -751,6 +756,7 @@ Widget build(BuildContext context) {
                                 date: Timestamp.now(),
                                 userId: FirebaseAuth.instance.currentUser!.uid,
                                 user: widget.currentUserData!.name,
+                                edited: false,
                                 pfp: widget.currentUserData!.image,
                                 value: _selectedLibrary,
                                 id: _posts.length.toString()
@@ -920,6 +926,7 @@ Widget build(BuildContext context) {
 
                       // Update the post value with the new text
                       postToEdit.value = editPostController.text;
+                      postToEdit.edited = true;
 
                       try {
                         // Call a function to update the post in Firestore
@@ -933,6 +940,7 @@ Widget build(BuildContext context) {
                           // Update the local _posts list with the edited post
                           _posts[postIndex] = postToEdit;
                           _posts.sort((a, b) => b.date.compareTo(a.date));
+                          _edit = false;
                         });
 
                         editPostController.clear();
@@ -1067,6 +1075,7 @@ Widget build(BuildContext context) {
 
                               // Update the comment value with the new text
                               commentToEdit.value = editCommentController.text;
+                              commentToEdit.edited = true;
 
                               try {
                                 // Call a function to update the comment in Firestore
@@ -1097,6 +1106,7 @@ Widget build(BuildContext context) {
                               award: false,
                               teacher: widget.currentUserData!.teacher ? true : false,
                               date: Timestamp.now(),
+                              edited: false,
                               user: widget.currentUserData!.name,
                               pfp: widget.currentUserData!.image,
                               userId: FirebaseAuth.instance.currentUser!.uid,
@@ -1243,6 +1253,7 @@ Widget build(BuildContext context) {
 
                           // Update the answer value with the new text
                           answerToEdit.value = editAnswerController.text;
+                          answerToEdit.edited = true;
 
                           try {
                             // Call a function to update the answer in Firestore
@@ -1274,6 +1285,7 @@ Widget build(BuildContext context) {
                           teacher: widget.currentUserData!.teacher ? true : false,
                           date: Timestamp.now(),
                           user: widget.currentUserData!.name,
+                          edited: false,
                           pfp: widget.currentUserData!.image,
                           userId: FirebaseAuth.instance.currentUser!.uid,
                           value: answerController.text,

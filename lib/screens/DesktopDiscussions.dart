@@ -117,11 +117,13 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
                 return CommentsData(
                   teacher: commentItem['teacher'] ?? false,
                   award: commentItem['award'] ?? false,
+                  edited: commentItem['edited'] ?? false,
                   answers: (commentItem['answers'] as List<dynamic>? ?? []).map<CommentsAnswersData>((answerItem) {
                     if (answerItem is Map<String, dynamic>) {
                       return CommentsAnswersData(
                         award: answerItem['award'] ?? false,
                         teacher: answerItem['teacher'] ?? false,
+                        edited: answerItem['edited'] ?? false,
                         date: answerItem['date'] ?? Timestamp.now(),
                         user: answerItem['user'] ?? '',
                         userId: answerItem['userId'],
@@ -134,6 +136,7 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
                         award: false,
                         teacher: false,
                         date: Timestamp.now(),
+                        edited: false,
                         user: '',
                         userId: '',
                         pfp: '',
@@ -183,6 +186,7 @@ class _DesktopDiscussionsState extends State<DesktopDiscussions> {
                   date: answerItem['date'],
                   user: answerItem['user'],
                   userId: answerItem['userId'],
+                  edited: answerItem['edited'],
                   pfp: answerItem['pfp'],
                   value: answerItem['value'],
                 );
@@ -294,6 +298,7 @@ Widget build(BuildContext context) {
                           comments: [],
                           date: Timestamp.now(),
                           user: widget.currentUserData!.name,
+                          edited: false,
                           pfp: widget.currentUserData!.image,
                           userId: FirebaseAuth.instance.currentUser!.uid,
                           value: postController.text,
@@ -365,7 +370,7 @@ Widget build(BuildContext context) {
                                             ),
                                         ),
                                         Text(
-                                          formatTimestamp(post.date),
+                                          post.edited ? '${formatTimestamp(post.date)} (upravené)' : formatTimestamp(post.date),
                                           style: TextStyle(
                                             color: AppColors.getColor('mono').grey,
                                           ),
@@ -595,6 +600,7 @@ Widget build(BuildContext context) {
                                             iconColor: AppColors.getColor('mono').black, 
                                             text: 'ZAHODIŤ ZMENY',  
                                             onTap: () {
+                                              _edit = false;
                                               _onNavigationItemSelected(0);
                                               Navigator.of(context).pop();
                                             }
@@ -666,7 +672,9 @@ Widget build(BuildContext context) {
               child: Row(
               children: [
                 Spacer(),
-                 ReButton(
+                Container(
+                  width: 230,
+                  child: ReButton(
                 activeColor: AppColors.getColor('mono').white, 
                 defaultColor: AppColors.getColor('green').main, 
                 disabledColor: AppColors.getColor('mono').lightGrey, 
@@ -686,6 +694,8 @@ Widget build(BuildContext context) {
 
                       // Update the post value with the new text
                       postToEdit.value = editPostController.text;
+                      postToEdit.edited = true;
+
 
                       try {
                         // Call a function to update the post in Firestore
@@ -699,6 +709,8 @@ Widget build(BuildContext context) {
                           // Update the local _posts list with the edited post
                           _posts[postIndex] = postToEdit;
                           _posts.sort((a, b) => b.date.compareTo(a.date));
+                          _edit = false;
+
                         });
 
                         editPostController.clear();
@@ -709,7 +721,9 @@ Widget build(BuildContext context) {
                       print('Invalid post index');
                     }
                   },
-                 )
+                 ),
+                ),
+                 
               ],
             ),
             )
@@ -878,6 +892,7 @@ Widget build(BuildContext context) {
                         date: Timestamp.now(),
                         userId: FirebaseAuth.instance.currentUser!.uid,
                         user: widget.currentUserData!.name,
+                        edited: false,
                         pfp: widget.currentUserData!.image,
                         value: _selectedLibrary,
                         id: _posts.length.toString()
@@ -1084,6 +1099,7 @@ Widget build(BuildContext context) {
                               answers: [],  // Initialize answers list with an empty list
                               award: false,
                               teacher:  widget.currentUserData!.teacher ? true : false,
+                              edited: false,
                               date: Timestamp.now(),
                               user: widget.currentUserData!.name,
                               pfp: widget.currentUserData!.image,
@@ -1301,6 +1317,7 @@ Widget build(BuildContext context) {
                             teacher: widget.currentUserData!.teacher ? true : false,
                             date: Timestamp.now(),
                             user: widget.currentUserData!.name,
+                            edited: false,
                             pfp: widget.currentUserData!.image,
                             userId: FirebaseAuth.instance.currentUser!.uid,
                             value: answerController.text,

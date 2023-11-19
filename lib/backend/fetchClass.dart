@@ -21,6 +21,7 @@ class CommentsAnswersData {
   String value;
   bool award;
   bool teacher;
+  bool edited;
   CommentsAnswersData({
     required this.userId,
     required this.pfp,
@@ -28,6 +29,7 @@ class CommentsAnswersData {
     required this.date,
     required this.user,
     required this.value,
+    required this.edited,
     required this.teacher
   });
 }
@@ -41,10 +43,12 @@ class CommentsData {
   String value;
   bool award;
   bool teacher;
+  bool edited;
   CommentsData({
     required this.award,
     required this.userId,
     required this.pfp,
+    required this.edited,
     required this.answers,
     required this.date,
     required this.user,
@@ -61,9 +65,11 @@ class PostsData {
   String userId;
   String pfp;
   String value;
+  bool edited;
   PostsData({
     required this.comments,
     required this.userId,
+    required this.edited,
     required this.pfp,
     required this.date,
     required this.id,
@@ -129,6 +135,7 @@ Future<ClassData> fetchClass(String classId) async {
                 pfp: answerItem['pfp'] as String? ?? '',
                 userId: answerItem['userId'] as String? ?? '',
                 user: answerItem['user'] as String? ?? '',
+                edited: answerItem['edited'] as bool? ?? false,
                 value: answerItem['value'] as String? ?? '',
               );
             }).toList();
@@ -136,6 +143,7 @@ Future<ClassData> fetchClass(String classId) async {
             return CommentsData(
               teacher: commentItem['teacher'] as bool? ?? false,
               award: commentItem['award'] as bool? ?? false,
+              edited: commentItem['edited'] as bool? ?? false,
               answers: answersDataList,
               pfp: commentItem['pfp'] as String? ?? '',
               userId: commentItem['userId'] as String? ?? '',
@@ -153,6 +161,7 @@ Future<ClassData> fetchClass(String classId) async {
             userId: postItem['userId'] as String? ?? '',
             user: postItem['user'] as String? ?? '',
             value: postItem['value'] as String? ?? '',
+            edited: postItem['edited'] as bool? ?? false,
           );
         }).toList();
 
@@ -212,11 +221,13 @@ Future<void> editClass(String classId, ClassData newClassData) async {
           'userId': post.userId,
           'user': post.user,
           'value': post.value,
+          'edited': post.edited,
           'comments': post.comments.map((comment) {
             return {
               'award': comment.award,
               'date': comment.date,
               'pfp': comment.pfp,
+              'edited': comment.edited,
               'userId': comment.userId,
               'user': comment.user,
               'value': comment.value,
@@ -225,6 +236,7 @@ Future<void> editClass(String classId, ClassData newClassData) async {
                   'award': answer.award,
                   'date': answer.date,
                   'pfp': answer.pfp,
+                  'edited': answer.edited,
                   'userId': answer.userId,
                   'user': answer.user,
                   'value': answer.value,
@@ -349,6 +361,7 @@ Future<void> addComment(String classId, String postId, CommentsData comment, ) a
             'date': comment.date,
             'user': comment.user,
             'userId': comment.userId,
+            'edited': comment.edited,
             'pfp': comment.pfp,
             'value': comment.value,
             'answers': <Map<String, dynamic>>[],
@@ -419,6 +432,7 @@ Future<void> addAnswer(String classId, String postId, int commentIndex, Comments
               'pfp': answer.pfp,
               'value': answer.value,
               'award': answer.award,
+              'edited': answer.edited,
               'teacher': answer.teacher,
             };
             comments[commentIndex]['answers'].add(answerData);
@@ -497,11 +511,13 @@ Future<void> addPost(String classId, PostsData post) async {
             'user': comment.user,
             'userId': comment.userId,
             'pfp': comment.pfp,
+            'edited': comment.edited,
             'value': comment.value
           }).toList(),
           'userId': post.userId,
           'pfp': post.pfp,
           'date': post.date,
+          'edited': post.edited,
           'id': post.id,
           'user': post.user,
           'value': post.value,
@@ -565,6 +581,7 @@ Future<void> updateCommentValue(String classId, String postId, int commentIndex,
           if (commentIndex >= 0 && commentIndex < comments.length) {
             // Update the 'value' field of the comment at the found index
             comments[commentIndex]['value'] = updatedValue;
+            comments[commentIndex]['edited'] = true;
 
             // Update the posts field within the class data
             classData['posts'] = posts;
@@ -626,6 +643,7 @@ Future<void> updateAnswerValue(String classId, String postId, int commentIndex, 
             if (answerIndex >= 0 && answerIndex < answers.length) {
               // Update the 'value' field of the answer at the found index
               answers[answerIndex]['value'] = updatedValue;
+              answers[answerIndex]['edited'] = true;
 
               // Update the posts field within the class data
               classData['posts'] = posts;
@@ -680,6 +698,7 @@ Future<void> updatePostValue(String classId, String postId, String updatedValue)
         if (postIndex != -1) {
           // Update the 'value' field of the post at the found index
           posts[postIndex]['value'] = updatedValue;
+          posts[postIndex]['edited'] = true;
 
           // Update the posts field within the class data
           classData['posts'] = posts;

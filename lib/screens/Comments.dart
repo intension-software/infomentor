@@ -97,7 +97,7 @@ class _CommentsState extends State<Comments> {
                                   ),
                               ),
                               Text(
-                                formatTimestamp(widget.post!.date),
+                                widget.post!.edited ? '${formatTimestamp(widget.post!.date)} (upravené)' : formatTimestamp(widget.post!.date),
                                 style: TextStyle(
                                   color: AppColors.getColor('mono').grey,
                                 ),
@@ -192,7 +192,7 @@ class _CommentsState extends State<Comments> {
                                         ),
                                     ),
                                     Text(
-                                      formatTimestamp(comment.date),
+                                      comment.edited ? '${formatTimestamp(comment.date)} (upravené)' : formatTimestamp(comment.date),
                                       style: TextStyle(
                                         color: AppColors.getColor('mono').grey,
                                       ),
