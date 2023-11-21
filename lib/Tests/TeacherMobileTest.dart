@@ -45,7 +45,6 @@ class TeacherMobileTest extends StatefulWidget {
 class _TeacherMobileTestState extends State<TeacherMobileTest> {
   List<UserAnswerData> _answer = [];
   bool? isCorrect;
-  bool screen = true;
   int questionIndex = 0;
   List<String> answers = [];
   List<DivisionData> division = [];
@@ -249,20 +248,20 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
     }
     return Stack(
       children: [
-        !screen  ? Positioned.fill(
+        !firstScreen  ? Positioned.fill(
           child: SvgPicture.asset(
             'assets/background.svg',
             fit: BoxFit.cover,
           ),
         ) : Container(),
-        screen ? Positioned.fill(
+        firstScreen ? Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor
             ),
           ),) : Container(),
 
-        screen ? Positioned.fill(
+        firstScreen ? Positioned.fill(
           child:  SvgPicture.asset(
             'assets/lastScreenBackground.svg',
             fit: BoxFit.cover,
@@ -273,14 +272,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       appBar: AppBar(
         backgroundColor: 
                 (definition != '' || images.length > 0) ||
-            screen
+            firstScreen
             ? Theme.of(context).primaryColor
             : Theme.of(context).colorScheme.background,
         elevation: 0,
         flexibleSpace: Container(
           padding: EdgeInsets.symmetric(horizontal: 50),
           height: 120, // adjust this to make the AppBar taller
-          child: !screen
+          child: !firstScreen
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -324,7 +323,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
           icon: Icon(
             Icons.arrow_back,
             color: (
-              (definition != '' || images.length > 0)) || screen
+              (definition != '' || images.length > 0)) || firstScreen
                 ? AppColors.getColor('mono').white
                 : AppColors.getColor('mono').black,
           ),
@@ -333,8 +332,8 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
         ),
       ),
 
-      backgroundColor: (definition != '' || images.length > 0) || screen ? Colors.transparent : Theme.of(context).colorScheme.background,
-      body: !screen ? SingleChildScrollView(
+      backgroundColor: (definition != '' || images.length > 0) || firstScreen ? Colors.transparent : Theme.of(context).colorScheme.background,
+      body: !firstScreen ? SingleChildScrollView(
          child: Container(
           width: double.infinity,
           padding: EdgeInsets.only(bottom: 50),
@@ -750,7 +749,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
           )
         )
       )
-       : firstScreen ?
+       :
       Container(
         decoration: BoxDecoration(
                   color: AppColors.getColor('mono').white
@@ -810,77 +809,19 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Theme.of(context).primaryColor))
               ),
-              child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.cover, width:  MediaQuery.of(context).size.width,),
+              child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.fill, width:  MediaQuery.of(context).size.width,),
             ),
             Spacer(),
             ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'POKRAČOVAŤ', onTap:
               () {
                 setState(() {
-                  screen = false;
                   firstScreen = false;
                 });
               }
             ),
             SizedBox(height: 60),
           ],
-        ))) :  Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].name,
-              style:  Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 30),
-            Image.asset('assets/star.png', height: 100,),
-            SizedBox(height: 10),
-            Text(
-              getResultBasedOnPercentage(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points, questionsPoint ?? 0),
-              style:  Theme.of(context)
-                .textTheme
-                .headlineLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            
-            SizedBox(height: 10),
-            Text(
-              "${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}/${questionsPoint} správnych odpovedí | ${((widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points / questionsPoint!) * 100).round()}%",
-              style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "+${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}",
-                  style:  Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                ),
-                SizedBox(width: 5),
-                SvgPicture.asset('assets/icons/starYellowIcon.svg'),
-              ],
-            ),
-            SizedBox(height: 20),
-            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAVRIEŤ', onTap:
-              () => widget.overlay(),
-            ),
-          ],
-        )
+        ))) 
       ),
       ]
     );
@@ -957,7 +898,6 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
   void _showscreen() {
     setState(() {
       // Update the state to show the last screen
-      screen = true;
       question = '';
       subQuestion = '';
       title = '';
@@ -968,6 +908,7 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
       matches = [];
       matchmaking = [];
     });
+    widget.overlay();
   }
 
   bool areAllCompleted(UserData userData) {

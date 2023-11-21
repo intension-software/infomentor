@@ -316,7 +316,7 @@ Widget build(BuildContext context) {
                                                       decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
                                                         color: (!widget.currentUserData!.teacher ? !(widget.currentUserData?.capitols?[capitolIndex].tests[testIndex]?.completed ?? false) : !(percentages[capitolIndex][testIndex] == 1.0))
-                                                            ? AppColors.getColor(results?[capitolIndex].capitolsData!.color ?? '').lighter
+                                                            ? AppColors.getColor('blue').lighter
                                                             : AppColors.getColor('yellow').lighter,
                                                       ),
                                                     )

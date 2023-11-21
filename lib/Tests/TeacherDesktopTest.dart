@@ -45,7 +45,6 @@ class TeacherDesktopTest extends StatefulWidget {
 class _TeacherDesktopTestState extends State<TeacherDesktopTest> {
   List<UserAnswerData> _answer = [];
   bool? isCorrect;
-  bool screen = true;
   int questionIndex = 0;
   List<DivisionData> division = [];
   List<String> answers = [];
@@ -249,14 +248,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
     }
     return Stack(
       children: [
-        screen ? Positioned.fill(
+        firstScreen ? Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor
             ),
           ),) : Container(),
 
-        screen ? Positioned.fill(
+        firstScreen ? Positioned.fill(
           child:  SvgPicture.asset(
             'assets/lastScreenBackground.svg',
             fit: BoxFit.cover,
@@ -266,14 +265,14 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
       Scaffold(
       appBar: AppBar(
         backgroundColor: 
-            screen
+            firstScreen
             ? Theme.of(context).primaryColor
             : Theme.of(context).colorScheme.background,
         elevation: 0,
         flexibleSpace: Container(
           padding: EdgeInsets.symmetric(horizontal: 50),
           height: 120, // adjust this to make the AppBar taller
-          child: !screen
+          child: !firstScreen
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -317,7 +316,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
           icon: Icon(
             Icons.arrow_back,
             color: 
-              screen
+              firstScreen
                 ? AppColors.getColor('mono').white
                 : AppColors.getColor('mono').black,
           ),
@@ -326,8 +325,8 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
         ),
       ),
 
-      backgroundColor: screen ?  Colors.transparent : Theme.of(context).colorScheme.background,
-      body: !screen ? SingleChildScrollView(
+      backgroundColor: firstScreen ?  Colors.transparent : Theme.of(context).colorScheme.background,
+      body: !firstScreen ? SingleChildScrollView(
          child:
          Container(
           child: Column(
@@ -769,7 +768,7 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
          ]
       ),
           )
-       ) : firstScreen ?
+       ) :
       Container(
         decoration: BoxDecoration(
                   color: AppColors.getColor('mono').white
@@ -829,105 +828,22 @@ Future<Map<String, dynamic>> getQuestionStats(String classId, int capitolIndex, 
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Theme.of(context).primaryColor))
               ),
-              child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.cover, width:  MediaQuery.of(context).size.width,),
+              child: SvgPicture.asset('assets/bottomBackground.svg', fit: BoxFit.fill, width:  MediaQuery.of(context).size.width,),
             ),
             Spacer(),
             ReButton(activeColor: AppColors.getColor('green').main, defaultColor:  AppColors.getColor('green').light, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').lighter, hoverColor: AppColors.getColor('green').main, text: 'POKRAČOVAŤ', onTap:
               () {
                 setState(() {
-                  screen = false;
                   firstScreen = false;
                 });
               }
             ),
             SizedBox(height: 60),
           ],
-        ))) :  Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].name,
-              style:  Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 30),
-            Image.asset('assets/star.png', height: 100,),
-            SizedBox(height: 10),
-            Text(
-              getResultBasedOnPercentage(widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points, questionsPoint ?? 0),
-              style:  Theme.of(context)
-                .textTheme
-                .headlineLarge!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            
-            SizedBox(height: 10),
-            Text(
-              "${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}/${questionsPoint} správnych odpovedí | ${((widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points / questionsPoint!) * 100).round()}%",
-              style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "+${widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].points}",
-                  style:  Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                ),
-                SizedBox(width: 5),
-                SvgPicture.asset('assets/icons/starYellowIcon.svg'),
-              ],
-            ),
-            SizedBox(height: 20),
-            ReButton(activeColor: AppColors.getColor('mono').white, defaultColor:  AppColors.getColor('mono').white, disabledColor: AppColors.getColor('mono').lightGrey, focusedColor: AppColors.getColor('primary').light, hoverColor: AppColors.getColor('mono').lighterGrey, textColor: AppColors.getColor('mono').black, iconColor: AppColors.getColor('mono').black, text: 'ZAVRIEŤ', onTap:
-              () => widget.overlay(),
-            ),
-          ],
-        )
-      ),
+        ))))
       ]
     );
   }
-
-  String getResultBasedOnPercentage(int value, int total) {
-  if (total == 0) {
-    throw ArgumentError('Total cannot be zero');
-  }
-
-  double percentage = (value / total) * 100;
-
-  if (percentage >= 90 && percentage <= 100) {
-    return 'Výborný výsledok!';
-  } else if (percentage >= 75 && percentage < 90) {
-    return 'Chválitebný výsledok!';
-  } else if (percentage >= 50 && percentage < 75) {
-    return 'Dobrý výsledok!';
-  } else if (percentage >= 30 && percentage < 50) {
-    return 'Dostatočný výsledok!';
-  } else if (percentage >= 0 && percentage < 30) {
-    return 'Nedostatočný výsledok!';
-  } else {
-    throw ArgumentError('Invalid values provided');
-  }
-}
-
-
 
   int countTrueValues(List<UserQuestionsData>? questionList) {
     int count = 0;
@@ -977,7 +893,6 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
   void _showscreen() {
     setState(() {
       // Update the state to show the last screen
-      screen = true;
       question = '';
       subQuestion = '';
       title = '';
@@ -988,6 +903,7 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
       matches = [];
       matchmaking = [];
     });
+    widget.overlay();
   }
 
   bool areAllCompleted(UserData userData) {
