@@ -26,6 +26,8 @@ class _ResultsState extends State<Results> {
   CancelableOperation<List<UserData>>? fetchStudentsOperation;
   int? studentIndex;
   bool _loading = true;
+  String selectedPeriod = 'Všetky';  // Initial selection
+
 
   int indexOfElement(List<UserData> list, String id) {
     for (var i = 0; i < list.length; i++) {
@@ -47,6 +49,45 @@ class _ResultsState extends State<Results> {
       fetchStudents();
     });
   }
+
+  Widget buildRadioButtons() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Radio<String>(
+        value: 'Všetky',
+        groupValue: selectedPeriod,
+        onChanged: (String? value) {
+          setState(() {
+            selectedPeriod = value!;
+          });
+        },
+      ),
+      Text('Všetky'),
+      Radio<String>(
+        value: 'Prvý Polrok',
+        groupValue: selectedPeriod,
+        onChanged: (String? value) {
+          setState(() {
+            selectedPeriod = value!;
+          });
+        },
+      ),
+      Text('Prvý Polrok'),
+      Radio<String>(
+        value: 'Druhý Polrok',
+        groupValue: selectedPeriod,
+        onChanged: (String? value) {
+          setState(() {
+            selectedPeriod = value!;
+          });
+        },
+      ),
+      Text('Druhý Polrok'),
+    ],
+  );
+}
+
 
   Future<void> _fetchCurrentUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -97,19 +138,25 @@ class _ResultsState extends State<Results> {
 
   @override
 Widget build(BuildContext context) {
-  if(_loading) return  Center(child: CircularProgressIndicator());
+  if (_loading) return Center(child: CircularProgressIndicator());
+
   return SingleChildScrollView(
     child: Container(
       color: Theme.of(context).colorScheme.background,
-      child: Column(
-        children: [
-          if (students != null)
-            buildScoreTable(students!)
-        ],
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            buildRadioButtons(),  // Include the radio buttons
+            if (students != null)
+              buildScoreTable(students!)
+          ],
+        ),
       ),
     ),
   );
 }
+
 
 
   List<Map<String, int>> getCapitolScores(UserData userData) {
@@ -157,25 +204,30 @@ int getMaxScore(UserData userData) {
 }
 
 Widget buildScoreTable(List<UserData> students) {
-  return Container( 
-    margin: EdgeInsets.all(20),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Table(
-          border: TableBorder(
-            right:  BorderSide(color: Colors.grey),
+  return SingleChildScrollView(
+    scrollDirection: Axis.horizontal,  // Enable horizontal scrolling
+    child: Container(
+      width: 1400,  // Set the table width to 1200 pixels
+      margin: EdgeInsets.all(20),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(12),
           ),
-          children: _buildRows(students),
+          child: Table(
+            border: TableBorder(
+              right: BorderSide(color: Colors.grey),
+            ),
+            children: _buildRows(students),
+          ),
         ),
       ),
-    )
+    ),
   );
 }
+
 
 
 List<TableRow> _buildRows(List<UserData> students) {
@@ -261,6 +313,14 @@ List<TableRow> _buildRows(List<UserData> students) {
     int maxScore = getMaxScore(student);
     double percentage = (totalScore / maxScore) * 100;
     String grade = getGrade(percentage);
+
+    // Modify this part to filter capitols based on selectedPeriod
+    if (selectedPeriod == 'Prvý Polrok') {
+      scores = scores.take(4).toList();  // Take first 4 capitols for Prvý Polrok
+    } else if (selectedPeriod == 'Druhý Polrok') {
+      scores = scores.skip(4).toList();  // Skip first 4 capitols for Druhý Polrok
+    }
+    
 
     rows.add(
       TableRow(

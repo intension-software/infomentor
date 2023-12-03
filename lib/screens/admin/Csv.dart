@@ -7,7 +7,8 @@ import 'package:infomentor/backend/userController.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 
 class Csv extends StatefulWidget {
   final UserData? currentUserData;
@@ -50,6 +51,7 @@ class _CsvState extends State<Csv> {
       return null;
     }
   }
+
 
 
   @override
@@ -132,12 +134,45 @@ class _CsvState extends State<Csv> {
                     ),
                 ),
                 SizedBox(height: 30,),
-                Text(
-                  'Súbor musí byť formátovaný nasledovne: ',
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: AppColors.getColor('mono').grey,
+                Row(
+                  children: [
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () async {
+                          // Load the file
+                          final byteData = await rootBundle.load('assets/Žiaci.xlsx');
+                          final directory = await getApplicationDocumentsDirectory();
+                          final file = File('${directory.path}/Žiaci.xlsx');
+
+                          // Write the file
+                          await file.writeAsBytes(
+                              byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+                          // Notify user
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('File downloaded successfully!')),
+                          );
+                        },
+                        child: Text(
+                          'Súbor ',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
                       ),
+                    ),
+                    
+                    Text(
+                    'musí byť formátovaný nasledovne: ',
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: AppColors.getColor('mono').grey,
+                        ),
+                  ),
+                  ],
                 ),
+                
                 Text(
                   '3 stĺplce pomenované ako:',
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(

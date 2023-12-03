@@ -26,6 +26,7 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_styled_toast: ^2.2.1
   flutter_gcaptcha_v3: ^2.0.4
+  path_provider: ^2.1.1
   excel: ^3.0.0
   csv: ^5.1.1
   mailer: ^6.0.1
@@ -64,3 +65,4 @@ flutter:
     - assets/bottomBackground.svg
     - assets/notifications/
     - assets/learningCards/
+    - assets/Žiaci.xlsx

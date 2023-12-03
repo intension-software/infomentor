@@ -1174,15 +1174,14 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
 
  
       setState(() {
-        widget.userData!.capitols[int.parse(widget.capitolsId)].tests[widget.testIndex].completed = true;
         questionIndex = 0;
         _answer = [];
         pressed = false;
       });
      
-      saveUserDataToFirestore(widget.userData!);
       _showscreen();
     }
+    saveUserDataToFirestore(widget.userData!);
   }
 
 
@@ -1229,7 +1228,6 @@ CorrectData? firstWhereOrNull(List<CorrectData> list, bool Function(CorrectData)
         'name': userData.name,
         'active': userData.active,
         'schoolClass': userData.schoolClass,
-        'notifications': userData.notifications,
         'image': userData.image,
         'surname': userData.surname,
         'points': userData.points,
